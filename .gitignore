@@ -1,0 +1,29 @@
+.env
+out/
+node_modules/
+tmp-uploads/
+*.log
+.DS_Store
+public/schuster/poster.*
+public/grub/poster.*
+public/horizontal/
+
+# Demo customer assets (don't commit copyrighted posters)
+public/altenhofen/
+public/grub/
+public/horizontal/
+public/horizontal-2/
+public/immoconsult/
+public/kamine/
+public/kuhn/
+public/malerbetrieb/
+public/meralux/
+public/neuhaeuser/
+public/sb-bagger/
+public/schuster/
+public/wohnbau/
+public/epo/
+
+# Demo configs (template-Beispiel: configs/_example.json statt echten Kundendaten)
+configs/horizontal.json
+configs/horizontal-2.json

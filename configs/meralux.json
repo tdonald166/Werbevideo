@@ -1,0 +1,60 @@
+{
+  "id": "meralux",
+  "unternehmen": {
+    "name": "meralux G. Kistner GmbH",
+    "slogan": "PERSÖNLICH. KOMPETENT. ZUVERLÄSSIG."
+  },
+  "headline": "FENSTER UND HAUSTÜREN\nFÜR HÖCHSTE ANSPRÜCHE",
+  "subheadline": "Über 60 Jahren Erfahrung. Qualität. Vertrauen.",
+  "vorteile": [
+    {
+      "titel": "FENSTER",
+      "beschreibung": "Modernes Design, beste Wärmedämmung, höchste Qualität."
+    },
+    {
+      "titel": "HAUSTÜREN",
+      "beschreibung": "Sicherheit, Komfort und Ästhetik in Perfektion."
+    },
+    {
+      "titel": "QUALITÄT",
+      "beschreibung": "Hochwertige Materialien und präzise Verarbeitung 'Made in Germany'."
+    },
+    {
+      "titel": "NACHHALTIGKEIT",
+      "beschreibung": "Energieeffiziente Lösungen für eine nachhaltige Zukunft."
+    }
+  ],
+  "cta": {
+    "text": "Jetzt beraten lassen",
+    "kicker": "Über 60 Jahren Erfahrung"
+  },
+  "kontakt": {
+    "adresse_zeile1": "Industriestr. 3",
+    "adresse_zeile2": "55597 Wöllstein",
+    "telefon_buero": "+49(0) 6703 - 9315- 0",
+    "telefon_lager": "+49(0) 6703 - 9315- 550",
+    "email": "info@meralux.de",
+    "website": "www.meralux.de"
+  },
+  "oeffnungszeiten": {
+    "mo_do": "",
+    "fr": "",
+    "hinweis": ""
+  },
+  "design": {
+    "primary": "#0023B4",
+    "primaryLt": "#3355CC",
+    "accent": "#0023B4",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": null,
+    "hero": "meralux/poster.png"
+  },
+  "variant": "b",
+  "vorteile_label": "Unsere Stärken"
+}

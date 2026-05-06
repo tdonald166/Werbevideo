@@ -1,0 +1,56 @@
+{
+  "id": "malerbetrieb",
+  "unternehmen": {
+    "name": "Malerbetrieb Belkowski",
+    "slogan": "Ihr Partner für fachgerechtes Modernisieren"
+  },
+  "headline": "FARBE GESTALTET.\nQUALITÄT BLEIBT.",
+  "subheadline": "Maler- und Lackierer-Meister. Meisterqualität: sauber, zuverlässig, nachhaltig.",
+  "vorteile": [
+    {
+      "titel": "Innenraum-Gestaltung",
+      "beschreibung": "Wände, Decken, Tapeten- und Lackierarbeiten"
+    },
+    {
+      "titel": "Fassaden-Gestaltung",
+      "beschreibung": "Schutz und Gestaltung für den perfekten Außenauftritt"
+    },
+    {
+      "titel": "Lackier-Arbeiten",
+      "beschreibung": "Fenster, Türen, Zäune und mehr – präzise und langlebig"
+    }
+  ],
+  "cta": {
+    "text": "JETZT KOSTENLOS BERATEN LASSEN!",
+    "kicker": ""
+  },
+  "kontakt": {
+    "adresse_zeile1": "Gerhart-Hauptmann-Straße 10",
+    "adresse_zeile2": "55257 Budenheim",
+    "telefon_buero": "0171-3771420",
+    "telefon_lager": "06139-962437",
+    "email": "firma@maler-belkowski.de",
+    "website": ""
+  },
+  "oeffnungszeiten": {
+    "mo_do": "",
+    "fr": "",
+    "hinweis": ""
+  },
+  "design": {
+    "primary": "#0a0a0a",
+    "primaryLt": "#2a2a2a",
+    "accent": "#fdb913",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": null,
+    "hero": "malerbetrieb/poster.png"
+  },
+  "variant": "a",
+  "vorteile_label": "Ihre Vorteile"
+}

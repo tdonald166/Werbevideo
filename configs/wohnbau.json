@@ -1,0 +1,56 @@
+{
+  "id": "wohnbau",
+  "unternehmen": {
+    "name": "Wohnbau Budenheim",
+    "slogan": "Wir bauen. Wir erhalten. Wir gestalten Zukunft."
+  },
+  "headline": "LEBENSRAUM SCHAFFEN.\nZUKUNFT GESTALTEN.",
+  "subheadline": "Als kommunales Wohnungsunternehmen stehen wir für bezahlbaren Wohnraum, hohe Qualität und nachhaltige Entwicklung in Budenheim und Umgebung.",
+  "vorteile": [
+    {
+      "titel": "WOHNEN",
+      "beschreibung": "Attraktive Mietwohnungen für jedes Lebensmodell."
+    },
+    {
+      "titel": "SERVICE",
+      "beschreibung": "Persönlich, zuverlässig und immer für Sie da."
+    },
+    {
+      "titel": "WERTE",
+      "beschreibung": "Verantwortungsvoll handeln – heute und für kommende Generationen."
+    }
+  ],
+  "cta": {
+    "text": "Jetzt informieren und beraten lassen!",
+    "kicker": "IHR NEUES ZUHAUSE WARTET AUF SIE!"
+  },
+  "kontakt": {
+    "adresse_zeile1": "Heidesheimer Str. 79",
+    "adresse_zeile2": "55257 Budenheim",
+    "telefon_buero": "0 61 39 - 96 27 0",
+    "telefon_lager": "0 61 39 - 96 27 19",
+    "email": "info@wohnbau-budenheim.de",
+    "website": ""
+  },
+  "oeffnungszeiten": {
+    "mo_do": "",
+    "fr": "",
+    "hinweis": ""
+  },
+  "design": {
+    "primary": "#004B8D",
+    "primaryLt": "#1E88E5",
+    "accent": "#0099DD",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": null,
+    "hero": "wohnbau/poster.png"
+  },
+  "variant": "f",
+  "vorteile_label": "Gute Gründe"
+}

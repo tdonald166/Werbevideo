@@ -1,0 +1,56 @@
+{
+  "id": "kamine",
+  "unternehmen": {
+    "name": "Gerhard Härter Kachelöfen & Kamine",
+    "slogan": "PERSÖNLICH. KOMPETENT. REGIONAL. WÄRME, DIE BLEIBT."
+  },
+  "headline": "WO WÄRME\nZUHAUSE IST.",
+  "subheadline": "Individuelle Lösungen für behagliche Wärme und zeitlose Eleganz.",
+  "vorteile": [
+    {
+      "titel": "INDIVIDUELLE PLANUNG",
+      "beschreibung": "Maßgeschneiderte Lösungen für Ihr Zuhause."
+    },
+    {
+      "titel": "EFFIZIENT & NACHHALTIG",
+      "beschreibung": "Moderne Technik für umweltbewusstes Heizen."
+    },
+    {
+      "titel": "MEISTERHAFTE HANDWERKSKUNST",
+      "beschreibung": "Präzision und Qualität aus Meisterhand."
+    }
+  ],
+  "cta": {
+    "text": "JETZT BERATUNGSTERMIN VEREINBAREN!",
+    "kicker": "WIR BERATEN SIE GERNE PERSÖNLICH!"
+  },
+  "kontakt": {
+    "adresse_zeile1": "Kapellenstraße 32",
+    "adresse_zeile2": "55437 Nieder-Hilbersheim",
+    "telefon_buero": "0 67 28 - 753",
+    "telefon_lager": "0 67 28 - 99 28 95",
+    "email": "info@kacheloefen-haerter.de",
+    "website": "www.kacheloefen-haerter.de"
+  },
+  "oeffnungszeiten": {
+    "mo_do": "Mo. – Fr.: 10:00 – 18:00 Uhr",
+    "fr": "Sa.: 10:00 – 14:00 Uhr",
+    "hinweis": "und nach Vereinbarung"
+  },
+  "design": {
+    "primary": "#1a1a1a",
+    "primaryLt": "#3d3d3d",
+    "accent": "#ff6600",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": null,
+    "hero": "kamine/poster.png"
+  },
+  "variant": "e",
+  "vorteile_label": "Unser Versprechen"
+}

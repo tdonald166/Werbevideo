@@ -1,0 +1,60 @@
+{
+  "id": "kuhn",
+  "unternehmen": {
+    "name": "KÜHN",
+    "slogan": "SCHNELL. SAUBER. ZUVERLÄSSIG."
+  },
+  "headline": "BAUSCHUTT?\nWIR MACHEN DAS!",
+  "subheadline": "Ihr Partner für Abbruch, Transport & Baustoffe",
+  "vorteile": [
+    {
+      "titel": "Erdarbeiten",
+      "beschreibung": "Aushub, Planierung, Geländearbeiten und mehr."
+    },
+    {
+      "titel": "Abbrucharbeiten",
+      "beschreibung": "Fachgerechter Abbruch von Gebäuden, Hallen und Anlagen."
+    },
+    {
+      "titel": "Transporte",
+      "beschreibung": "Zuverlässiger Transport von Schüttgütern, Baustellenabfällen und mehr."
+    },
+    {
+      "titel": "Bauschuttannahme",
+      "beschreibung": "Recycling von Bauschutt, Sand, Kies, Splitt und Mutterboden."
+    }
+  ],
+  "cta": {
+    "text": "JETZT ANRUFEN!",
+    "kicker": "HEUTE ANRUFEN – OFT NOCH AM SELBEN TAG VERFÜGBAR!"
+  },
+  "kontakt": {
+    "adresse_zeile1": "Wallerheim, Schimsheimer Str. 9 + 11",
+    "adresse_zeile2": "",
+    "telefon_buero": "06732 - 938187-0",
+    "telefon_lager": "06732 - 63547",
+    "email": "info@kuhn-sohn.de",
+    "website": ""
+  },
+  "oeffnungszeiten": {
+    "mo_do": "",
+    "fr": "",
+    "hinweis": ""
+  },
+  "design": {
+    "primary": "#000000",
+    "primaryLt": "#2b2b2b",
+    "accent": "#fdb913",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": null,
+    "hero": "kuhn/poster.png"
+  },
+  "variant": "f",
+  "vorteile_label": "Gute Gründe"
+}

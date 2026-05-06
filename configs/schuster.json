@@ -1,0 +1,56 @@
+{
+  "id": "schuster",
+  "unternehmen": {
+    "name": "SCHUSTER Dachdeckerei GmbH",
+    "slogan": "Gut durchdacht!"
+  },
+  "headline": "STARKES DACH.\nSICHERES ZUHAUSE.",
+  "subheadline": "Sanierung. Neubau. Meisterqualität für Ihr Zuhause.",
+  "vorteile": [
+    {
+      "titel": "Meisterbetrieb in 2. Generation",
+      "beschreibung": "Erfahrung und Handwerksqualität seit Generationen"
+    },
+    {
+      "titel": "Schnell, sauber, zuverlässig",
+      "beschreibung": "Professionelle Ausführung ohne Kompromisse"
+    },
+    {
+      "titel": "Für Mainz, Wiesbaden & Rhein-Main",
+      "beschreibung": "Ihr regionaler Partner vor Ort"
+    }
+  ],
+  "cta": {
+    "text": "JETZT DACH-CHECK SICHERN",
+    "kicker": "Termin sichern"
+  },
+  "kontakt": {
+    "adresse_zeile1": "Neue Kirchstraße 1a",
+    "adresse_zeile2": "55262 Ingelheim OT Heidesheim",
+    "telefon_buero": "06132 434840",
+    "telefon_lager": "06131 3079785",
+    "email": "schuster@gutdurchdacht.de",
+    "website": "gutdurchdacht.de"
+  },
+  "oeffnungszeiten": {
+    "mo_do": "08:00 - 12:00 Uhr | 13:00 - 16:00 Uhr",
+    "fr": "08:00 - 15:00 Uhr",
+    "hinweis": "Termine nach Absprache auch außerhalb der Bürozeiten möglich."
+  },
+  "design": {
+    "primary": "#0d3b6e",
+    "primaryLt": "#1a5a9e",
+    "accent": "#c41e1e",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": null,
+    "hero": "schuster/poster.png"
+  },
+  "variant": "e",
+  "vorteile_label": "Unser Versprechen"
+}

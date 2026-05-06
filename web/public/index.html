@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Werbevideo Generator</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="/static/templates.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', system-ui, sans-serif; }
+  .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+  .gradient-text { background: linear-gradient(135deg,#ff6b6b 0%,#ffa500 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .scroll-thin::-webkit-scrollbar { width: 8px; }
+  .scroll-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+  @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(220,38,38,0.6); } 70% { box-shadow: 0 0 0 30px rgba(220,38,38,0); } 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); } }
+  .pulse-ring { animation: pulse-ring 2s infinite; }
+  .variant-card.selected { border-color: #f59e0b; box-shadow: 0 0 30px rgba(245,158,11,0.4); }
+  .dropzone-active { border-color: #f59e0b !important; background: rgba(245,158,11,0.08) !important; }
+</style>
+</head>
+<body class="bg-[#0a0a0f] text-white min-h-screen" x-data="app()" x-init="init()">
+
+<!-- Header -->
+<header class="sticky top-0 z-30 bg-[#0a0a0f]/80 backdrop-blur-md border-b border-white/5">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-red-600 flex items-center justify-center text-xl">▶</div>
+      <div>
+        <div class="text-lg font-bold leading-none">Werbevideo Generator</div>
+        <div class="text-xs text-white/50 leading-none mt-1">KI-gestützte Werbespots aus deinen Postern</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button @click="view='library'" :class="view==='library' ? 'bg-white/10' : 'hover:bg-white/5'" class="px-4 py-2 rounded-lg text-sm font-medium transition">📚 Bibliothek</button>
+      <button @click="showTemplateModal = true" class="px-4 py-2 rounded-lg text-sm font-medium bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 transition">⚡ Template</button>
+      <button @click="view='upload'; resetWizard()" :class="view==='upload' ? 'bg-amber-500 text-black' : 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30'" class="px-4 py-2 rounded-lg text-sm font-bold transition">+ Neues Video</button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-6 py-10">
+
+<!-- ──────── LIBRARY VIEW ──────── -->
+<template x-if="view==='library'">
+<div>
+  <div class="mb-8">
+    <h1 class="text-4xl font-black gradient-text">Deine Werbevideos</h1>
+    <p class="text-white/50 mt-2" x-text="`${configs.length} Videos in deiner Bibliothek`"></p>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <template x-for="cfg in configs" :key="cfg.id">
+      <div class="glass rounded-2xl overflow-hidden hover:scale-[1.02] transition cursor-pointer group" @click="openVideo(cfg)">
+        <div class="aspect-video relative overflow-hidden" :style="`background:linear-gradient(135deg,${cfg.primary},${cfg.accent})`">
+          <template x-if="cfg.hero">
+            <img :src="`/posters/${cfg.hero}`" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition" />
+          </template>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent"></div>
+          <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+            <div>
+              <div class="text-xs uppercase tracking-widest font-bold" :style="`color:${cfg.accent}`">Variant <span x-text="cfg.variant.toUpperCase()"></span></div>
+              <div class="text-lg font-bold leading-tight" x-text="cfg.name"></div>
+            </div>
+            <template x-if="cfg.hasVideo">
+              <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-2xl">▶</div>
+            </template>
+          </div>
+        </div>
+        <div class="p-4 flex items-center justify-between">
+          <div class="text-sm text-white/60 italic" x-text="cfg.slogan"></div>
+          <div class="flex gap-2">
+            <button @click.stop="editConfig(cfg.id)" class="text-xs px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg">✏️ Bearbeiten</button>
+            <button @click.stop="deleteConfig(cfg.id)" class="text-xs px-3 py-1.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg">🗑</button>
+          </div>
+        </div>
+      </div>
+    </template>
+    <template x-if="configs.length === 0">
+      <div class="col-span-3 glass rounded-2xl p-16 text-center">
+        <div class="text-6xl mb-4">🎬</div>
+        <div class="text-xl font-bold mb-2">Noch keine Videos</div>
+        <div class="text-white/50 mb-6">Lade dein erstes Poster hoch, um zu starten.</div>
+        <button @click="view='upload'" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-lg">+ Video erstellen</button>
+      </div>
+    </template>
+  </div>
+</div>
+</template>
+
+<!-- ──────── UPLOAD VIEW ──────── -->
+<template x-if="view==='upload' && step==='dropzone'">
+<div class="max-w-3xl mx-auto">
+  <div class="text-center mb-10">
+    <h1 class="text-5xl font-black gradient-text mb-4">Poster hochladen</h1>
+    <p class="text-white/60 text-lg">Lade ein Werbeposter hoch — die KI extrahiert automatisch alle Inhalte.</p>
+  </div>
+
+  <div
+    @dragover.prevent="dragActive=true"
+    @dragleave.prevent="dragActive=false"
+    @drop.prevent="dragActive=false; handleFile($event.dataTransfer.files[0])"
+    @click="$refs.fileInput.click()"
+    :class="dragActive ? 'dropzone-active' : ''"
+    class="glass rounded-2xl border-2 border-dashed border-white/20 hover:border-amber-500/50 hover:bg-white/5 transition cursor-pointer p-16 text-center">
+    <input type="file" x-ref="fileInput" class="hidden" accept="image/*" @change="handleFile($event.target.files[0])" />
+    <div class="text-7xl mb-6">📤</div>
+    <div class="text-2xl font-bold mb-3">Poster hierher ziehen</div>
+    <div class="text-white/50 mb-6">oder klicken zum Auswählen</div>
+    <div class="inline-flex items-center gap-2 text-xs text-white/40 bg-white/5 px-4 py-2 rounded-full">
+      📷 PNG, JPG, WebP · max 30 MB
+    </div>
+  </div>
+</div>
+</template>
+
+<!-- ──────── EXTRACTING ──────── -->
+<template x-if="view==='upload' && step==='extracting'">
+<div class="max-w-2xl mx-auto text-center py-20">
+  <div class="w-32 h-32 mx-auto mb-8 relative">
+    <div class="absolute inset-0 rounded-full bg-amber-500/20 animate-ping"></div>
+    <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-amber-500 to-red-600 flex items-center justify-center text-6xl">🤖</div>
+  </div>
+  <h2 class="text-3xl font-black mb-4">KI analysiert dein Poster…</h2>
+  <p class="text-white/60 text-lg">Das dauert ungefähr 10 Sekunden. Claude liest Texte, Farben und Layout aus.</p>
+</div>
+</template>
+
+<!-- ──────── EDIT CONFIG ──────── -->
+<template x-if="view==='upload' && step==='edit' && config">
+<div>
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-4xl font-black gradient-text">Daten prüfen & anpassen</h1>
+      <p class="text-white/50 mt-2">Korrigiere was die KI falsch erkannt hat.</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button @click="templateApplyMode = true; showTemplateModal = true"
+              class="text-sm bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 px-4 py-2 rounded-lg font-medium">
+        ⚡ Template anwenden
+      </button>
+      <button @click="step='dropzone'" class="text-white/50 hover:text-white text-sm">← Zurück</button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Form -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Firma -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Unternehmen</h3>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs text-white/50 block mb-1">Firmenname</label>
+            <input type="text" x-model="config.unternehmen.name" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-1">Slogan</label>
+            <input type="text" x-model="config.unternehmen.slogan" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Headline -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Hauptbotschaft</h3>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs text-white/50 block mb-1">Headline (2 Zeilen — Enter für Zeilenumbruch)</label>
+            <textarea x-model="config.headline" rows="2" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500 font-bold text-lg"></textarea>
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-1">Untertitel</label>
+            <input type="text" x-model="config.subheadline" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Vorteile -->
+      <div class="glass rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold">Vorteile (3)</h3>
+          <input type="text" x-model="config.vorteile_label" placeholder="Label z.B. 'Ihre Vorteile'"
+                 class="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-sm w-48" />
+        </div>
+        <div class="space-y-3">
+          <template x-for="(v, i) in config.vorteile" :key="i">
+            <div class="bg-white/5 rounded-lg p-4 border border-white/5">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-full bg-amber-500 text-black font-black flex items-center justify-center" x-text="i+1"></div>
+                <input type="text" x-model="v.titel" placeholder="Titel" class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 font-bold" />
+              </div>
+              <input type="text" x-model="v.beschreibung" placeholder="Beschreibung (optional)" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm" />
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Call-to-Action</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-white/50 block mb-1">Kicker (klein, oben)</label>
+            <input type="text" x-model="config.cta.kicker" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-1">CTA-Text (groß)</label>
+            <input type="text" x-model="config.cta.text" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-bold" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Kontakt -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Kontakt</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-white/50 block mb-1">📍 Adresse Zeile 1</label>
+            <input type="text" x-model="config.kontakt.adresse_zeile1" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-1">📍 Adresse Zeile 2</label>
+            <input type="text" x-model="config.kontakt.adresse_zeile2" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-1">☎ Telefon</label>
+            <input type="text" x-model="config.kontakt.telefon_buero" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-bold text-lg" />
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-1">☎ 2. Telefon (optional)</label>
+            <input type="text" x-model="config.kontakt.telefon_lager" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-1">✉ E-Mail</label>
+            <input type="text" x-model="config.kontakt.email" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-1">🌐 Website</label>
+            <input type="text" x-model="config.kontakt.website" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Farben -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Markenfarben</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-white/50 block mb-2">Primär (Hintergrund)</label>
+            <div class="flex items-center gap-2">
+              <input type="color" x-model="config.design.primary" class="w-14 h-14 bg-transparent border-0 rounded-lg cursor-pointer" />
+              <input type="text" x-model="config.design.primary" class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-3 font-mono" />
+            </div>
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-2">Akzent (CTA, Highlights)</label>
+            <div class="flex items-center gap-2">
+              <input type="color" x-model="config.design.accent" class="w-14 h-14 bg-transparent border-0 rounded-lg cursor-pointer" />
+              <input type="text" x-model="config.design.accent" class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-3 font-mono" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schrift + Dauer -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Schrift & Dauer</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-white/50 block mb-2">Schriftstil</label>
+            <div class="grid grid-cols-1 gap-2">
+              <template x-for="fp in fontPresets" :key="fp.id">
+                <div @click="config.fontPreset = fp.id"
+                     :class="(config.fontPreset || 'modern') === fp.id ? 'border-amber-400 bg-amber-500/10' : 'border-white/10 hover:border-white/30'"
+                     class="cursor-pointer rounded-lg border-2 px-4 py-3 transition flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-sm" :style="`font-family:${fp.preview}`" x-text="fp.name"></div>
+                    <div class="text-xs text-white/50" x-text="fp.desc"></div>
+                  </div>
+                  <div class="text-amber-400 text-lg" x-show="(config.fontPreset || 'modern') === fp.id">✓</div>
+                </div>
+              </template>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-2">Dauer</label>
+            <div class="grid grid-cols-1 gap-2">
+              <template x-for="d in durations" :key="d.sec">
+                <div @click="config.duration = d.sec"
+                     :class="(config.duration || 15) === d.sec ? 'border-amber-400 bg-amber-500/10' : 'border-white/10 hover:border-white/30'"
+                     class="cursor-pointer rounded-lg border-2 px-4 py-3 transition flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-lg" x-text="d.sec + ' Sekunden'"></div>
+                    <div class="text-xs text-white/50" x-text="d.desc"></div>
+                  </div>
+                  <div class="text-amber-400 text-lg" x-show="(config.duration || 15) === d.sec">✓</div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Variant Picker -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Stil-Variante (Animation & Layout)</h3>
+        <div class="grid grid-cols-3 gap-3">
+          <template x-for="v in variants" :key="v.id">
+            <div @click="config.variant=v.id"
+                 :class="config.variant===v.id ? 'selected' : 'border-white/10 hover:border-white/30'"
+                 class="variant-card cursor-pointer rounded-xl border-2 p-4 transition"
+                 :style="`background:linear-gradient(135deg,${config.design.primary}33,${config.design.accent}22)`">
+              <div class="text-3xl font-black mb-2" :style="`color:${config.design.accent}`" x-text="v.id.toUpperCase()"></div>
+              <div class="text-sm font-bold mb-1" x-text="v.name"></div>
+              <div class="text-xs text-white/60" x-text="v.desc"></div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar: Poster preview + Render button -->
+    <div class="space-y-4">
+      <div class="glass rounded-2xl p-4 sticky top-24">
+        <div class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-3">Original-Poster</div>
+        <template x-if="config.assets && config.assets.hero">
+          <img :src="`/posters/${config.assets.hero}`" class="w-full rounded-lg mb-4" />
+        </template>
+        <button @click="saveAndRender()"
+                class="w-full bg-gradient-to-r from-amber-500 to-red-600 hover:from-amber-400 hover:to-red-500 text-black font-black py-4 rounded-xl text-lg shadow-lg shadow-amber-500/30 transition pulse-ring">
+          🎬 Video erstellen
+        </button>
+        <button @click="saveOnly()" class="w-full mt-2 bg-white/5 hover:bg-white/10 py-3 rounded-xl text-sm font-medium">💾 Nur speichern</button>
+      </div>
+    </div>
+  </div>
+</div>
+</template>
+
+<!-- ──────── RENDERING ──────── -->
+<template x-if="view==='upload' && step==='rendering' && job">
+<div class="max-w-2xl mx-auto py-12">
+  <div class="text-center mb-10">
+    <div class="text-6xl mb-4">🎬</div>
+    <h2 class="text-3xl font-black mb-2">Video wird erstellt…</h2>
+    <p class="text-white/50">Das dauert ungefähr 3–5 Minuten. Du kannst diese Seite offen lassen.</p>
+  </div>
+
+  <div class="glass rounded-2xl p-6">
+    <div class="flex items-center justify-between text-sm mb-2">
+      <span class="text-white/70" x-text="job.phase === 'encoding' ? '🎞 Encodiere…' : '🖼 Rendere Frames…'"></span>
+      <span class="font-mono font-bold text-amber-400" x-text="`${job.progress} / ${job.total}`"></span>
+    </div>
+    <div class="h-3 bg-white/10 rounded-full overflow-hidden">
+      <div class="h-full bg-gradient-to-r from-amber-500 to-red-600 transition-all" :style="`width:${(job.progress/job.total)*100}%`"></div>
+    </div>
+    <div class="text-xs text-white/40 mt-3 font-mono" x-text="`${Math.round((job.progress/job.total)*100)}%`"></div>
+  </div>
+
+  <details class="mt-6 glass rounded-xl p-4">
+    <summary class="text-sm text-white/60 cursor-pointer">Live-Log</summary>
+    <pre class="text-xs text-white/40 mt-3 font-mono whitespace-pre-wrap max-h-48 overflow-y-auto scroll-thin" x-text="(job.log||[]).join('')"></pre>
+  </details>
+</div>
+</template>
+
+<!-- ──────── DONE ──────── -->
+<template x-if="view==='upload' && step==='done'">
+<div class="max-w-4xl mx-auto py-12">
+  <div class="text-center mb-8">
+    <div class="text-7xl mb-4">🎉</div>
+    <h2 class="text-4xl font-black gradient-text mb-3">Fertig!</h2>
+    <p class="text-white/60 text-lg">Dein Werbevideo ist bereit.</p>
+  </div>
+
+  <div class="glass rounded-2xl p-2 mb-6">
+    <video :src="finalVideoUrl" controls autoplay class="w-full rounded-xl bg-black"></video>
+  </div>
+
+  <div class="flex flex-wrap justify-center gap-4">
+    <a :href="finalVideoUrl" :download="`${currentId}-werbevideo.mp4`"
+       class="bg-amber-500 hover:bg-amber-400 text-black font-black px-8 py-4 rounded-xl shadow-lg">
+      ⬇ Video herunterladen
+    </a>
+    <button @click="view='library'; loadConfigs()" class="bg-white/5 hover:bg-white/10 px-8 py-4 rounded-xl font-bold">
+      📚 Zur Bibliothek
+    </button>
+    <button @click="view='upload'; resetWizard()" class="bg-white/5 hover:bg-white/10 px-8 py-4 rounded-xl font-bold">
+      + Weiteres Video
+    </button>
+  </div>
+</div>
+</template>
+
+<!-- ──────── ERROR TOAST ──────── -->
+<template x-if="error">
+<div class="fixed bottom-6 right-6 bg-red-500/90 backdrop-blur-md text-white px-6 py-4 rounded-xl shadow-2xl max-w-md z-50">
+  <div class="flex items-start gap-3">
+    <div class="text-xl">⚠️</div>
+    <div class="flex-1">
+      <div class="font-bold mb-1">Fehler</div>
+      <div class="text-sm text-white/90" x-text="error"></div>
+    </div>
+    <button @click="error=null" class="text-white/70 hover:text-white">×</button>
+  </div>
+</div>
+</template>
+
+</main>
+
+<!-- Template Picker Modal -->
+<template x-if="showTemplateModal">
+<div class="fixed inset-0 bg-black/85 backdrop-blur-md z-40 flex items-center justify-center p-6 overflow-y-auto" @click="showTemplateModal=false">
+  <div class="max-w-6xl w-full" @click.stop>
+    <div class="text-center mb-8">
+      <h2 class="text-4xl font-black gradient-text mb-2">Branchen-Templates</h2>
+      <p class="text-white/60">Wähle eine Branche — fertige Variante, Farben, Schriften und Beispieltexte sind sofort einsatzbereit.</p>
+    </div>
+
+    <div x-show="!templateApplyMode" class="mb-4 text-center">
+      <input x-model="templateNewName" type="text" placeholder="Firmenname (z.B. 'Müller GmbH')"
+             class="w-full max-w-md bg-white/5 border border-white/15 rounded-xl px-5 py-3 text-center font-bold text-lg" />
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <template x-for="t in templates" :key="t.id">
+        <div @click="applyTemplate(t)"
+             class="glass rounded-2xl p-5 cursor-pointer hover:scale-[1.02] transition border border-white/10 hover:border-amber-500/60"
+             :style="`background:linear-gradient(135deg,${t.design.primary}33,${t.design.accent}22)`">
+          <div class="flex items-start gap-3 mb-3">
+            <div class="text-4xl" x-text="t.icon"></div>
+            <div class="flex-1">
+              <div class="text-xl font-black" x-text="t.name"></div>
+              <div class="text-xs text-white/60 leading-snug mt-1" x-text="t.desc"></div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-6 h-6 rounded" :style="`background:${t.design.primary}`"></div>
+            <div class="w-6 h-6 rounded" :style="`background:${t.design.accent}`"></div>
+            <div class="ml-auto text-xs uppercase tracking-widest font-bold" :style="`color:${t.design.accent}`">
+              Variant <span x-text="t.variant.toUpperCase()"></span>
+            </div>
+          </div>
+          <div class="text-xs text-white/50 italic" x-text="`'${t.placeholders.headline.replace(/\n/g, ' / ')}'`"></div>
+          <div class="mt-3 text-xs text-amber-400 font-bold opacity-0 group-hover:opacity-100">→ Auswählen</div>
+        </div>
+      </template>
+    </div>
+
+    <div class="text-center mt-8">
+      <button @click="showTemplateModal=false" class="text-white/50 hover:text-white text-sm">Abbrechen</button>
+    </div>
+  </div>
+</div>
+</template>
+
+<!-- Video modal in library -->
+<template x-if="modalVideo">
+<div class="fixed inset-0 bg-black/90 backdrop-blur-md z-40 flex items-center justify-center p-6" @click="modalVideo=null">
+  <div class="max-w-5xl w-full" @click.stop>
+    <video :src="modalVideo" controls autoplay class="w-full rounded-2xl bg-black"></video>
+    <div class="text-center mt-4">
+      <a :href="modalVideo" download class="inline-block bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl">⬇ Herunterladen</a>
+    </div>
+  </div>
+</div>
+</template>
+
+<script>
+function app() {
+  return {
+    view: 'library',  // library | upload
+    step: 'dropzone', // dropzone | extracting | edit | rendering | done
+    dragActive: false,
+    configs: [],
+    config: null,
+    currentId: null,
+    job: null,
+    pollInterval: null,
+    finalVideoUrl: null,
+    modalVideo: null,
+    error: null,
+    templates: window.INDUSTRY_TEMPLATES || [],
+    showTemplateModal: false,
+    templateApplyMode: false,
+    templateNewName: "",
+    variants: [
+      { id: 'a', name: 'Letter Kinetic', desc: 'Buchstabe für Buchstabe + Mega-Phone' },
+      { id: 'b', name: 'Word Slide', desc: 'Wörter slide L/R + Manifesto + Split-Card' },
+      { id: 'c', name: 'Zoom Burst', desc: 'Zoom-Blur + Stripes + Phone-Strip' },
+      { id: 'd', name: 'Mask Wipe', desc: 'Vorhang-Reveal + Editorial + Watermark' },
+      { id: 'e', name: 'Typewriter', desc: 'Tipp-Effekt + TV-News + Broadcast' },
+      { id: 'f', name: '3D Flip', desc: 'Flip + Hexagon-Karten + Frame' },
+      { id: 'g', name: 'Explosive Burst', desc: 'Schockwellen + Sun-Rays + Radial-Phone' },
+      { id: 'h', name: 'Liquid Flow', desc: 'Morphing-Blobs + organische Bewegung' },
+      { id: 'i', name: 'Retro Synthwave', desc: '80s-Sun + Grid-Floor + Chrome-3D' },
+      { id: 'j', name: '✨ Prism Holographic', desc: 'Rainbow-Shimmer + Diamond-Karten + holografisch' },
+      { id: 'k', name: '✨ Motion Studio', desc: 'Bauhaus-Geometrie + Strict-Grid + Editorial' },
+      { id: 'l', name: '✨ Cinema Noir', desc: 'Letterbox + Lens-Flare + dramatische Zooms' },
+    ],
+    fontPresets: [
+      { id: 'modern',     name: 'Modern',     desc: 'Oswald + Inter — clean & professionell',     preview: 'Oswald, sans-serif' },
+      { id: 'bold',       name: 'Bold',       desc: 'Anton + Lato — kraftvoll & impactstark',     preview: 'Anton, sans-serif' },
+      { id: 'elegant',    name: 'Elegant',    desc: 'Playfair + Montserrat — edel & klassisch',   preview: 'Playfair Display, serif' },
+      { id: 'industrial', name: 'Industrial', desc: 'Bebas Neue + Inter — markant & technisch',    preview: 'Bebas Neue, sans-serif' },
+      { id: 'editorial',  name: 'Editorial',  desc: 'Playfair + Inter — magazin-stil',             preview: 'Playfair Display, serif' },
+    ],
+    durations: [
+      { sec: 15, desc: 'Standard — kompakt, schnell, social-media-tauglich' },
+      { sec: 20, desc: 'Mehr Luft — etwas ruhiger, mehr Hold-Zeit' },
+      { sec: 30, desc: 'Premium — alle Animationen ausgespielt, ruhig und edel' },
+    ],
+
+    async init() {
+      await this.loadConfigs();
+    },
+    resetWizard() {
+      this.step = 'dropzone';
+      this.config = null;
+      this.currentId = null;
+      this.job = null;
+      this.finalVideoUrl = null;
+      if (this.pollInterval) clearInterval(this.pollInterval);
+    },
+    async loadConfigs() {
+      try {
+        const r = await fetch('/api/configs');
+        this.configs = await r.json();
+      } catch (e) { this.error = e.message; }
+    },
+    openVideo(cfg) {
+      if (cfg.hasVideo) this.modalVideo = cfg.videoUrl;
+    },
+    async editConfig(id) {
+      try {
+        const r = await fetch('/api/config/' + id);
+        if (!r.ok) throw new Error('Config nicht gefunden');
+        this.config = await r.json();
+        this.currentId = id;
+        this.view = 'upload';
+        this.step = 'edit';
+      } catch (e) { this.error = e.message; }
+    },
+    async deleteConfig(id) {
+      if (!confirm('Wirklich löschen? Auch das Video wird entfernt.')) return;
+      try {
+        const r = await fetch('/api/config/' + id, { method: 'DELETE' });
+        if (!r.ok) throw new Error('Löschen fehlgeschlagen');
+        await this.loadConfigs();
+      } catch (e) { this.error = e.message; }
+    },
+    async handleFile(file) {
+      if (!file) return;
+      if (!file.type.startsWith('image/')) { this.error = 'Bitte ein Bild hochladen.'; return; }
+      this.step = 'extracting';
+      const fd = new FormData();
+      fd.append('poster', file);
+      try {
+        const r = await fetch('/api/upload', { method: 'POST', body: fd });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error || 'Upload fehlgeschlagen');
+        this.config = data.config;
+        this.currentId = data.id;
+        this.step = 'edit';
+      } catch (e) {
+        this.error = e.message;
+        this.step = 'dropzone';
+      }
+    },
+    async saveOnly() {
+      try {
+        await fetch('/api/config/' + this.currentId, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(this.config),
+        });
+        this.view = 'library';
+        await this.loadConfigs();
+      } catch (e) { this.error = e.message; }
+    },
+    async saveAndRender() {
+      try {
+        await fetch('/api/config/' + this.currentId, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(this.config),
+        });
+        const r = await fetch('/api/render/' + this.currentId, { method: 'POST' });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error);
+        this.step = 'rendering';
+        this.pollJob(data.jobId);
+      } catch (e) { this.error = e.message; }
+    },
+    async applyTemplate(t) {
+      // Mode 1: bereits in Edit-Form → Template-Werte überschreiben aktuelle config
+      if (this.templateApplyMode && this.config) {
+        this.config.variant = t.variant;
+        this.config.fontPreset = t.fontPreset;
+        this.config.duration = t.duration;
+        this.config.design = { ...this.config.design, ...t.design };
+        this.config.vorteile_label = t.placeholders.vorteile_label;
+        // Optional: Texte überschreiben (nur wenn aktuelle Texte leer sind)
+        // Hier überschreiben wir alle Texte mit Template-Defaults
+        if (confirm("Auch Texte mit Template-Beispielen ersetzen? (Abbrechen = nur Variante/Farben/Schrift ändern)")) {
+          this.config.unternehmen = { ...t.placeholders.unternehmen };
+          this.config.headline = t.placeholders.headline;
+          this.config.subheadline = t.placeholders.subheadline;
+          this.config.vorteile = JSON.parse(JSON.stringify(t.placeholders.vorteile));
+          this.config.cta = { ...t.placeholders.cta };
+        }
+        this.showTemplateModal = false;
+        this.templateApplyMode = false;
+        return;
+      }
+      // Mode 2: Neues Video aus Template starten (kein Poster)
+      try {
+        const r = await fetch('/api/config-from-template', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ template: t, name: this.templateNewName }),
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error || 'Template-Erstellung fehlgeschlagen');
+        this.config = data.config;
+        this.currentId = data.id;
+        this.showTemplateModal = false;
+        this.templateNewName = "";
+        this.view = 'upload';
+        this.step = 'edit';
+      } catch (e) {
+        this.error = e.message;
+      }
+    },
+    pollJob(jobId) {
+      this.pollInterval = setInterval(async () => {
+        try {
+          const r = await fetch('/api/jobs/' + jobId);
+          const j = await r.json();
+          this.job = j;
+          if (j.status === 'done') {
+            clearInterval(this.pollInterval);
+            this.finalVideoUrl = `/videos/${this.currentId}-cinematic-h.mp4?t=${Date.now()}`;
+            this.step = 'done';
+            await this.loadConfigs();
+          } else if (j.status === 'error') {
+            clearInterval(this.pollInterval);
+            this.error = j.error || 'Rendering-Fehler';
+            this.step = 'edit';
+          }
+        } catch (e) { /* keep polling */ }
+      }, 1500);
+    },
+  };
+}
+</script>
+</body>
+</html>

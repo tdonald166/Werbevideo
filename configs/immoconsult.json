@@ -1,0 +1,60 @@
+{
+  "id": "immoconsult",
+  "unternehmen": {
+    "name": "Immo Consult Boos",
+    "slogan": "Wir bringen Menschen und Immobilien zusammen."
+  },
+  "headline": "ENTDECKEN SIE\nIHR TRAUMHAUS jetzt.",
+  "subheadline": "Ihr zuverlässiger Partner für den Kauf und Verkauf von Immobilien in der Region.",
+  "vorteile": [
+    {
+      "titel": "KAUF & VERKAUF",
+      "beschreibung": "Wir finden Ihre Wunschimmobilie oder den passenden Käufer."
+    },
+    {
+      "titel": "WERTERMITTLUNG",
+      "beschreibung": "Professionelle Bewertung Ihrer Immobilie – fair und marktgerecht."
+    },
+    {
+      "titel": "PERSÖNLICH",
+      "beschreibung": "Individuelle Beratung mit Herz, Erfahrung und regionaler Kompetenz."
+    },
+    {
+      "titel": "RUNDUM-SERVICE",
+      "beschreibung": "Wir begleiten Sie sicher von der ersten Beratung bis zum Vertragsabschluss."
+    }
+  ],
+  "cta": {
+    "text": "JETZT ANRUFEN",
+    "kicker": "und Ihr Traumhaus verwirklichen!"
+  },
+  "kontakt": {
+    "adresse_zeile1": "Kreuznacher Straße 66",
+    "adresse_zeile2": "55576 Sprendlingen",
+    "telefon_buero": "06701 961333",
+    "telefon_lager": "",
+    "email": "info@immoconsultboos.de",
+    "website": ""
+  },
+  "oeffnungszeiten": {
+    "mo_do": "",
+    "fr": "",
+    "hinweis": ""
+  },
+  "design": {
+    "primary": "#003d7a",
+    "primaryLt": "#4a7ba7",
+    "accent": "#008744",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": null,
+    "hero": "immoconsult/poster.png"
+  },
+  "variant": "d",
+  "vorteile_label": "Warum wir"
+}

@@ -1,0 +1,60 @@
+{
+  "id": "altenhofen",
+  "unternehmen": {
+    "name": "ALTENHOFEN Schwimmbad- & Saunabau",
+    "slogan": "Qualität. Erfahrung. Leidenschaft."
+  },
+  "headline": "IHR TRAUM.\nUNSERE PLANUNG.\nPERFEKTE UMSETZUNG.",
+  "subheadline": "Individuelle Schwimmbäder und Saunen – geplant mit Erfahrung, gebaut mit Leidenschaft.",
+  "vorteile": [
+    {
+      "titel": "PLANUNG",
+      "beschreibung": "Individuelle Beratung und 3D-Planung für Ihren Traumpool."
+    },
+    {
+      "titel": "BAU",
+      "beschreibung": "Hochwertige Materialien und präzise Ausführung durch erfahrene Profis."
+    },
+    {
+      "titel": "TECHNIK",
+      "beschreibung": "Moderne Pooltechnik für kristallklares Wasser und höchsten Komfort."
+    },
+    {
+      "titel": "SAUNA",
+      "beschreibung": "Individuelle Saunalösungen für Wellness, Erholung und Entspannung."
+    }
+  ],
+  "cta": {
+    "text": "JETZT ANFRAGEN!",
+    "kicker": "Wir beraten Sie gerne und verwirklichen Ihren Traum vom perfekten Pool oder Ihrer Wohlfühlsauna."
+  },
+  "kontakt": {
+    "adresse_zeile1": "Uwe-Zeidler-Ring 6",
+    "adresse_zeile2": "55294 Bodenheim",
+    "telefon_buero": "06135 / 706 5000",
+    "telefon_lager": "06135 / 706 5177",
+    "email": "kontakt@altenhofen-schwimmbdbau.de",
+    "website": ""
+  },
+  "oeffnungszeiten": {
+    "mo_do": "",
+    "fr": "",
+    "hinweis": ""
+  },
+  "design": {
+    "primary": "#006d9e",
+    "primaryLt": "#3a9ec6",
+    "accent": "#ffffff",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": null,
+    "hero": "altenhofen/poster.png"
+  },
+  "variant": "j",
+  "vorteile_label": "Ihre Vorteile"
+}

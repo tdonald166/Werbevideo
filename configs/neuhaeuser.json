@@ -1,0 +1,60 @@
+{
+  "id": "neuhaeuser",
+  "unternehmen": {
+    "name": "Neuhäuser Qualitätsdächer",
+    "slogan": "DACHBAU. SPENGLEREI. WIR LEBEN QUALITÄT."
+  },
+  "headline": "STARK ÜBER JEDEM WETTER.\nQUALITÄT, DIE BLEIBT.",
+  "subheadline": "Ihr Meisterbetrieb für hochwertige Dachlösungen in Mainz und Umgebung.",
+  "vorteile": [
+    {
+      "titel": "DACHDECKUNG",
+      "beschreibung": "Steildach, Flachdach und Sanierung"
+    },
+    {
+      "titel": "DACHFENSTER",
+      "beschreibung": "Mehr Licht, mehr Luft, mehr Wohnqualität"
+    },
+    {
+      "titel": "DACHENTWÄSSERUNG",
+      "beschreibung": "Zuverlässige Systeme für optimalen Schutz"
+    },
+    {
+      "titel": "WÄRMEDÄMMUNG",
+      "beschreibung": "Energie sparen, Werte erhalten"
+    }
+  ],
+  "cta": {
+    "text": "Vertrauen Sie auf Erfahrung. Kompetenz und Zuverlässigkeit.",
+    "kicker": "QUALITÄT VOM FACH. SICHER FÜRS LEBEN."
+  },
+  "kontakt": {
+    "adresse_zeile1": "Am Sägewerk 17",
+    "adresse_zeile2": "55124 Mainz",
+    "telefon_buero": "+49 (0)6131 501533-0",
+    "telefon_lager": "+49 (0)6131 501533-3",
+    "email": "info@dachbau-mainz.de",
+    "website": ""
+  },
+  "oeffnungszeiten": {
+    "mo_do": "",
+    "fr": "",
+    "hinweis": ""
+  },
+  "design": {
+    "primary": "#003366",
+    "primaryLt": "#1a5a8a",
+    "accent": "#fdb913",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": null,
+    "hero": "neuhaeuser/poster.png"
+  },
+  "variant": "c",
+  "vorteile_label": "Das macht uns aus"
+}
