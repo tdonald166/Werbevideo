@@ -148,7 +148,7 @@ const KineticTitle: React.FC<{
 
 // ─── Headline-Reveal — 12 Varianten ────────────────────────
 const RevealedHeadline: React.FC<{
-  variant: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l";
+  variant: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o";
   frame: number;
   lines: string[];
   fontFamily: string;
@@ -562,6 +562,123 @@ const RevealedHeadline: React.FC<{
     );
   }
 
+  // Variant M — Aurora wave reveal (sanftes Wellen-Mask von links)
+  if (variant === "m") {
+    const aurora = (text: string, startFrame: number, color: string, shadow: string) => {
+      const localF = frame - startFrame;
+      const op = ci(localF, [0, 22], [0, 1], EO);
+      const sc = ci(localF, [0, 28], [0.92, 1], EO);
+      const ty = ci(localF, [0, 24], [60, 0], EO);
+      const wavePos = (localF * 4) % 200;
+      return (
+        <div style={{
+          opacity: op,
+          transform: `translateY(${ty}px) scale(${sc})`,
+          fontFamily, fontSize: size, fontWeight: 700,
+          background: `linear-gradient(110deg,
+            ${colorPrimary} 0%, ${colorAccent} 30%, #00f5d4 50%,
+            ${colorAccent} 70%, ${colorPrimary} 100%)`,
+          backgroundSize: "200% 100%",
+          backgroundPosition: `${wavePos}% 0`,
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          letterSpacing: -1, lineHeight: 1.0,
+          filter: `drop-shadow(0 0 40px ${colorAccent}aa) drop-shadow(0 0 80px ${colorAccent}55)`,
+        }}>
+          {text.toUpperCase()}
+        </div>
+      );
+    };
+    return (
+      <>
+        <div style={{ opacity: line1Op }}>
+          {aurora(lines[0] || "", 30, colorPrimary, shadowMain)}
+        </div>
+        {lines[1] && (
+          <div style={{ opacity: line2Op, marginTop: 4 }}>
+            {aurora(lines[1], 48, colorAccent, shadowAccent)}
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // Variant N — Architectural cut: kratzendes Slide mit harten Rändern
+  if (variant === "n") {
+    const arch = (text: string, startFrame: number, color: string, shadow: string) => {
+      const localF = frame - startFrame;
+      const op = ci(localF, [0, 14], [0, 1], EO);
+      const tx = ci(localF, [0, 20], [-200, 0], EO);
+      const wipe = ci(localF, [0, 26], [100, 0], EO);
+      return (
+        <div style={{
+          opacity: op,
+          transform: `translateX(${tx}px)`,
+          clipPath: `inset(0 ${wipe}% 0 0)`,
+          fontFamily, fontSize: size, fontWeight: 700,
+          color, letterSpacing: -2, lineHeight: 0.9,
+          textShadow: shadow,
+          textTransform: "uppercase",
+          borderLeft: `8px solid ${colorAccent}`,
+          paddingLeft: 30,
+        }}>
+          {text}
+        </div>
+      );
+    };
+    return (
+      <>
+        <div style={{ opacity: line1Op }}>
+          {arch(lines[0] || "", 30, colorPrimary, shadowMain)}
+        </div>
+        {lines[1] && (
+          <div style={{ opacity: line2Op, marginTop: 4 }}>
+            {arch(lines[1], 48, colorAccent, shadowAccent)}
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // Variant O — Luxury Gold (geprägter goldener Schriftzug mit Glanzwelle)
+  if (variant === "o") {
+    const gold = (text: string, startFrame: number, color: string, shadow: string) => {
+      const localF = frame - startFrame;
+      const op = ci(localF, [0, 24], [0, 1], EO);
+      const sc = ci(localF, [0, 30], [0.9, 1], EO);
+      const ty = ci(localF, [0, 26], [30, 0], EO);
+      const shine = (localF * 3) % 200;
+      return (
+        <div style={{
+          opacity: op,
+          transform: `translateY(${ty}px) scale(${sc})`,
+          fontFamily, fontSize: size, fontWeight: 700,
+          background: `linear-gradient(110deg,
+            #d4af37 0%, #f5d56e 20%, #fff5b8 35%, #f5d56e 50%,
+            #d4af37 65%, #a08020 80%, #d4af37 100%)`,
+          backgroundSize: "200% 100%",
+          backgroundPosition: `${shine}% 0`,
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          letterSpacing: 2, lineHeight: 1.0,
+          filter: `drop-shadow(2px 2px 0 #6b4f0f) drop-shadow(0 4px 20px rgba(0,0,0,0.6))`,
+        }}>
+          {text.toUpperCase()}
+        </div>
+      );
+    };
+    return (
+      <>
+        <div style={{ opacity: line1Op }}>
+          {gold(lines[0] || "", 30, colorPrimary, shadowMain)}
+        </div>
+        {lines[1] && (
+          <div style={{ opacity: line2Op, marginTop: 4 }}>
+            {gold(lines[1], 48, colorAccent, shadowAccent)}
+          </div>
+        )}
+      </>
+    );
+  }
+
   // Variant C — Big zoom-blur reveal (whole line at once)
   const reveal = (text: string, startFrame: number, color: string, shadow: string) => {
     const localF = frame - startFrame;
@@ -742,6 +859,9 @@ const SceneVorteile = (props: { frame: number; c: AdConfig; vertical: boolean })
   if (v === "j") return <SceneVorteileJ {...props} />;
   if (v === "k") return <SceneVorteileK {...props} />;
   if (v === "l") return <SceneVorteileL {...props} />;
+  if (v === "m") return <SceneVorteileM {...props} />;
+  if (v === "n") return <SceneVorteileN {...props} />;
+  if (v === "o") return <SceneVorteileO {...props} />;
   return <SceneVorteileA {...props} />;
 };
 
@@ -2529,6 +2649,437 @@ const SceneVorteileL = ({ frame, c, vertical }: { frame: number; c: AdConfig; ve
   );
 };
 
+// ─── Variant M — AURORA PREMIUM: Aurora-Borealis Background + glowing waves
+const SceneVorteileM = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 120, END = 240;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const SCRIPT = font(c.design.fontScript);
+  const W = vertical ? 1080 : 1920;
+  const H = vertical ? 1920 : 1080;
+
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const exit = ci(f, [END - START - 18, END - START], [1, 0], EIN);
+  const auroraShift = (f * 1.5) % 360;
+
+  return (
+    <AbsoluteFill style={{ background: "#050a14", opacity: bgOp * exit }}>
+      {/* Aurora-Layer 1: weicher grüner Schein */}
+      <AbsoluteFill style={{
+        background: `radial-gradient(ellipse 60% 80% at 30% ${30 + Math.sin(f * 0.02) * 15}%, #00f5d488 0%, transparent 50%)`,
+        opacity: 0.7,
+        filter: "blur(30px)",
+      }} />
+      {/* Aurora-Layer 2: lila/pink */}
+      <AbsoluteFill style={{
+        background: `radial-gradient(ellipse 70% 60% at ${70 + Math.cos(f * 0.025) * 10}% 60%, ${c.design.accent}aa 0%, transparent 55%)`,
+        opacity: 0.6,
+        filter: "blur(40px)",
+      }} />
+      {/* Aurora-Layer 3: cyan flow */}
+      <AbsoluteFill style={{
+        background: `linear-gradient(${auroraShift}deg, transparent 30%, #00f5ff44 50%, transparent 70%)`,
+        filter: "blur(50px)",
+      }} />
+
+      <Bokeh frame={frame} w={W} h={H} count={40} color="#00f5d4" />
+
+      {/* Header */}
+      <div style={{
+        position: "absolute", top: vertical ? 200 : 120,
+        left: 0, right: 0, textAlign: "center",
+        opacity: ci(f, [4, 24], [0, 1], EO),
+        transform: `translateY(${ci(f, [4, 26], [40, 0], EO)}px)`,
+      }}>
+        <div style={{
+          fontFamily: SCRIPT, fontSize: vertical ? 78 : 76,
+          color: "#00f5d4",
+          textShadow: "0 0 40px #00f5d4aa, 0 0 80px #00f5d455",
+          marginBottom: 8,
+        }}>
+          unsere
+        </div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700,
+          fontSize: vertical ? 130 : 130,
+          background: `linear-gradient(110deg, #00f5d4, ${c.design.accent}, #00f5ff, #00f5d4)`,
+          backgroundSize: "200% 100%",
+          backgroundPosition: `${(f * 2) % 200}% 0`,
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          letterSpacing: 4, lineHeight: 1,
+          filter: `drop-shadow(0 0 50px #00f5d4aa)`,
+        }}>
+          AURORA
+        </div>
+      </div>
+
+      {/* 3 floating cards mit Aurora-Glow */}
+      <div style={{
+        position: "absolute",
+        top: vertical ? 720 : 480,
+        left: 0, right: 0,
+        display: "flex", flexDirection: vertical ? "column" : "row",
+        justifyContent: "center", gap: vertical ? 30 : 50,
+        padding: "0 80px",
+      }}>
+        {c.vorteile.map((v, i) => {
+          const sStart = 22 + i * 14;
+          const op = ci(f, [sStart, sStart + 22], [0, 1], EO);
+          const ty = ci(f, [sStart, sStart + 26], [60, 0], EO);
+          const sc = ci(f, [sStart, sStart + 30], [0.9, 1], POP);
+          const float = Math.sin((f - sStart) * 0.08) * 6;
+          const glowColors = ["#00f5d4", "#ff6b9d", "#00f5ff"];
+          const glow = glowColors[i % 3];
+
+          return (
+            <div key={i} style={{
+              opacity: op,
+              transform: `translateY(${ty + float}px) scale(${sc})`,
+              flex: 1,
+              padding: vertical ? "36px 30px" : "44px 32px",
+              background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)",
+              backdropFilter: "blur(20px)",
+              border: `1px solid ${glow}66`,
+              borderRadius: 24,
+              boxShadow: `0 20px 60px ${glow}33, 0 0 40px ${glow}22, inset 0 0 30px rgba(255,255,255,0.04)`,
+              textAlign: "center",
+              position: "relative",
+            }}>
+              <div style={{
+                width: 84, height: 84, borderRadius: "50%",
+                background: `radial-gradient(circle, ${glow} 0%, ${c.design.accent} 100%)`,
+                margin: "0 auto 18px",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontFamily: HEAD, fontSize: 36, fontWeight: 700,
+                color: "#fff",
+                boxShadow: `0 0 40px ${glow}, inset 0 0 20px rgba(255,255,255,0.3)`,
+              }}>
+                {String(i + 1).padStart(2, "0")}
+              </div>
+              <div style={{
+                fontFamily: HEAD, fontWeight: 700,
+                fontSize: vertical ? 36 : 32,
+                color: "#fff", letterSpacing: 0.5, lineHeight: 1.1,
+                marginBottom: 10,
+                textShadow: `0 0 20px ${glow}aa`,
+                textTransform: "uppercase",
+              }}>
+                {v.titel}
+              </div>
+              {v.beschreibung && (
+                <div style={{
+                  fontFamily: BODY, fontSize: vertical ? 22 : 20,
+                  color: "rgba(255,255,255,0.85)", lineHeight: 1.4,
+                }}>
+                  {v.beschreibung}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ─── Variant N — ARCHITECTURAL: Brutalist concrete with massive type
+const SceneVorteileN = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 120, END = 240;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const exit = ci(f, [END - START - 18, END - START], [1, 0], EIN);
+
+  return (
+    <AbsoluteFill style={{
+      background: "#1a1a1a",
+      opacity: bgOp * exit,
+    }}>
+      {/* Concrete texture via subtle noise */}
+      <AbsoluteFill style={{
+        opacity: 0.08,
+        backgroundImage: `radial-gradient(circle at 30% 30%, #fff 1px, transparent 1px),
+                          radial-gradient(circle at 70% 60%, #fff 1px, transparent 1px),
+                          radial-gradient(circle at 50% 80%, #fff 1px, transparent 1px)`,
+        backgroundSize: "50px 50px, 80px 80px, 30px 30px",
+      }} />
+
+      {/* Massive accent block top */}
+      <div style={{
+        position: "absolute",
+        top: 0,
+        left: ci(f, [0, 24], [-600, 0], EO),
+        width: vertical ? 600 : 800,
+        height: vertical ? 220 : 160,
+        background: c.design.accent,
+        clipPath: "polygon(0 0, 100% 0, 90% 100%, 0% 100%)",
+      }} />
+
+      {/* Bottom black block */}
+      <div style={{
+        position: "absolute",
+        bottom: 0, right: 0,
+        width: vertical ? 700 : 900,
+        height: vertical ? 250 : 200,
+        background: "#0a0a0a",
+        clipPath: "polygon(15% 0, 100% 0, 100% 100%, 0% 100%)",
+        transform: `translateX(${ci(f, [4, 28], [600, 0], EO)}px)`,
+      }} />
+
+      {/* Massive "BUILT" headline */}
+      <div style={{
+        position: "absolute",
+        top: vertical ? 220 : 100,
+        left: vertical ? 60 : 100,
+        opacity: ci(f, [12, 32], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: BODY, fontWeight: 800,
+          fontSize: vertical ? 24 : 22,
+          color: "#fff", letterSpacing: 14,
+          marginBottom: 12, opacity: 0.7,
+        }}>
+          ⏤ KOMPETENZ
+        </div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700,
+          fontSize: vertical ? 240 : 280,
+          color: "#fff", lineHeight: 0.85,
+          letterSpacing: -10,
+        }}>
+          BUILT
+        </div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700,
+          fontSize: vertical ? 140 : 160,
+          color: c.design.accent, lineHeight: 0.85,
+          letterSpacing: -4,
+          marginTop: -10,
+        }}>
+          ↗ TO LAST
+        </div>
+      </div>
+
+      {/* Numbered list, brutalist style */}
+      <div style={{
+        position: "absolute",
+        bottom: vertical ? 80 : 120,
+        left: vertical ? 60 : 100,
+        right: vertical ? 60 : 100,
+        display: "flex", flexDirection: vertical ? "column" : "row",
+        gap: vertical ? 16 : 26,
+      }}>
+        {c.vorteile.map((v, i) => {
+          const sStart = 28 + i * 12;
+          const op = ci(f, [sStart, sStart + 22], [0, 1], EO);
+          const tx = ci(f, [sStart, sStart + 26], [-50, 0], EO);
+          return (
+            <div key={i} style={{
+              opacity: op,
+              transform: `translateX(${tx}px)`,
+              flex: 1,
+              padding: vertical ? "20px 24px" : "28px 30px",
+              background: i % 2 === 0 ? "#0a0a0a" : "rgba(255,255,255,0.05)",
+              borderTop: `5px solid ${c.design.accent}`,
+              display: "flex", alignItems: "flex-start", gap: 22,
+            }}>
+              <div style={{
+                fontFamily: HEAD, fontWeight: 700,
+                fontSize: vertical ? 100 : 90,
+                color: c.design.accent, lineHeight: 0.85,
+                letterSpacing: -2,
+                flexShrink: 0,
+              }}>
+                .0{i + 1}
+              </div>
+              <div style={{ flex: 1, paddingTop: 6 }}>
+                <div style={{
+                  fontFamily: HEAD, fontWeight: 700,
+                  fontSize: vertical ? 32 : 28,
+                  color: "#fff", letterSpacing: 0.5,
+                  lineHeight: 1.05, marginBottom: 6,
+                  textTransform: "uppercase",
+                }}>
+                  {v.titel}
+                </div>
+                {v.beschreibung && (
+                  <div style={{
+                    fontFamily: BODY, fontSize: vertical ? 19 : 16,
+                    color: "rgba(255,255,255,0.7)", lineHeight: 1.4,
+                  }}>
+                    {v.beschreibung}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ─── Variant O — LUXURY GOLD: Dunkler Velvet + Gold-Akzente
+const SceneVorteileO = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 120, END = 240;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const SCRIPT = font(c.design.fontScript);
+  const W = vertical ? 1080 : 1920;
+  const H = vertical ? 1920 : 1080;
+
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const exit = ci(f, [END - START - 18, END - START], [1, 0], EIN);
+  const goldShift = (f * 2) % 200;
+
+  return (
+    <AbsoluteFill style={{
+      background: `radial-gradient(ellipse at 50% 50%, #1a0f0a 0%, #0a0604 80%)`,
+      opacity: bgOp * exit,
+    }}>
+      {/* Goldene Bokeh-Funken */}
+      <Bokeh frame={frame} w={W} h={H} count={50} color="#d4af37" />
+
+      {/* Goldene Linien oben/unten */}
+      <div style={{
+        position: "absolute", top: 60, left: "10%", right: "10%",
+        height: 2,
+        background: `linear-gradient(90deg, transparent, #d4af37, #f5d56e, #d4af37, transparent)`,
+        boxShadow: "0 0 12px #d4af37",
+        transform: `scaleX(${ci(f, [0, 24], [0, 1], EO)})`,
+      }} />
+      <div style={{
+        position: "absolute", bottom: 60, left: "10%", right: "10%",
+        height: 2,
+        background: `linear-gradient(90deg, transparent, #d4af37, #f5d56e, #d4af37, transparent)`,
+        boxShadow: "0 0 12px #d4af37",
+        transform: `scaleX(${ci(f, [4, 28], [0, 1], EO)})`,
+      }} />
+
+      {/* Header — geprägter goldener Schriftzug */}
+      <div style={{
+        position: "absolute", top: vertical ? 200 : 110,
+        left: 0, right: 0, textAlign: "center",
+        opacity: ci(f, [12, 32], [0, 1], EO),
+        transform: `translateY(${ci(f, [12, 32], [40, 0], EO)}px)`,
+      }}>
+        <div style={{
+          fontFamily: SCRIPT, fontSize: vertical ? 76 : 70,
+          color: "#d4af37", marginBottom: 8,
+          textShadow: "0 0 30px #d4af37aa",
+          letterSpacing: 4,
+        }}>
+          excellence in
+        </div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700,
+          fontSize: vertical ? 150 : 140,
+          background: `linear-gradient(110deg, #d4af37 0%, #f5d56e 25%, #fff5b8 40%, #f5d56e 55%, #d4af37 70%, #a08020 85%, #d4af37 100%)`,
+          backgroundSize: "200% 100%",
+          backgroundPosition: `${goldShift}% 0`,
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          letterSpacing: 4, lineHeight: 1,
+          filter: "drop-shadow(2px 3px 0 #6b4f0f) drop-shadow(0 8px 30px rgba(0,0,0,0.7))",
+        }}>
+          DETAIL
+        </div>
+      </div>
+
+      {/* 3 luxuriöse Karten mit goldenen Rahmen */}
+      <div style={{
+        position: "absolute",
+        top: vertical ? 720 : 470,
+        left: 0, right: 0,
+        display: "flex", flexDirection: vertical ? "column" : "row",
+        justifyContent: "center", gap: vertical ? 28 : 40,
+        padding: "0 80px",
+      }}>
+        {c.vorteile.map((v, i) => {
+          const sStart = 26 + i * 14;
+          const op = ci(f, [sStart, sStart + 22], [0, 1], EO);
+          const ty = ci(f, [sStart, sStart + 28], [60, 0], EO);
+          const sc = ci(f, [sStart, sStart + 30], [0.9, 1], POP);
+          const cardShift = (f - sStart) * 2;
+
+          return (
+            <div key={i} style={{
+              opacity: op,
+              transform: `translateY(${ty}px) scale(${sc})`,
+              flex: 1,
+              padding: vertical ? "40px 32px" : "50px 36px",
+              background: "linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(0,0,0,0.6) 100%)",
+              border: "1px solid #d4af37",
+              borderRadius: 4,
+              boxShadow: "0 20px 60px rgba(0,0,0,0.5), inset 0 0 40px rgba(212,175,55,0.05)",
+              textAlign: "center",
+              position: "relative",
+            }}>
+              {/* Goldenes Rahmen-Detail (Ecken) */}
+              {[[0,0,"top","left"],[0,1,"top","right"],[1,0,"bottom","left"],[1,1,"bottom","right"]].map((p, pi) => (
+                <div key={pi} style={{
+                  position: "absolute",
+                  [p[2]]: -2, [p[3]]: -2,
+                  width: 24, height: 24,
+                  border: `2px solid #d4af37`,
+                  borderRight: p[3] === "left" ? `2px solid #d4af37` : "none",
+                  borderBottom: p[2] === "top" ? `2px solid #d4af37` : "none",
+                  borderLeft: p[3] === "right" ? `2px solid #d4af37` : "none",
+                  borderTop: p[2] === "bottom" ? `2px solid #d4af37` : "none",
+                  boxShadow: "0 0 12px #d4af3788",
+                }} />
+              ))}
+              <div style={{
+                fontFamily: HEAD, fontWeight: 700,
+                fontSize: vertical ? 90 : 80,
+                background: `linear-gradient(180deg, #f5d56e 0%, #d4af37 100%)`,
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+                lineHeight: 0.85,
+                filter: `drop-shadow(0 4px 0 #6b4f0f) drop-shadow(0 0 20px #d4af37aa)`,
+                marginBottom: 16,
+              }}>
+                .{String(i + 1).padStart(2, "0")}
+              </div>
+              <div style={{
+                fontFamily: HEAD, fontWeight: 700,
+                fontSize: vertical ? 30 : 26,
+                color: "#fff", letterSpacing: 2,
+                lineHeight: 1.1, marginBottom: 12,
+                textShadow: "0 0 20px #d4af3777",
+                textTransform: "uppercase",
+              }}>
+                {v.titel}
+              </div>
+              <div style={{
+                width: 40, height: 1, background: "#d4af37", margin: "0 auto 12px",
+              }} />
+              {v.beschreibung && (
+                <div style={{
+                  fontFamily: BODY, fontWeight: 400,
+                  fontSize: vertical ? 19 : 17,
+                  color: "rgba(255,255,255,0.75)", lineHeight: 1.5,
+                  fontStyle: "italic",
+                }}>
+                  {v.beschreibung}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 // ─── SCENE 3 — Massive CTA ─────────────────────────────────
 const SceneCTA = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
   const START = 240, END = 330;
@@ -2651,6 +3202,9 @@ const SceneFinal = (props: { frame: number; c: AdConfig; vertical: boolean }) =>
   if (v === "j") return <SceneFinalJ {...props} />;
   if (v === "k") return <SceneFinalK {...props} />;
   if (v === "l") return <SceneFinalL {...props} />;
+  if (v === "m") return <SceneFinalM {...props} />;
+  if (v === "n") return <SceneFinalN {...props} />;
+  if (v === "o") return <SceneFinalO {...props} />;
   return <SceneFinalA {...props} />;
 };
 
@@ -4830,9 +5384,477 @@ const SceneFinalL = ({ frame, c, vertical }: { frame: number; c: AdConfig; verti
   );
 };
 
+// ── Final M — AURORA: glühender Aurora-Hintergrund mit Phone-Aura ──
+const SceneFinalM = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 330, END = 450;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const SCRIPT = font(c.design.fontScript);
+  const W = vertical ? 1080 : 1920, H = vertical ? 1920 : 1080;
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const fade = ci(f, [END - START - 14, END - START], [1, 0], EIN);
+  const auroraShift = (f * 1.5) % 360;
+  const phonePulse = 1 + Math.sin(f * 0.16) * 0.03;
+  const shine = (f * 2) % 200;
+
+  return (
+    <AbsoluteFill style={{ background: "#050a14", opacity: bgOp * fade }}>
+      <AbsoluteFill style={{
+        background: `radial-gradient(ellipse 60% 80% at 30% ${30 + Math.sin(f * 0.02) * 15}%, #00f5d488 0%, transparent 50%)`,
+        opacity: 0.7, filter: "blur(30px)",
+      }} />
+      <AbsoluteFill style={{
+        background: `radial-gradient(ellipse 70% 60% at ${70 + Math.cos(f * 0.025) * 10}% 60%, ${c.design.accent}aa 0%, transparent 55%)`,
+        opacity: 0.6, filter: "blur(40px)",
+      }} />
+      <AbsoluteFill style={{
+        background: `linear-gradient(${auroraShift}deg, transparent 30%, #00f5ff44 50%, transparent 70%)`, filter: "blur(50px)",
+      }} />
+      <Bokeh frame={frame} w={W} h={H} count={40} color="#00f5d4" />
+
+      <div style={{
+        position: "absolute", top: vertical ? 130 : 90, left: 0, right: 0, textAlign: "center", padding: "0 40px",
+        opacity: ci(f, [4, 26], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 70 : 80,
+          background: `linear-gradient(110deg, #00f5d4, ${c.design.accent}, #00f5ff, #00f5d4)`,
+          backgroundSize: "200% 100%", backgroundPosition: `${shine}% 0`,
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          letterSpacing: 1, lineHeight: 1.0,
+          filter: "drop-shadow(0 0 50px #00f5d4aa)",
+        }}>
+          {c.unternehmen.name.toUpperCase()}
+        </div>
+        <div style={{
+          fontFamily: SCRIPT, fontSize: vertical ? 56 : 56, color: "#00f5d4", marginTop: 6,
+          textShadow: "0 0 30px #00f5d4aa",
+        }}>
+          {c.unternehmen.slogan}
+        </div>
+      </div>
+
+      <div style={{
+        position: "absolute", top: vertical ? 460 : 320, left: 0, right: 0, textAlign: "center",
+        opacity: ci(f, [22, 44], [0, 1], EO),
+        transform: `scale(${ci(f, [22, 50], [0.7, 1], POP)})`,
+      }}>
+        <div style={{
+          display: "inline-block", padding: vertical ? "36px 50px" : "44px 80px",
+          background: "linear-gradient(135deg, rgba(0,245,212,0.15) 0%, rgba(0,0,0,0.4) 100%)",
+          backdropFilter: "blur(20px)",
+          border: "1px solid rgba(0,245,212,0.5)",
+          borderRadius: 30,
+          boxShadow: "0 0 80px #00f5d488, inset 0 0 40px rgba(0,245,212,0.1)",
+          transform: `scale(${phonePulse})`,
+        }}>
+          <div style={{
+            fontFamily: BODY, fontWeight: 700, fontSize: vertical ? 26 : 28,
+            color: "#00f5d4", letterSpacing: 12, marginBottom: 14,
+            textShadow: "0 0 20px #00f5d4",
+          }}>
+            ☎ ANRUFEN
+          </div>
+          <div style={{
+            fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 100 : 130,
+            color: "#fff", letterSpacing: 3, lineHeight: 1,
+            textShadow: "0 0 60px #00f5d4, 0 0 120px #00f5d4aa",
+          }}>
+            {c.kontakt.telefon_buero}
+          </div>
+        </div>
+      </div>
+
+      <div style={{
+        position: "absolute", bottom: vertical ? 130 : 90, left: 0, right: 0, textAlign: "center", padding: "0 40px",
+        opacity: ci(f, [44, 64], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 36 : 42,
+          color: "#fff", lineHeight: 1.1, textShadow: "0 0 30px #00f5d4aa",
+        }}>
+          📍 {c.kontakt.adresse_zeile1}, {c.kontakt.adresse_zeile2}
+        </div>
+        {c.kontakt.website && (
+          <div style={{
+            marginTop: 10, fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 32 : 36,
+            color: "#00f5d4", letterSpacing: 2, textShadow: "0 0 30px #00f5d4",
+          }}>
+            🌐 {c.kontakt.website}
+          </div>
+        )}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ── Final N — ARCHITECTURAL: brutalist concrete blocks
+const SceneFinalN = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 330, END = 450;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const fade = ci(f, [END - START - 14, END - START], [1, 0], EIN);
+
+  return (
+    <AbsoluteFill style={{ background: "#1a1a1a", opacity: bgOp * fade }}>
+      <AbsoluteFill style={{
+        opacity: 0.05,
+        backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`,
+        backgroundSize: "100px 100px",
+      }} />
+
+      {/* Diagonal accent block */}
+      <div style={{
+        position: "absolute", top: 0, left: 0,
+        width: vertical ? 800 : 1000, height: vertical ? 250 : 180,
+        background: c.design.accent,
+        clipPath: "polygon(0 0, 100% 0, 85% 100%, 0% 100%)",
+        transform: `translateX(${ci(f, [0, 24], [-700, 0], EO)}px)`,
+      }} />
+
+      {/* Brand top */}
+      <div style={{
+        position: "absolute", top: vertical ? 60 : 40, left: vertical ? 60 : 100,
+        opacity: ci(f, [12, 32], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: BODY, fontWeight: 800, fontSize: vertical ? 22 : 22,
+          color: "#fff", letterSpacing: 12, marginBottom: 6, opacity: 0.7,
+        }}>
+          ⏤ KONTAKT
+        </div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 80 : 90,
+          color: "#fff", lineHeight: 0.9, letterSpacing: -3,
+        }}>
+          {c.unternehmen.name.toUpperCase()}
+        </div>
+      </div>
+
+      {/* MEGA Phone block */}
+      <div style={{
+        position: "absolute", top: vertical ? 460 : 320, left: vertical ? 60 : 100, right: vertical ? 60 : 100,
+        opacity: ci(f, [22, 44], [0, 1], EO),
+        transform: `translateX(${ci(f, [22, 44], [-100, 0], EO)}px)`,
+        background: c.design.accent,
+        padding: vertical ? "40px 50px" : "60px 70px",
+        borderTopRightRadius: 0, borderBottomLeftRadius: 0,
+      }}>
+        <div style={{
+          fontFamily: BODY, fontWeight: 800, fontSize: vertical ? 24 : 24,
+          color: "#0a0a0a", letterSpacing: 12, marginBottom: 14,
+        }}>
+          ☎ TELEFON
+        </div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 110 : 160,
+          color: "#0a0a0a", lineHeight: 0.85, letterSpacing: -3,
+        }}>
+          {c.kontakt.telefon_buero}
+        </div>
+      </div>
+
+      {/* Address block — concrete style */}
+      <div style={{
+        position: "absolute", bottom: vertical ? 80 : 80, left: vertical ? 60 : 100, right: vertical ? 60 : 100,
+        opacity: ci(f, [40, 60], [0, 1], EO),
+        background: "#0a0a0a",
+        padding: vertical ? "26px 36px" : "36px 50px",
+        borderTop: `5px solid ${c.design.accent}`,
+        display: "flex", flexDirection: vertical ? "column" : "row",
+        gap: vertical ? 20 : 50,
+      }}>
+        <div style={{ flex: 1 }}>
+          <div style={{
+            fontFamily: BODY, fontWeight: 800, fontSize: 18, color: c.design.accent,
+            letterSpacing: 8, marginBottom: 6,
+          }}>📍 STANDORT</div>
+          <div style={{ fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 36 : 40, color: "#fff", lineHeight: 1.1 }}>
+            {c.kontakt.adresse_zeile1}
+          </div>
+          <div style={{ fontFamily: HEAD, fontWeight: 600, fontSize: vertical ? 28 : 32, color: "rgba(255,255,255,0.85)" }}>
+            {c.kontakt.adresse_zeile2}
+          </div>
+        </div>
+        {c.kontakt.website && (
+          <div style={{ flex: 1, textAlign: vertical ? "left" : "right" }}>
+            <div style={{
+              fontFamily: BODY, fontWeight: 800, fontSize: 18, color: c.design.accent,
+              letterSpacing: 8, marginBottom: 6,
+            }}>🌐 WEB</div>
+            <div style={{ fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 32 : 36, color: "#fff" }}>
+              {c.kontakt.website}
+            </div>
+          </div>
+        )}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ── Final O — LUXURY GOLD: Velvet + geprägtes Gold
+const SceneFinalO = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 330, END = 450;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const SCRIPT = font(c.design.fontScript);
+  const W = vertical ? 1080 : 1920, H = vertical ? 1920 : 1080;
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const fade = ci(f, [END - START - 14, END - START], [1, 0], EIN);
+  const goldShift = (f * 2) % 200;
+
+  return (
+    <AbsoluteFill style={{
+      background: `radial-gradient(ellipse at 50% 50%, #1a0f0a 0%, #0a0604 80%)`,
+      opacity: bgOp * fade,
+    }}>
+      <Bokeh frame={frame} w={W} h={H} count={45} color="#d4af37" />
+
+      {/* Gold-Rahmen */}
+      <div style={{
+        position: "absolute", top: 60, bottom: 60, left: 60, right: 60,
+        border: "1px solid #d4af37",
+        opacity: ci(f, [4, 28], [0, 1], EO),
+        boxShadow: "0 0 30px #d4af3744, inset 0 0 30px rgba(212,175,55,0.05)",
+      }} />
+
+      {/* Brand */}
+      <div style={{
+        position: "absolute", top: vertical ? 150 : 110, left: 0, right: 0, textAlign: "center", padding: "0 60px",
+        opacity: ci(f, [12, 36], [0, 1], EO),
+        transform: `scale(${ci(f, [12, 40], [0.85, 1], EO)})`,
+      }}>
+        <div style={{
+          fontFamily: SCRIPT, fontSize: vertical ? 60 : 60, color: "#d4af37",
+          marginBottom: 8, textShadow: "0 0 30px #d4af37aa", letterSpacing: 4,
+        }}>
+          {c.unternehmen.slogan}
+        </div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 70 : 80,
+          background: `linear-gradient(110deg, #d4af37 0%, #f5d56e 25%, #fff5b8 40%, #f5d56e 55%, #d4af37 70%, #a08020 85%, #d4af37 100%)`,
+          backgroundSize: "200% 100%", backgroundPosition: `${goldShift}% 0`,
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          letterSpacing: 4, lineHeight: 1,
+          filter: "drop-shadow(2px 3px 0 #6b4f0f) drop-shadow(0 8px 30px rgba(0,0,0,0.7))",
+        }}>
+          {c.unternehmen.name.toUpperCase()}
+        </div>
+      </div>
+
+      {/* Mega-Phone in Gold-Rahmen */}
+      <div style={{
+        position: "absolute", top: vertical ? 540 : 380, left: 0, right: 0, textAlign: "center", padding: "0 40px",
+        opacity: ci(f, [30, 54], [0, 1], EO),
+        transform: `scale(${ci(f, [30, 54], [0.85, 1], EO)})`,
+      }}>
+        <div style={{
+          display: "inline-block", padding: vertical ? "30px 50px" : "44px 80px",
+          background: "rgba(0,0,0,0.6)",
+          border: "2px solid #d4af37",
+          boxShadow: "0 0 60px #d4af3766, inset 0 0 30px rgba(212,175,55,0.1)",
+        }}>
+          <div style={{
+            fontFamily: BODY, fontWeight: 700, fontSize: vertical ? 26 : 26,
+            color: "#d4af37", letterSpacing: 14, marginBottom: 14,
+            textShadow: "0 0 20px #d4af37",
+          }}>
+            ✦ TELEFON ✦
+          </div>
+          <div style={{
+            fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 100 : 130,
+            background: `linear-gradient(110deg, #d4af37, #f5d56e, #d4af37)`,
+            backgroundSize: "200% 100%", backgroundPosition: `${goldShift}% 0`,
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            letterSpacing: 3, lineHeight: 1,
+            filter: "drop-shadow(0 4px 0 #6b4f0f)",
+          }}>
+            {c.kontakt.telefon_buero}
+          </div>
+        </div>
+      </div>
+
+      <div style={{
+        position: "absolute", bottom: vertical ? 160 : 130, left: 0, right: 0, textAlign: "center", padding: "0 80px",
+        opacity: ci(f, [50, 70], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 600, fontSize: vertical ? 32 : 36,
+          color: "rgba(255,255,255,0.9)", lineHeight: 1.3, letterSpacing: 1,
+        }}>
+          📍 {c.kontakt.adresse_zeile1} · {c.kontakt.adresse_zeile2}
+        </div>
+        {c.kontakt.website && (
+          <div style={{
+            marginTop: 14,
+            fontFamily: BODY, fontWeight: 700, fontSize: vertical ? 24 : 26,
+            color: "#d4af37", letterSpacing: 6,
+            textShadow: "0 0 20px #d4af37",
+          }}>
+            ▸ {c.kontakt.website} ◂
+          </div>
+        )}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 const FadeBlack = ({ frame, total }: { frame: number; total: number }) => {
   const op = ci(frame, [total - 8, total], [0, 1], EIN);
   return <AbsoluteFill style={{ background: "#000", opacity: op, pointerEvents: "none" }} />;
+};
+
+// Hintergrund-Bilderwechsel: bis zu 2 Bilder, alternieren mit langsamem Cross-Fade
+// Bilder bleiben wie hochgeladen — kein Overlay, keine Filter, gut sichtbar
+const BackgroundImages = ({
+  frame, c, vertical,
+}: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const hero = c.assets?.hero;
+  const hero2 = c.assets?.hero2;
+  if (!hero && !hero2) return null;
+
+  // Bei 2 Bildern: erstes Bild ~9 Sek, dann 2-Sek Cross-Fade, zweites Bild bis Ende
+  const SWITCH = 270;   // Wechselpunkt (9 Sek bei 30fps)
+  const FADE   = 60;    // 2-Sekunden langer Cross-Fade — sehr sanft
+
+  const op1 = hero2
+    ? ci(frame, [0, 24, SWITCH, SWITCH + FADE], [0, 1, 1, 0], EI)
+    : ci(frame, [0, 24], [0, 1], EO);
+  const op2 = hero2
+    ? ci(frame, [SWITCH - FADE, SWITCH + 24, 440, 450], [0, 1, 1, 0], EI)
+    : 0;
+
+  const outroFade = ci(frame, [438, 450], [1, 0], EIN);
+
+  // Subtiles Ken Burns — nur leichter Zoom, kaum Drift, damit Bild nicht "wackelt"
+  const zoom1   = ci(frame, [0, 450], [1.0, 1.08], EI);
+  const drift1X = Math.sin(frame * 0.004) * (vertical ? 12 : 18);
+  const drift1Y = Math.cos(frame * 0.003) * (vertical ? 14 : 10);
+  const zoom2   = ci(frame, [SWITCH - FADE, 450], [1.04, 1.10], EI);
+  const drift2X = Math.cos(frame * 0.005) * (vertical ? 14 : 22);
+  const drift2Y = Math.sin(frame * 0.004) * (vertical ? 12 : 12);
+
+  const layer = (src: string, op: number, scale: number, dx: number, dy: number) => (
+    <AbsoluteFill style={{
+      opacity: op * outroFade,
+      transform: `scale(${scale}) translate(${dx}px, ${dy}px)`,
+      transformOrigin: "center center",
+    }}>
+      <Img src={staticFile(src)} style={{
+        width: "100%", height: "100%", objectFit: "cover",
+        // Keine Filter — Bild bleibt wie hochgeladen
+      }} />
+    </AbsoluteFill>
+  );
+
+  return (
+    <AbsoluteFill style={{ pointerEvents: "none" }}>
+      {hero && layer(hero, op1, zoom1, drift1X, drift1Y)}
+      {hero2 && layer(hero2, op2, zoom2, drift2X, drift2Y)}
+    </AbsoluteFill>
+  );
+};
+
+// Hintergrundbilder als sanfte Overlay-Schicht ÜBER den Szenen — sehr niedrige Opacity,
+// damit das Bild durchgehend "spürbar" bleibt ohne Texte zu blockieren.
+const BackgroundImagesOverlay = ({
+  frame, c, vertical,
+}: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const hero = c.assets?.hero;
+  const hero2 = c.assets?.hero2;
+  if (!hero && !hero2) return null;
+
+  const SWITCH = 270, FADE = 60;
+  const op1 = hero2
+    ? ci(frame, [0, 24, SWITCH, SWITCH + FADE], [0, 1, 1, 0], EI)
+    : ci(frame, [0, 24], [0, 1], EO);
+  const op2 = hero2
+    ? ci(frame, [SWITCH - FADE, SWITCH + 24, 440, 450], [0, 1, 1, 0], EI)
+    : 0;
+  const outroFade = ci(frame, [438, 450], [1, 0], EIN);
+
+  // Identisches Ken-Burns wie Hauptlayer (synchron)
+  const zoom1   = ci(frame, [0, 450], [1.0, 1.08], EI);
+  const drift1X = Math.sin(frame * 0.004) * (vertical ? 12 : 18);
+  const drift1Y = Math.cos(frame * 0.003) * (vertical ? 14 : 10);
+  const zoom2   = ci(frame, [SWITCH - FADE, 450], [1.04, 1.10], EI);
+  const drift2X = Math.cos(frame * 0.005) * (vertical ? 14 : 22);
+  const drift2Y = Math.sin(frame * 0.004) * (vertical ? 12 : 12);
+
+  const overlay = (src: string, op: number, scale: number, dx: number, dy: number) => (
+    <AbsoluteFill style={{
+      opacity: op * outroFade * 0.32, // Sanfte Overlay-Opacity, gut sichtbar aber Texte bleiben lesbar
+      transform: `scale(${scale}) translate(${dx}px, ${dy}px)`,
+      transformOrigin: "center center",
+      mixBlendMode: "soft-light", // angenehmer Blend mit Szenen
+    }}>
+      <Img src={staticFile(src)} style={{
+        width: "100%", height: "100%", objectFit: "cover",
+      }} />
+    </AbsoluteFill>
+  );
+
+  return (
+    <AbsoluteFill style={{ pointerEvents: "none" }}>
+      {hero && overlay(hero, op1, zoom1, drift1X, drift1Y)}
+      {hero2 && overlay(hero2, op2, zoom2, drift2X, drift2Y)}
+    </AbsoluteFill>
+  );
+};
+
+// Großes, schwebendes Logo im Hintergrund — durchgängig sichtbar.
+// Bewegt sich langsam diagonal, leichte Rotation + Atmungsskalierung.
+const LogoBackground = ({
+  frame, c, vertical,
+}: { frame: number; c: AdConfig; vertical: boolean }) => {
+  if (!c.assets?.logo) return null;
+
+  // Sanfte Fades am Anfang/Ende (Frames basieren auf 450-Frame-Timeline)
+  const fadeIn  = ci(frame, [0, 30], [0, 1], EO);
+  const fadeOut = ci(frame, [425, 445], [1, 0], EIN);
+  const op = fadeIn * fadeOut;
+
+  // Langsame diagonale Drift (subtil über die Dauer)
+  const driftX = Math.sin(frame * 0.012) * (vertical ? 100 : 160);
+  const driftY = Math.cos(frame * 0.009) * (vertical ? 120 : 90);
+  // Atmungs-Scale
+  const breath = 1 + Math.sin(frame * 0.02) * 0.05;
+  // Leichte Rotation (±3°)
+  const rot    = Math.sin(frame * 0.008) * 3;
+
+  // Sehr grosses Logo: füllt den Großteil des Bildes
+  const logoSize = vertical ? "95%" : "85%";
+
+  return (
+    <AbsoluteFill style={{
+      pointerEvents: "none",
+      zIndex: 1,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      opacity: op * 0.22, // etwas stärker — bei Riesengrösse trotzdem subtil
+    }}>
+      <div style={{
+        transform: `translate(${driftX}px, ${driftY}px) scale(${breath}) rotate(${rot}deg)`,
+        filter: `drop-shadow(0 0 100px ${c.design.accent}66)`,
+        width: logoSize,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}>
+        <Img src={staticFile(c.assets.logo)} style={{
+          width: "100%", height: "auto", display: "block",
+        }} />
+      </div>
+    </AbsoluteFill>
+  );
 };
 
 // Internally all scenes are coded against a 450-frame timeline.
@@ -4849,11 +5871,18 @@ export const AdCinematicH: React.FC<{ config: AdConfig }> = ({ config }) => {
   const frame = useVirtualFrame();
   return (
     <AbsoluteFill style={{ background: "#000", overflow: "hidden" }}>
-      <SceneHero     frame={frame} c={c} vertical={false} />
-      <SceneVorteile frame={frame} c={c} vertical={false} />
-      <SceneCTA      frame={frame} c={c} vertical={false} />
-      <SceneFinal    frame={frame} c={c} vertical={false} />
-      <FadeBlack     frame={frame} total={450} />
+      {/* 1. Hintergrundbilder ganz hinten (Szenen-Hintergrund) */}
+      <BackgroundImages frame={frame} c={c} vertical={false} />
+      {/* 2. Logo schwebt drüber */}
+      <LogoBackground   frame={frame} c={c} vertical={false} />
+      {/* 3. Szenen mit ihren Inhalten (haben semi-transparente Hintergründe) */}
+      <SceneHero        frame={frame} c={c} vertical={false} />
+      <SceneVorteile    frame={frame} c={c} vertical={false} />
+      <SceneCTA         frame={frame} c={c} vertical={false} />
+      <SceneFinal       frame={frame} c={c} vertical={false} />
+      {/* 4. Hintergrundbilder zusätzlich sanft drüber für „durchgehend sichtbar"-Feeling */}
+      <BackgroundImagesOverlay frame={frame} c={c} vertical={false} />
+      <FadeBlack        frame={frame} total={450} />
     </AbsoluteFill>
   );
 };
@@ -4863,11 +5892,14 @@ export const AdCinematicV: React.FC<{ config: AdConfig }> = ({ config }) => {
   const frame = useVirtualFrame();
   return (
     <AbsoluteFill style={{ background: "#000", overflow: "hidden" }}>
-      <SceneHero     frame={frame} c={c} vertical={true} />
-      <SceneVorteile frame={frame} c={c} vertical={true} />
-      <SceneCTA      frame={frame} c={c} vertical={true} />
-      <SceneFinal    frame={frame} c={c} vertical={true} />
-      <FadeBlack     frame={frame} total={450} />
+      <BackgroundImages frame={frame} c={c} vertical={true} />
+      <LogoBackground   frame={frame} c={c} vertical={true} />
+      <SceneHero        frame={frame} c={c} vertical={true} />
+      <SceneVorteile    frame={frame} c={c} vertical={true} />
+      <SceneCTA         frame={frame} c={c} vertical={true} />
+      <SceneFinal       frame={frame} c={c} vertical={true} />
+      <BackgroundImagesOverlay frame={frame} c={c} vertical={true} />
+      <FadeBlack        frame={frame} total={450} />
     </AbsoluteFill>
   );
 };

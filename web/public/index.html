@@ -7,7 +7,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="/static/templates.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Oswald:wght@400;700&family=Anton&family=Bebas+Neue&family=Playfair+Display:wght@700&family=Cinzel:wght@600&family=Outfit:wght@600&family=Cormorant+Garamond:wght@600&family=Archivo+Black&family=Audiowide&family=Manrope:wght@600&family=DM+Sans:wght@600&family=Lora:wght@600&family=Kanit:wght@700&family=Righteous&family=Montserrat:wght@600&family=Lato:wght@700&family=Caveat:wght@600&display=swap" rel="stylesheet">
 <style>
   body { font-family: 'Inter', system-ui, sans-serif; }
   .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
@@ -34,6 +34,7 @@
     </div>
     <div class="flex items-center gap-3">
       <button @click="view='library'" :class="view==='library' ? 'bg-white/10' : 'hover:bg-white/5'" class="px-4 py-2 rounded-lg text-sm font-medium transition">📚 Bibliothek</button>
+      <button @click="view='website'; resetWebsite()" :class="view==='website' ? 'bg-cyan-500/30 text-cyan-200' : 'bg-cyan-500/15 text-cyan-300 hover:bg-cyan-500/25'" class="px-4 py-2 rounded-lg text-sm font-medium transition">🌐 Aus Website</button>
       <button @click="showTemplateModal = true" class="px-4 py-2 rounded-lg text-sm font-medium bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 transition">⚡ Template</button>
       <button @click="view='upload'; resetWizard()" :class="view==='upload' ? 'bg-amber-500 text-black' : 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30'" class="px-4 py-2 rounded-lg text-sm font-bold transition">+ Neues Video</button>
     </div>
@@ -85,6 +86,289 @@
       </div>
     </template>
   </div>
+</div>
+</template>
+
+<!-- ──────── POSTER CREATOR VIEW (OpenAI) ──────── -->
+<template x-if="view==='poster'">
+<div>
+  <div class="text-center mb-8">
+    <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 text-xs font-bold uppercase tracking-widest mb-4">
+      🎨 Powered by OpenAI · gpt-image-1
+    </div>
+    <h1 class="text-5xl font-black gradient-text mb-3">Werbeposter generieren</h1>
+    <p class="text-white/60 text-lg max-w-2xl mx-auto">
+      Fülle die Felder aus, lade dein Logo hoch — KI erstellt ein professionelles Werbeposter in ~30 Sekunden.
+    </p>
+  </div>
+
+  <template x-if="!posterResult">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Form (2/3) -->
+    <div class="lg:col-span-2 space-y-5">
+      <!-- Pflichtfelder -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Pflichtfelder</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-white/50 block mb-1">Unternehmen *</label>
+            <input type="text" x-model="poster.unternehmen" placeholder="z.B. Müller Bau GmbH"
+                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500" />
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-1">Branche *</label>
+            <input type="text" x-model="poster.branche" placeholder="z.B. Dachdeckerei, Zahnarztpraxis, Restaurant"
+                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Inhalte -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Werbe-Inhalte</h3>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs text-white/50 block mb-1">Slogan</label>
+            <input type="text" x-model="poster.slogan" placeholder="z.B. 'Stark wie ein Dach.'"
+                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-1">Leistungen (kommagetrennt)</label>
+            <textarea x-model="poster.leistungen" rows="2" placeholder="z.B. Sanierung, Neubau, Wartung, Beratung"
+                      class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3"></textarea>
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-1">Call-to-Action</label>
+            <input type="text" x-model="poster.cta" placeholder="z.B. 'Jetzt Termin sichern'"
+                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Kontakt -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Kontakt</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-white/50 block mb-1">Adresse</label>
+            <input type="text" x-model="poster.adresse" placeholder="Straße 1, 12345 Stadt"
+                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-1">Telefon</label>
+            <input type="text" x-model="poster.telefon" placeholder="+49 ..."
+                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-1">E-Mail</label>
+            <input type="text" x-model="poster.email" placeholder="info@..."
+                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+          </div>
+          <div>
+            <label class="text-xs text-white/50 block mb-1">Website</label>
+            <input type="text" x-model="poster.website" placeholder="www..."
+                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Format -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Format</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <div @click="poster.format='horizontal'"
+               :class="poster.format==='horizontal' ? 'border-cyan-400 bg-cyan-500/10' : 'border-white/10 hover:border-white/30'"
+               class="cursor-pointer rounded-lg border-2 p-4 transition text-center">
+            <div class="text-3xl mb-1">▭</div>
+            <div class="font-bold">Horizontal</div>
+            <div class="text-xs text-white/50">1536 × 1024 · 16:9</div>
+          </div>
+          <div @click="poster.format='vertikal'"
+               :class="poster.format==='vertikal' ? 'border-cyan-400 bg-cyan-500/10' : 'border-white/10 hover:border-white/30'"
+               class="cursor-pointer rounded-lg border-2 p-4 transition text-center">
+            <div class="text-3xl mb-1">▯</div>
+            <div class="font-bold">Vertikal</div>
+            <div class="text-xs text-white/50">1024 × 1536 · 9:16</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar (1/3): Logo Upload + Generate -->
+    <div class="space-y-4">
+      <!-- Logo upload -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Logo</h3>
+        <div @dragover.prevent="logoDragActive=true"
+             @dragleave.prevent="logoDragActive=false"
+             @drop.prevent="logoDragActive=false; handleLogoFile($event.dataTransfer.files[0])"
+             @click="$refs.logoInput.click()"
+             :class="logoDragActive ? 'border-cyan-500 bg-cyan-500/10' : 'border-white/15'"
+             class="cursor-pointer rounded-xl border-2 border-dashed p-6 text-center hover:border-cyan-500/50 hover:bg-white/5 transition">
+          <input type="file" x-ref="logoInput" class="hidden" accept="image/*" @change="handleLogoFile($event.target.files[0])" />
+          <template x-if="poster.logoPreview">
+            <div>
+              <img :src="poster.logoPreview" class="max-h-32 mx-auto mb-3 rounded" />
+              <div class="text-xs text-cyan-400" x-text="poster.logoName"></div>
+              <button @click.stop="poster.logoFile=null; poster.logoPreview=null" class="text-xs text-red-400 hover:text-red-300 mt-2">✕ Entfernen</button>
+            </div>
+          </template>
+          <template x-if="!poster.logoPreview">
+            <div>
+              <div class="text-4xl mb-2">📤</div>
+              <div class="font-bold mb-1">Logo hochladen</div>
+              <div class="text-xs text-white/50">PNG mit Transparenz empfohlen</div>
+            </div>
+          </template>
+        </div>
+        <div class="text-xs text-white/40 mt-3 italic">
+          Das Logo wird oben links auf das generierte Poster komponiert.
+        </div>
+      </div>
+
+      <!-- Generate Button -->
+      <div class="glass rounded-2xl p-4">
+        <button @click="generatePoster()"
+                :disabled="!poster.unternehmen || !poster.branche"
+                :class="(!poster.unternehmen || !poster.branche) ? 'opacity-50 cursor-not-allowed' : ''"
+                class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black py-4 rounded-xl text-lg shadow-lg shadow-cyan-500/30 transition">
+          🎨 Poster generieren<br><span class="text-xs opacity-70 font-semibold">~30 Sek · OpenAI gpt-image-1</span>
+        </button>
+        <div class="text-xs text-white/40 mt-3 text-center">
+          ~0,04 € pro Generierung
+        </div>
+      </div>
+    </div>
+  </div>
+  </template>
+
+  <!-- LOADING STATE -->
+  <template x-if="posterLoading">
+  <div class="text-center py-20">
+    <div class="w-32 h-32 mx-auto mb-8 relative">
+      <div class="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping"></div>
+      <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-6xl">🎨</div>
+    </div>
+    <h2 class="text-3xl font-black mb-4">KI erstellt dein Poster…</h2>
+    <p class="text-white/60 text-lg">Das dauert ~30 Sekunden. Bitte Seite offen lassen.</p>
+  </div>
+  </template>
+
+  <!-- RESULT -->
+  <template x-if="posterResult && !posterLoading">
+  <div>
+    <div class="text-center mb-6">
+      <div class="text-6xl mb-3">✨</div>
+      <h2 class="text-4xl font-black gradient-text mb-2">Poster fertig!</h2>
+      <p class="text-white/60">Verwende es direkt für ein Werbevideo oder lade es herunter.</p>
+    </div>
+    <div class="glass rounded-2xl p-2 mb-6 max-w-3xl mx-auto">
+      <img :src="posterResult.posterUrl + '?t=' + Date.now()" class="w-full rounded-xl" />
+    </div>
+    <div class="flex flex-wrap justify-center gap-4">
+      <button @click="useAsVideoSource()"
+              class="bg-gradient-to-r from-amber-500 to-red-600 text-black font-black px-8 py-4 rounded-xl shadow-lg">
+        🎬 Daraus Video erstellen
+      </button>
+      <a :href="posterResult.posterUrl" :download="`${posterResult.id}-poster.png`"
+         class="bg-white/10 hover:bg-white/15 px-8 py-4 rounded-xl font-bold">
+        ⬇ Poster herunterladen
+      </a>
+      <button @click="resetPoster()" class="bg-white/5 hover:bg-white/10 px-8 py-4 rounded-xl font-bold">
+        ↺ Erneut generieren
+      </button>
+    </div>
+  </div>
+  </template>
+</div>
+</template>
+
+<!-- ──────── WEBSITE VIEW (URL + Logo → Claude analysiert) ──────── -->
+<template x-if="view==='website'">
+<div class="max-w-3xl mx-auto">
+  <div class="text-center mb-8">
+    <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 text-xs font-bold uppercase tracking-widest mb-4">
+      🌐 Powered by Claude — analysiert Webseiten automatisch
+    </div>
+    <h1 class="text-5xl font-black gradient-text mb-3">Video aus Website</h1>
+    <p class="text-white/60 text-lg max-w-xl mx-auto">
+      Gib eine Website-URL ein und lade dein Logo hoch — die KI extrahiert automatisch alle Inhalte und erstellt einen Werbespot.
+    </p>
+  </div>
+
+  <template x-if="!websiteLoading">
+  <div class="space-y-5">
+    <!-- URL -->
+    <div class="glass rounded-2xl p-6">
+      <label class="text-xs uppercase tracking-widest text-cyan-400 font-bold block mb-3">Website-URL *</label>
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">🌐</span>
+        <input type="text" x-model="website.url"
+               placeholder="z.B. https://www.beispielfirma.de"
+               @keydown.enter="analyzeWebsite()"
+               class="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-4 focus:outline-none focus:border-cyan-500 text-lg" />
+      </div>
+      <div class="text-xs text-white/40 mt-3">
+        Die Website muss öffentlich erreichbar sein. Claude liest Texte und Inhalte aus.
+      </div>
+    </div>
+
+    <!-- Logo Upload (optional — wird sonst auto-extrahiert) -->
+    <div class="glass rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-3">
+        <label class="text-xs uppercase tracking-widest text-cyan-400 font-bold">Logo</label>
+        <span class="text-xs text-white/40 italic">wird sonst von Webseite automatisch geladen</span>
+      </div>
+      <div @dragover.prevent="websiteLogoDrag=true"
+           @dragleave.prevent="websiteLogoDrag=false"
+           @drop.prevent="websiteLogoDrag=false; handleWebsiteLogo($event.dataTransfer.files[0])"
+           @click="$refs.websiteLogoInput.click()"
+           :class="websiteLogoDrag ? 'border-cyan-500 bg-cyan-500/10' : 'border-white/15'"
+           class="cursor-pointer rounded-xl border-2 border-dashed p-6 text-center hover:border-cyan-500/50 hover:bg-white/5 transition">
+        <input type="file" x-ref="websiteLogoInput" class="hidden" accept="image/*" @change="handleWebsiteLogo($event.target.files[0])" />
+        <template x-if="website.logoPreview">
+          <div>
+            <img :src="website.logoPreview" class="max-h-32 mx-auto mb-3 rounded" />
+            <div class="text-xs text-cyan-400" x-text="website.logoName"></div>
+            <button @click.stop="website.logoFile=null; website.logoPreview=null" class="text-xs text-red-400 hover:text-red-300 mt-2">✕ Entfernen</button>
+          </div>
+        </template>
+        <template x-if="!website.logoPreview">
+          <div>
+            <div class="text-4xl mb-2">🤖</div>
+            <div class="font-bold mb-1">Logo (optional manuell)</div>
+            <div class="text-xs text-white/50">Falls leer: System holt das Logo automatisch von der Webseite</div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- Analyse-Button -->
+    <button @click="analyzeWebsite()"
+            :disabled="!website.url"
+            :class="!website.url ? 'opacity-50 cursor-not-allowed' : ''"
+            class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black py-5 rounded-xl text-lg shadow-lg shadow-cyan-500/30 transition">
+      🔍 Webseite analysieren<br><span class="text-xs opacity-70 font-semibold">~10 Sekunden · Claude liest Inhalte</span>
+    </button>
+
+    <div class="text-xs text-white/40 text-center italic">
+      Claude extrahiert: Firmenname, Slogan, Vorteile, Adresse, Telefon, E-Mail, Markenfarben.<br>
+      Anschließend kannst du alles im Editor anpassen.
+    </div>
+  </div>
+  </template>
+
+  <!-- LOADING -->
+  <template x-if="websiteLoading">
+  <div class="text-center py-20">
+    <div class="w-32 h-32 mx-auto mb-8 relative">
+      <div class="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping"></div>
+      <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-6xl">🔍</div>
+    </div>
+    <h2 class="text-3xl font-black mb-4">Claude analysiert die Website…</h2>
+    <p class="text-white/60 text-lg">Webseite wird geladen, Inhalte werden extrahiert.<br>Dauert ungefähr 10 Sekunden.</p>
+  </div>
+  </template>
 </div>
 </template>
 
@@ -263,22 +547,110 @@
         </div>
       </div>
 
+      <!-- Logo + Hintergrundbilder (Drag & Drop) -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-2">Logo & Hintergrundbilder</h3>
+        <p class="text-xs text-white/50 mb-4">Logo schwebt riesig im Hintergrund. Bis zu 2 weitere Bilder wechseln sich dahinter mit Cross-Fade + Ken-Burns ab.</p>
+
+        <!-- Logo (Riesengroß im Hintergrund) -->
+        <div class="mb-4">
+          <label class="text-xs text-white/50 block mb-2">🏷 Logo <span class="text-white/30">(schwebt im Hintergrund)</span></label>
+          <div @click="$refs.logoEditInput.click()"
+               @dragover.prevent="logoDrag = true"
+               @dragleave.prevent="logoDrag = false"
+               @drop.prevent="logoDrag = false; uploadBackground('logo', $event.dataTransfer.files[0])"
+               :class="logoDrag ? 'border-amber-400 bg-amber-500/10' : 'border-white/15 hover:border-amber-500/50 hover:bg-white/5'"
+               class="cursor-pointer rounded-lg border-2 border-dashed transition h-32 flex items-center justify-center overflow-hidden relative">
+            <input type="file" x-ref="logoEditInput" class="hidden" accept="image/*"
+                   @change="uploadBackground('logo', $event.target.files[0])" />
+            <template x-if="config.assets && config.assets.logo">
+              <img :src="`/posters/${config.assets.logo}?t=${assetReloadKey}`" class="max-h-28 max-w-full object-contain" />
+            </template>
+            <template x-if="!config.assets || !config.assets.logo">
+              <div class="text-center text-white/40">
+                <div class="text-3xl mb-1">🏷</div>
+                <div class="text-xs">Logo hochladen<br><span class="text-white/30">oder reinziehen</span></div>
+              </div>
+            </template>
+          </div>
+          <template x-if="config.assets && config.assets.logo">
+            <button @click="deleteBackground('logo')" class="text-xs text-red-400 hover:text-red-300 mt-2">✕ Logo entfernen</button>
+          </template>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <!-- Hero 1 -->
+          <div>
+            <label class="text-xs text-white/50 block mb-2">Hintergrund 1</label>
+            <div @click="$refs.bg1Input.click()"
+                 @dragover.prevent="bg1Drag = true"
+                 @dragleave.prevent="bg1Drag = false"
+                 @drop.prevent="bg1Drag = false; uploadBackground('hero', $event.dataTransfer.files[0])"
+                 :class="bg1Drag ? 'border-amber-400 bg-amber-500/10' : 'border-white/15 hover:border-amber-500/50 hover:bg-white/5'"
+                 class="cursor-pointer rounded-lg border-2 border-dashed transition aspect-video flex items-center justify-center overflow-hidden relative">
+              <input type="file" x-ref="bg1Input" class="hidden" accept="image/*"
+                     @change="uploadBackground('hero', $event.target.files[0])" />
+              <template x-if="config.assets && config.assets.hero">
+                <img :src="`/posters/${config.assets.hero}?t=${assetReloadKey}`" class="w-full h-full object-cover" />
+              </template>
+              <template x-if="!config.assets || !config.assets.hero">
+                <div class="text-center text-white/40">
+                  <div class="text-3xl mb-1">📤</div>
+                  <div class="text-xs">Bild hochladen<br><span class="text-white/30">oder reinziehen</span></div>
+                </div>
+              </template>
+            </div>
+            <template x-if="config.assets && config.assets.hero">
+              <button @click="deleteBackground('hero')" class="text-xs text-red-400 hover:text-red-300 mt-2">✕ Entfernen</button>
+            </template>
+          </div>
+          <!-- Hero 2 -->
+          <div>
+            <label class="text-xs text-white/50 block mb-2">Hintergrund 2 <span class="text-white/30">(optional)</span></label>
+            <div @click="$refs.bg2Input.click()"
+                 @dragover.prevent="bg2Drag = true"
+                 @dragleave.prevent="bg2Drag = false"
+                 @drop.prevent="bg2Drag = false; uploadBackground('hero2', $event.dataTransfer.files[0])"
+                 :class="bg2Drag ? 'border-amber-400 bg-amber-500/10' : 'border-white/15 hover:border-amber-500/50 hover:bg-white/5'"
+                 class="cursor-pointer rounded-lg border-2 border-dashed transition aspect-video flex items-center justify-center overflow-hidden relative">
+              <input type="file" x-ref="bg2Input" class="hidden" accept="image/*"
+                     @change="uploadBackground('hero2', $event.target.files[0])" />
+              <template x-if="config.assets && config.assets.hero2">
+                <img :src="`/posters/${config.assets.hero2}?t=${assetReloadKey}`" class="w-full h-full object-cover" />
+              </template>
+              <template x-if="!config.assets || !config.assets.hero2">
+                <div class="text-center text-white/40">
+                  <div class="text-3xl mb-1">📤</div>
+                  <div class="text-xs">2. Bild (optional)<br><span class="text-white/30">oder reinziehen</span></div>
+                </div>
+              </template>
+            </div>
+            <template x-if="config.assets && config.assets.hero2">
+              <button @click="deleteBackground('hero2')" class="text-xs text-red-400 hover:text-red-300 mt-2">✕ Entfernen</button>
+            </template>
+          </div>
+        </div>
+      </div>
+
       <!-- Schrift + Dauer -->
       <div class="glass rounded-2xl p-6">
         <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Schrift & Dauer</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="text-xs text-white/50 block mb-2">Schriftstil</label>
-            <div class="grid grid-cols-1 gap-2">
+            <label class="text-xs text-white/50 block mb-2">Schriftstil <span class="text-white/30">(13 Stilrichtungen)</span></label>
+            <div class="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto scroll-thin pr-2">
               <template x-for="fp in fontPresets" :key="fp.id">
                 <div @click="config.fontPreset = fp.id"
                      :class="(config.fontPreset || 'modern') === fp.id ? 'border-amber-400 bg-amber-500/10' : 'border-white/10 hover:border-white/30'"
-                     class="cursor-pointer rounded-lg border-2 px-4 py-3 transition flex items-center justify-between">
-                  <div>
-                    <div class="font-bold text-sm" :style="`font-family:${fp.preview}`" x-text="fp.name"></div>
-                    <div class="text-xs text-white/50" x-text="fp.desc"></div>
+                     class="cursor-pointer rounded-lg border-2 px-4 py-3 transition">
+                  <div class="flex items-center justify-between mb-1">
+                    <div class="font-bold text-sm" x-text="fp.name"></div>
+                    <div class="text-amber-400" x-show="(config.fontPreset || 'modern') === fp.id">✓</div>
                   </div>
-                  <div class="text-amber-400 text-lg" x-show="(config.fontPreset || 'modern') === fp.id">✓</div>
+                  <div class="text-2xl mb-1" :style="`font-family:${fp.preview};letter-spacing:0.5px`">
+                    Aa Bb 123
+                  </div>
+                  <div class="text-xs text-white/50" x-text="fp.desc"></div>
                 </div>
               </template>
             </div>
@@ -304,8 +676,8 @@
 
       <!-- Variant Picker -->
       <div class="glass rounded-2xl p-6">
-        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Stil-Variante (Animation & Layout)</h3>
-        <div class="grid grid-cols-3 gap-3">
+        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Stil-Variante <span class="text-white/40 normal-case">(15 Animationen & Layouts)</span></h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-[28rem] overflow-y-auto scroll-thin pr-2">
           <template x-for="v in variants" :key="v.id">
             <div @click="config.variant=v.id"
                  :class="config.variant===v.id ? 'selected' : 'border-white/10 hover:border-white/30'"
@@ -485,6 +857,27 @@ function app() {
     showTemplateModal: false,
     templateApplyMode: false,
     templateNewName: "",
+    // Website-Workflow
+    website: {
+      url: "",
+      logoFile: null, logoPreview: null, logoName: "",
+    },
+    websiteLoading: false,
+    websiteLogoDrag: false,
+    assetReloadKey: 0,
+    bg1Drag: false,
+    bg2Drag: false,
+    logoDrag: false,
+    // Poster Creator (OpenAI)
+    poster: {
+      unternehmen: "", branche: "", slogan: "", leistungen: "",
+      adresse: "", telefon: "", email: "", website: "",
+      cta: "", format: "horizontal",
+      logoFile: null, logoPreview: null, logoName: "",
+    },
+    posterLoading: false,
+    posterResult: null,
+    logoDragActive: false,
     variants: [
       { id: 'a', name: 'Letter Kinetic', desc: 'Buchstabe für Buchstabe + Mega-Phone' },
       { id: 'b', name: 'Word Slide', desc: 'Wörter slide L/R + Manifesto + Split-Card' },
@@ -498,13 +891,24 @@ function app() {
       { id: 'j', name: '✨ Prism Holographic', desc: 'Rainbow-Shimmer + Diamond-Karten + holografisch' },
       { id: 'k', name: '✨ Motion Studio', desc: 'Bauhaus-Geometrie + Strict-Grid + Editorial' },
       { id: 'l', name: '✨ Cinema Noir', desc: 'Letterbox + Lens-Flare + dramatische Zooms' },
+      { id: 'm', name: '🌌 Aurora Premium', desc: 'Aurora-Borealis Wellen + Glow-Karten' },
+      { id: 'n', name: '🏛 Architectural', desc: 'Brutalist Concrete + massive Type' },
+      { id: 'o', name: '👑 Luxury Gold', desc: 'Velvet + geprägtes Gold + Edelrahmen' },
     ],
     fontPresets: [
-      { id: 'modern',     name: 'Modern',     desc: 'Oswald + Inter — clean & professionell',     preview: 'Oswald, sans-serif' },
-      { id: 'bold',       name: 'Bold',       desc: 'Anton + Lato — kraftvoll & impactstark',     preview: 'Anton, sans-serif' },
-      { id: 'elegant',    name: 'Elegant',    desc: 'Playfair + Montserrat — edel & klassisch',   preview: 'Playfair Display, serif' },
-      { id: 'industrial', name: 'Industrial', desc: 'Bebas Neue + Inter — markant & technisch',    preview: 'Bebas Neue, sans-serif' },
-      { id: 'editorial',  name: 'Editorial',  desc: 'Playfair + Inter — magazin-stil',             preview: 'Playfair Display, serif' },
+      { id: 'modern',     name: 'Modern',      desc: 'Clean & professionell',  preview: '"Oswald", sans-serif' },
+      { id: 'bold',       name: 'Bold',        desc: 'Kraftvoll & impactstark', preview: '"Anton", sans-serif' },
+      { id: 'elegant',    name: 'Elegant',     desc: 'Edel & klassisch',        preview: '"Playfair Display", serif' },
+      { id: 'industrial', name: 'Industrial',  desc: 'Markant & technisch',     preview: '"Bebas Neue", sans-serif' },
+      { id: 'editorial',  name: 'Editorial',   desc: 'Magazin-Stil',            preview: '"Playfair Display", serif' },
+      { id: 'luxury',     name: '👑 Luxury',    desc: 'Premium & exklusiv',      preview: '"Cinzel", serif' },
+      { id: 'premium',    name: '✨ Premium',   desc: 'High-end editorial',      preview: '"Cormorant Garamond", serif' },
+      { id: 'tech',       name: '⚡ Tech',      desc: 'Modern & geometric',      preview: '"Outfit", sans-serif' },
+      { id: 'heavy',      name: '🔥 Heavy',     desc: 'Maximaler Impact',        preview: '"Archivo Black", sans-serif' },
+      { id: 'futuristic', name: '🚀 Futuristic', desc: 'Sci-Fi & cyber',         preview: '"Audiowide", sans-serif' },
+      { id: 'refined',    name: '🎩 Refined',    desc: 'Sophisticated calm',     preview: '"Manrope", sans-serif' },
+      { id: 'power',      name: '⚡ Power',      desc: 'Dynamic athletic',       preview: '"Kanit", sans-serif' },
+      { id: 'retro',      name: '🌈 Retro',      desc: '70s funky display',      preview: '"Righteous", sans-serif' },
     ],
     durations: [
       { sec: 15, desc: 'Standard — kompakt, schnell, social-media-tauglich' },
@@ -592,6 +996,130 @@ function app() {
         this.step = 'rendering';
         this.pollJob(data.jobId);
       } catch (e) { this.error = e.message; }
+    },
+    resetPoster() {
+      this.poster = {
+        unternehmen: "", branche: "", slogan: "", leistungen: "",
+        adresse: "", telefon: "", email: "", website: "",
+        cta: "", format: "horizontal",
+        logoFile: null, logoPreview: null, logoName: "",
+      };
+      this.posterResult = null;
+      this.posterLoading = false;
+    },
+    handleLogoFile(file) {
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        this.error = 'Bitte ein Bild als Logo hochladen.';
+        return;
+      }
+      this.poster.logoFile = file;
+      this.poster.logoName = file.name;
+      const reader = new FileReader();
+      reader.onload = (e) => { this.poster.logoPreview = e.target.result; };
+      reader.readAsDataURL(file);
+    },
+    async generatePoster() {
+      if (!this.poster.unternehmen || !this.poster.branche) {
+        this.error = 'Unternehmen und Branche sind Pflicht.';
+        return;
+      }
+      this.posterLoading = true;
+      this.posterResult = null;
+      const fd = new FormData();
+      ['unternehmen','branche','slogan','leistungen','adresse','telefon','email','website','cta','format']
+        .forEach(k => fd.append(k, this.poster[k] || ''));
+      if (this.poster.logoFile) fd.append('logo', this.poster.logoFile);
+      try {
+        const r = await fetch('/api/poster/generate', { method: 'POST', body: fd });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error || 'Generierung fehlgeschlagen');
+        this.posterResult = data;
+        await this.loadConfigs();
+      } catch (e) {
+        this.error = e.message;
+      } finally {
+        this.posterLoading = false;
+      }
+    },
+    useAsVideoSource() {
+      // Direkt zur Edit-Form mit der bereits erstellten Config
+      if (!this.posterResult) return;
+      this.config = this.posterResult.config;
+      this.currentId = this.posterResult.id;
+      this.view = 'upload';
+      this.step = 'edit';
+      this.posterResult = null;
+    },
+    async uploadBackground(slot, file) {
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        this.error = 'Bitte ein Bild hochladen.';
+        return;
+      }
+      const fd = new FormData();
+      fd.append(slot, file);
+      try {
+        const r = await fetch(`/api/config/${this.currentId}/background`, {
+          method: 'POST', body: fd,
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error || 'Upload fehlgeschlagen');
+        this.config = data.config;
+        this.assetReloadKey++;
+      } catch (e) { this.error = e.message; }
+    },
+    async deleteBackground(slot) {
+      try {
+        const r = await fetch(`/api/config/${this.currentId}/background/${slot}`, {
+          method: 'DELETE',
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error || 'Löschen fehlgeschlagen');
+        this.config = data.config;
+        this.assetReloadKey++;
+      } catch (e) { this.error = e.message; }
+    },
+    resetWebsite() {
+      this.website = { url: "", logoFile: null, logoPreview: null, logoName: "" };
+      this.websiteLoading = false;
+    },
+    handleWebsiteLogo(file) {
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        this.error = 'Bitte ein Bild als Logo hochladen.';
+        return;
+      }
+      this.website.logoFile = file;
+      this.website.logoName = file.name;
+      const reader = new FileReader();
+      reader.onload = (e) => { this.website.logoPreview = e.target.result; };
+      reader.readAsDataURL(file);
+    },
+    async analyzeWebsite() {
+      if (!this.website.url) {
+        this.error = 'Bitte eine Website-URL eingeben.';
+        return;
+      }
+      this.websiteLoading = true;
+      const fd = new FormData();
+      fd.append('url', this.website.url);
+      if (this.website.logoFile) fd.append('logo', this.website.logoFile);
+      try {
+        const r = await fetch('/api/from-website', { method: 'POST', body: fd });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error || 'Analyse fehlgeschlagen');
+        // Direkt zur Edit-Form mit der erstellten Config
+        this.config = data.config;
+        this.currentId = data.id;
+        await this.loadConfigs();
+        this.view = 'upload';
+        this.step = 'edit';
+      } catch (e) {
+        this.error = e.message;
+      } finally {
+        this.websiteLoading = false;
+      }
     },
     async applyTemplate(t) {
       // Mode 1: bereits in Edit-Form → Template-Werte überschreiben aktuelle config

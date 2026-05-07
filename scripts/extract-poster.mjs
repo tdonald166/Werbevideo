@@ -97,8 +97,16 @@ const PROMPT = `Du bist ein Werbe-Profi. Extrahiere aus diesem Werbeposter alle 
 WICHTIG:
 - Wenn du etwas nicht erkennst, schreibe "" oder lasse das Feld leer (NICHT erfinden!)
 - Bei Vorteilen: extrahiere höchstens 3, fasse ggf. zusammen
-- Bei Farben: schaue genau auf die dominanten Farben im Poster und gib korrekte Hex-Codes
-- Headline kurz halten — wenn das Poster eine sehr lange Headline hat, nimm den Kernteil`;
+- Headline kurz halten — wenn das Poster eine sehr lange Headline hat, nimm den Kernteil
+
+FARB-EXTRAKTION (sehr wichtig — bitte genau machen):
+1. Identifiziere die DOMINANTE MARKENFARBE im Poster (typisch im Logo, in den Headlines, oder als Hintergrund-Akzent). Das wird "primary".
+2. Identifiziere die AKZENT-FARBE (CTA-Buttons, Highlights, sekundäre Markenfarbe). Das wird "accent".
+3. Sample die exakten Pixelfarben — gib echte Hex-Codes wie "#0d3b6e" zurück, NICHT generische wie "#0000ff" oder "#ff0000".
+4. Bei Logos mit mehreren Farben: nimm die Farbe die am meisten Fläche einnimmt für "primary".
+5. "primaryLt" = etwas hellere/gesättigtere Variante von "primary" (z.B. wenn primary #0d3b6e → primaryLt #1e5faf).
+6. "accent" muss zur primary kontrastieren: bei Blau-Marke → Rot/Orange/Gold, bei Grün → Magenta/Rot, bei Rot → Gelb/Schwarz.
+7. Bei monochromen Postern (z.B. nur schwarz/weiß): "primary" = #0a0a0a, "accent" = sichtbarste Farbe im Bild oder ein Standard-Akzent #dc2626.`;
 
 const client = new Anthropic();
 
@@ -138,7 +146,7 @@ cfg.assets = cfg.assets || { logo: null, hero: null };
 cfg.assets.hero = `${id}/${path.basename(imagePath)}`;
 
 // Variant rotation based on hash of id — same id always → same variant
-const VARIANTS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"];
+const VARIANTS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"];
 const VORTEILE_LABELS = [
   "Ihre Vorteile",
   "Unsere Stärken",

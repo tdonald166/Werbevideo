@@ -26,7 +26,8 @@
     "multer": "^2.1.1",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "remotion": "^4.0.454"
+    "remotion": "^4.0.454",
+    "sharp": "^0.32.6"
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
