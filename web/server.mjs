@@ -655,9 +655,12 @@ app.post("/api/render/:id", async (req, res) => {
     startedAt: Date.now(), error: null, log: [],
   });
 
-  const proc = spawn("npx", [
-    "remotion", "render", `${id}-cinematic-h`, `out/${id}-cinematic-h.mp4`,
-  ], { cwd: ROOT, shell: true });
+  // Use system Chromium on Linux/Docker (Railway etc.) — set via REMOTION_CHROME_PATH
+  const renderArgs = ["remotion", "render", `${id}-cinematic-h`, `out/${id}-cinematic-h.mp4`];
+  if (process.env.REMOTION_CHROME_PATH) {
+    renderArgs.push("--browser-executable", process.env.REMOTION_CHROME_PATH);
+  }
+  const proc = spawn("npx", renderArgs, { cwd: ROOT, shell: true });
 
   const job = jobs.get(jobId);
   proc.stdout.on("data", (d) => {
