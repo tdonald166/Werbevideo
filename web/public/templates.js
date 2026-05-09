@@ -3,7 +3,7 @@ window.INDUSTRY_TEMPLATES = [
   {
     id: "handwerk",
     name: "Handwerk",
-    icon: "🔨",
+    icon: "",
     desc: "Dachdecker, Maler, Elektriker, Klempner, Schreiner",
     variant: "f",
     fontPreset: "industrial",
@@ -29,7 +29,7 @@ window.INDUSTRY_TEMPLATES = [
   {
     id: "gesundheit",
     name: "Arzt & Gesundheit",
-    icon: "🩺",
+    icon: "",
     desc: "Praxis, Therapeut, Apotheke, Pflege",
     variant: "a",
     fontPreset: "elegant",
@@ -55,7 +55,7 @@ window.INDUSTRY_TEMPLATES = [
   {
     id: "gastro",
     name: "Restaurant & Gastro",
-    icon: "🍽",
+    icon: "",
     desc: "Restaurant, Café, Bar, Lieferdienst",
     variant: "l",
     fontPreset: "editorial",
@@ -81,7 +81,7 @@ window.INDUSTRY_TEMPLATES = [
   {
     id: "immobilien",
     name: "Immobilien",
-    icon: "🏠",
+    icon: "",
     desc: "Makler, Bauunternehmen, Verwaltung",
     variant: "j",
     fontPreset: "elegant",
@@ -100,14 +100,14 @@ window.INDUSTRY_TEMPLATES = [
         { titel: "Diskret & seriös", beschreibung: "Vertrauensvoll begleitet" },
         { titel: "Optimaler Preis", beschreibung: "Realistische Bewertung" },
       ],
-      cta: { text: "Kostenlose Bewertung", kicker: "Ihr Objekt — unsere Strategie" },
+      cta: { text: "Kostenlose Bewertung", kicker: "Ihr Objekt · unsere Strategie" },
       vorteile_label: "Premium-Werte",
     },
   },
   {
     id: "auto",
     name: "Auto & KFZ",
-    icon: "🚗",
+    icon: "",
     desc: "Werkstatt, Autohaus, Reifenservice",
     variant: "g",
     fontPreset: "bold",
@@ -133,7 +133,7 @@ window.INDUSTRY_TEMPLATES = [
   {
     id: "beauty",
     name: "Beauty & Friseur",
-    icon: "💇",
+    icon: "",
     desc: "Friseur, Kosmetik, Nagelstudio, Spa",
     variant: "h",
     fontPreset: "elegant",
@@ -159,7 +159,7 @@ window.INDUSTRY_TEMPLATES = [
   {
     id: "fitness",
     name: "Fitness & Sport",
-    icon: "💪",
+    icon: "",
     desc: "Gym, Personal Trainer, Yoga, Crossfit",
     variant: "g",
     fontPreset: "bold",
@@ -185,7 +185,7 @@ window.INDUSTRY_TEMPLATES = [
   {
     id: "bildung",
     name: "Bildung & Schule",
-    icon: "📚",
+    icon: "",
     desc: "Nachhilfe, Sprachschule, Kita, Kurse",
     variant: "a",
     fontPreset: "modern",
@@ -211,7 +211,7 @@ window.INDUSTRY_TEMPLATES = [
   {
     id: "garten",
     name: "Garten & Landschaft",
-    icon: "🌳",
+    icon: "",
     desc: "Gärtner, Baumpflege, Landschaftsbau",
     variant: "h",
     fontPreset: "modern",
@@ -237,7 +237,7 @@ window.INDUSTRY_TEMPLATES = [
   {
     id: "finanzen",
     name: "Finanzen & Beratung",
-    icon: "💼",
+    icon: "",
     desc: "Versicherung, Steuerberater, Bank, Anwalt",
     variant: "d",
     fontPreset: "elegant",

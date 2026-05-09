@@ -146,7 +146,7 @@ cfg.assets = cfg.assets || { logo: null, hero: null };
 cfg.assets.hero = `${id}/${path.basename(imagePath)}`;
 
 // Variant rotation based on hash of id — same id always → same variant
-const VARIANTS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"];
+const VARIANTS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"];
 const VORTEILE_LABELS = [
   "Ihre Vorteile",
   "Unsere Stärken",

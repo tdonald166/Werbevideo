@@ -148,7 +148,7 @@ const KineticTitle: React.FC<{
 
 // ─── Headline-Reveal — 12 Varianten ────────────────────────
 const RevealedHeadline: React.FC<{
-  variant: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o";
+  variant: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t";
   frame: number;
   lines: string[];
   fontFamily: string;
@@ -679,6 +679,197 @@ const RevealedHeadline: React.FC<{
     );
   }
 
+  // Variant P — Studio Spotlight: text fades in with horizontal light beam crossing
+  if (variant === "p") {
+    const studio = (text: string, startFrame: number, color: string, shadow: string) => {
+      const localF = frame - startFrame;
+      const op = ci(localF, [0, 26], [0, 1], EO);
+      const sc = ci(localF, [0, 30], [1.08, 1], EO);
+      const beamX = ci(localF, [0, 34], [-200, 200], EO);
+      const beamOp = ci(localF, [4, 18, 26], [0, 1, 0], EI);
+      return (
+        <div style={{ position: "relative", display: "inline-block", overflow: "hidden", padding: "20px 0" }}>
+          <div style={{
+            opacity: op,
+            transform: `scale(${sc})`,
+            fontFamily, fontSize: size, fontWeight: 700,
+            color, letterSpacing: -1, lineHeight: 1.0,
+            textShadow: shadow + ", 0 0 80px rgba(255,255,255,0.5)",
+          }}>
+            {text.toUpperCase()}
+          </div>
+          {/* Light beam sweep */}
+          <div style={{
+            position: "absolute", top: 0, bottom: 0,
+            left: `${beamX}%`, width: "30%",
+            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent)",
+            opacity: beamOp,
+            mixBlendMode: "overlay",
+            pointerEvents: "none",
+          }} />
+        </div>
+      );
+    };
+    return (
+      <>
+        <div style={{ opacity: line1Op }}>{studio(lines[0] || "", 30, colorPrimary, shadowMain)}</div>
+        {lines[1] && (
+          <div style={{ opacity: line2Op, marginTop: 4 }}>{studio(lines[1], 48, colorAccent, shadowAccent)}</div>
+        )}
+      </>
+    );
+  }
+
+  // Variant Q — Liquid Chrome: text with mirrored reflection below
+  if (variant === "q") {
+    const chrome = (text: string, startFrame: number, color: string, shadow: string) => {
+      const localF = frame - startFrame;
+      const op = ci(localF, [0, 22], [0, 1], EO);
+      const sc = ci(localF, [0, 28], [0.85, 1], EO);
+      const ty = ci(localF, [0, 26], [40, 0], EO);
+      const shimmer = (localF * 2.5) % 200;
+      return (
+        <div style={{ display: "inline-block", opacity: op, transform: `translateY(${ty}px) scale(${sc})` }}>
+          <div style={{
+            fontFamily, fontSize: size, fontWeight: 700,
+            background: `linear-gradient(180deg, #ffffff 0%, #c0c0c0 35%, #808080 50%, #c0c0c0 65%, #ffffff 100%)`,
+            backgroundSize: "100% 200%",
+            backgroundPosition: `0 ${shimmer}%`,
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            letterSpacing: -1, lineHeight: 1.0,
+            filter: `drop-shadow(0 4px 0 #404040) drop-shadow(0 8px 24px rgba(0,0,0,0.6))`,
+          }}>
+            {text.toUpperCase()}
+          </div>
+          {/* Mirror reflection */}
+          <div style={{
+            fontFamily, fontSize: size, fontWeight: 700,
+            background: `linear-gradient(180deg, transparent 0%, rgba(192,192,192,0.4) 100%)`,
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            letterSpacing: -1, lineHeight: 1.0,
+            transform: "scaleY(-1)",
+            opacity: 0.3,
+            marginTop: -20,
+            maskImage: "linear-gradient(180deg, black, transparent 70%)",
+            WebkitMaskImage: "linear-gradient(180deg, black, transparent 70%)",
+          }}>
+            {text.toUpperCase()}
+          </div>
+        </div>
+      );
+    };
+    return (
+      <>
+        <div style={{ opacity: line1Op }}>{chrome(lines[0] || "", 30, colorPrimary, shadowMain)}</div>
+        {lines[1] && (
+          <div style={{ opacity: line2Op, marginTop: 4 }}>{chrome(lines[1], 48, colorAccent, shadowAccent)}</div>
+        )}
+      </>
+    );
+  }
+
+  // Variant R — Particle Universe: text materializes from particles
+  if (variant === "r") {
+    const particle = (text: string, startFrame: number, color: string, shadow: string) => {
+      const localF = frame - startFrame;
+      const op = ci(localF, [0, 30], [0, 1], EO);
+      const sc = ci(localF, [0, 36], [1.3, 1], EO);
+      const blur = ci(localF, [0, 30], [25, 0], EO);
+      return (
+        <div style={{
+          opacity: op,
+          transform: `scale(${sc})`,
+          filter: blur > 0.3 ? `blur(${blur}px)` : undefined,
+          fontFamily, fontSize: size, fontWeight: 700,
+          background: `linear-gradient(135deg, ${colorPrimary} 0%, ${colorAccent} 50%, #00f5ff 100%)`,
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          letterSpacing: -1, lineHeight: 1.0,
+          filter: `${blur > 0.3 ? `blur(${blur}px)` : ""} drop-shadow(0 0 30px ${colorAccent}aa) drop-shadow(0 0 60px #00f5ff66)`,
+        }}>
+          {text.toUpperCase()}
+        </div>
+      );
+    };
+    return (
+      <>
+        <div style={{ opacity: line1Op }}>{particle(lines[0] || "", 30, colorPrimary, shadowMain)}</div>
+        {lines[1] && (
+          <div style={{ opacity: line2Op, marginTop: 4 }}>{particle(lines[1], 48, colorAccent, shadowAccent)}</div>
+        )}
+      </>
+    );
+  }
+
+  // Variant S — Vintage Cinema: sepia film-burn fade-in with grain
+  if (variant === "s") {
+    const vintage = (text: string, startFrame: number, color: string, shadow: string) => {
+      const localF = frame - startFrame;
+      const op = ci(localF, [0, 32], [0, 1], EO);
+      const sc = ci(localF, [0, 40], [1.05, 1], EI);
+      // Flicker like old projector
+      const flicker = 0.92 + (random(`s-flick-${Math.floor(localF / 3)}`) * 0.08);
+      return (
+        <div style={{
+          opacity: op * flicker,
+          transform: `scale(${sc})`,
+          fontFamily, fontSize: size, fontWeight: 700,
+          color: "#f4e4c4",
+          letterSpacing: 2, lineHeight: 1.0,
+          textShadow: `2px 2px 0 #5a3a1a, 4px 4px 12px rgba(0,0,0,0.7), 0 0 30px rgba(244,228,196,0.3)`,
+          filter: "sepia(0.4) contrast(1.1)",
+        }}>
+          {text.toUpperCase()}
+        </div>
+      );
+    };
+    return (
+      <>
+        <div style={{ opacity: line1Op }}>{vintage(lines[0] || "", 30, colorPrimary, shadowMain)}</div>
+        {lines[1] && (
+          <div style={{ opacity: line2Op, marginTop: 4 }}>{vintage(lines[1], 50, colorAccent, shadowAccent)}</div>
+        )}
+      </>
+    );
+  }
+
+  // Variant T — Magazine Spread: pull-quote editorial style with side accent
+  if (variant === "t") {
+    const magazine = (text: string, startFrame: number, color: string, shadow: string, isAccent: boolean) => {
+      const localF = frame - startFrame;
+      const op = ci(localF, [0, 22], [0, 1], EO);
+      const tx = ci(localF, [0, 26], [-30, 0], EO);
+      return (
+        <div style={{
+          opacity: op,
+          transform: `translateX(${tx}px)`,
+          display: "flex", alignItems: "stretch", gap: 24,
+        }}>
+          <div style={{
+            width: 6, alignSelf: "stretch",
+            background: isAccent ? colorAccent : colorPrimary,
+            boxShadow: `0 0 20px ${isAccent ? colorAccent : colorPrimary}77`,
+          }} />
+          <div style={{
+            fontFamily, fontSize: size, fontWeight: 700,
+            color, letterSpacing: -1, lineHeight: 1.0,
+            textShadow: shadow,
+            fontStyle: "italic",
+          }}>
+            {text.toUpperCase()}
+          </div>
+        </div>
+      );
+    };
+    return (
+      <>
+        <div style={{ opacity: line1Op }}>{magazine(lines[0] || "", 30, colorPrimary, shadowMain, false)}</div>
+        {lines[1] && (
+          <div style={{ opacity: line2Op, marginTop: 8 }}>{magazine(lines[1], 50, colorAccent, shadowAccent, true)}</div>
+        )}
+      </>
+    );
+  }
+
   // Variant C — Big zoom-blur reveal (whole line at once)
   const reveal = (text: string, startFrame: number, color: string, shadow: string) => {
     const localF = frame - startFrame;
@@ -862,6 +1053,11 @@ const SceneVorteile = (props: { frame: number; c: AdConfig; vertical: boolean })
   if (v === "m") return <SceneVorteileM {...props} />;
   if (v === "n") return <SceneVorteileN {...props} />;
   if (v === "o") return <SceneVorteileO {...props} />;
+  if (v === "p") return <SceneVorteileP {...props} />;
+  if (v === "q") return <SceneVorteileQ {...props} />;
+  if (v === "r") return <SceneVorteileR {...props} />;
+  if (v === "s") return <SceneVorteileS {...props} />;
+  if (v === "t") return <SceneVorteileT {...props} />;
   return <SceneVorteileA {...props} />;
 };
 
@@ -3080,6 +3276,656 @@ const SceneVorteileO = ({ frame, c, vertical }: { frame: number; c: AdConfig; ve
   );
 };
 
+// ─── Variant P — STUDIO SPOTLIGHT: theatrical lighting + smoke
+const SceneVorteileP = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 120, END = 240;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const W = vertical ? 1080 : 1920, H = vertical ? 1920 : 1080;
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const exit = ci(f, [END - START - 18, END - START], [1, 0], EIN);
+
+  return (
+    <AbsoluteFill style={{ background: "#0a0a0a", opacity: bgOp * exit }}>
+      {/* Three spotlight cones from above */}
+      {[0, 1, 2].map((i) => {
+        const cx = vertical ? 50 : 25 + i * 25;
+        const beamY = vertical ? 25 + i * 25 : 0;
+        const sweepDelay = i * 12;
+        return (
+          <div key={i} style={{
+            position: "absolute",
+            left: vertical ? "50%" : `${cx}%`,
+            top: vertical ? `${beamY}%` : 0,
+            transform: vertical ? "translate(-50%, 0)" : "translateX(-50%)",
+            width: vertical ? "100%" : 0,
+            height: vertical ? 0 : "100%",
+            opacity: ci(f, [sweepDelay, sweepDelay + 16], [0, 1], EO),
+          }}>
+            <div style={{
+              position: "absolute",
+              left: vertical ? "10%" : "-150px", right: vertical ? "10%" : "auto",
+              top: vertical ? "0" : 0, bottom: vertical ? "auto" : 0,
+              width: vertical ? "auto" : 300,
+              height: vertical ? 300 : "auto",
+              background: vertical
+                ? `linear-gradient(180deg, ${c.design.accent}33 0%, transparent 80%)`
+                : `linear-gradient(180deg, ${c.design.accent}55 0%, transparent 80%)`,
+              clipPath: vertical
+                ? "polygon(40% 0, 60% 0, 100% 100%, 0% 100%)"
+                : "polygon(40% 0, 60% 0, 100% 100%, 0% 100%)",
+              filter: "blur(20px)",
+            }} />
+          </div>
+        );
+      })}
+
+      {/* Smoke particles */}
+      <Bokeh frame={frame} w={W} h={H} count={30} color="#ffffff" />
+
+      {/* Header */}
+      <div style={{
+        position: "absolute", top: vertical ? 200 : 100,
+        left: 0, right: 0, textAlign: "center",
+        opacity: ci(f, [4, 24], [0, 1], EO),
+        transform: `translateY(${ci(f, [4, 26], [40, 0], EO)}px)`,
+      }}>
+        <div style={{
+          fontFamily: BODY, fontWeight: 700,
+          fontSize: vertical ? 24 : 22, color: c.design.accent,
+          letterSpacing: 12, marginBottom: 12,
+          textShadow: `0 0 30px ${c.design.accent}aa`,
+        }}>
+          ON STAGE
+        </div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700,
+          fontSize: vertical ? 130 : 120, color: c.design.white,
+          letterSpacing: 2, lineHeight: 1,
+          textShadow: `0 0 60px rgba(255,255,255,0.5), 0 0 120px ${c.design.accent}aa`,
+        }}>
+          SPOTLIGHT
+        </div>
+      </div>
+
+      {/* 3 spotlight items */}
+      <div style={{
+        position: "absolute",
+        top: vertical ? 700 : 480,
+        left: 0, right: 0,
+        display: "flex", flexDirection: vertical ? "column" : "row",
+        justifyContent: "center", gap: vertical ? 36 : 48, padding: "0 80px",
+      }}>
+        {c.vorteile.map((v, i) => {
+          const sStart = 26 + i * 16;
+          const op = ci(f, [sStart, sStart + 22], [0, 1], EO);
+          const ty = ci(f, [sStart, sStart + 28], [60, 0], EO);
+          const sc = ci(f, [sStart, sStart + 32], [0.7, 1], POP);
+          return (
+            <div key={i} style={{
+              opacity: op,
+              transform: `translateY(${ty}px) scale(${sc})`,
+              flex: 1, textAlign: "center",
+              padding: vertical ? "40px 28px" : "60px 36px",
+              position: "relative",
+            }}>
+              {/* Mini spotlight glow behind item */}
+              <div style={{
+                position: "absolute", inset: -30,
+                background: `radial-gradient(ellipse at 50% 30%, ${c.design.accent}66 0%, transparent 60%)`,
+                filter: "blur(20px)",
+              }} />
+              <div style={{
+                position: "relative",
+                fontFamily: HEAD, fontWeight: 700,
+                fontSize: vertical ? 110 : 100,
+                color: c.design.white, lineHeight: 0.9,
+                textShadow: `0 0 30px rgba(255,255,255,0.7), 0 0 60px ${c.design.accent}`,
+                marginBottom: 16,
+              }}>
+                {String(i + 1).padStart(2, "0")}
+              </div>
+              <div style={{
+                position: "relative",
+                fontFamily: HEAD, fontWeight: 700,
+                fontSize: vertical ? 32 : 30,
+                color: c.design.white, letterSpacing: 1,
+                lineHeight: 1.1, marginBottom: 10,
+                textShadow: `0 0 20px ${c.design.accent}aa`,
+                textTransform: "uppercase",
+              }}>
+                {v.titel}
+              </div>
+              {v.beschreibung && (
+                <div style={{
+                  position: "relative",
+                  fontFamily: BODY, fontSize: vertical ? 20 : 18,
+                  color: "rgba(255,255,255,0.85)", lineHeight: 1.4,
+                }}>
+                  {v.beschreibung}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ─── Variant Q — LIQUID CHROME: reflective metallic surfaces
+const SceneVorteileQ = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 120, END = 240;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const exit = ci(f, [END - START - 18, END - START], [1, 0], EIN);
+  const shimmer = (f * 2.5) % 200;
+
+  return (
+    <AbsoluteFill style={{
+      background: "linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 50%, #1a1a1a 100%)",
+      opacity: bgOp * exit,
+    }}>
+      {/* Light streaks */}
+      <AbsoluteFill style={{
+        background: `linear-gradient(${(f * 0.5) % 360}deg, transparent 30%, rgba(255,255,255,0.05) 50%, transparent 70%)`,
+      }} />
+
+      {/* Chrome header */}
+      <div style={{
+        position: "absolute", top: vertical ? 200 : 110,
+        left: 0, right: 0, textAlign: "center",
+        opacity: ci(f, [4, 24], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700,
+          fontSize: vertical ? 130 : 130,
+          background: `linear-gradient(180deg, #ffffff 0%, #c0c0c0 35%, #606060 50%, #c0c0c0 65%, #ffffff 100%)`,
+          backgroundSize: "100% 200%",
+          backgroundPosition: `0 ${shimmer}%`,
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          letterSpacing: 4, lineHeight: 1,
+          filter: `drop-shadow(0 4px 0 #404040) drop-shadow(0 12px 30px rgba(0,0,0,0.7))`,
+        }}>
+          PREMIUM
+        </div>
+      </div>
+
+      {/* Chrome cards */}
+      <div style={{
+        position: "absolute",
+        top: vertical ? 720 : 480,
+        left: 0, right: 0,
+        display: "flex", flexDirection: vertical ? "column" : "row",
+        justifyContent: "center", gap: vertical ? 28 : 40, padding: "0 80px",
+      }}>
+        {c.vorteile.map((v, i) => {
+          const sStart = 22 + i * 14;
+          const op = ci(f, [sStart, sStart + 22], [0, 1], EO);
+          const ty = ci(f, [sStart, sStart + 28], [60, 0], EO);
+          const sc = ci(f, [sStart, sStart + 30], [0.85, 1], POP);
+          const cardShimmer = (f * 2 + i * 60) % 200;
+
+          return (
+            <div key={i} style={{
+              opacity: op,
+              transform: `translateY(${ty}px) scale(${sc})`,
+              flex: 1,
+              padding: vertical ? "36px 32px" : "44px 36px",
+              background: `linear-gradient(180deg,
+                rgba(255,255,255,0.15) 0%,
+                rgba(192,192,192,0.05) 50%,
+                rgba(64,64,64,0.1) 100%)`,
+              border: "1px solid rgba(255,255,255,0.25)",
+              borderRadius: 12,
+              boxShadow: `0 8px 30px rgba(0,0,0,0.5),
+                          inset 0 1px 0 rgba(255,255,255,0.4),
+                          inset 0 -1px 0 rgba(0,0,0,0.4)`,
+              textAlign: "center",
+              position: "relative", overflow: "hidden",
+            }}>
+              {/* Shimmer band */}
+              <div style={{
+                position: "absolute", top: 0, bottom: 0,
+                left: `${cardShimmer - 100}%`, width: "60%",
+                background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)",
+                pointerEvents: "none",
+              }} />
+              <div style={{
+                position: "relative",
+                fontFamily: HEAD, fontWeight: 700,
+                fontSize: vertical ? 80 : 72,
+                background: `linear-gradient(180deg, #ffffff 0%, #c0c0c0 50%, #808080 100%)`,
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+                lineHeight: 0.9,
+                filter: `drop-shadow(0 2px 0 #404040)`,
+                marginBottom: 12,
+              }}>
+                {String(i + 1).padStart(2, "0")}
+              </div>
+              <div style={{
+                position: "relative",
+                fontFamily: HEAD, fontWeight: 700,
+                fontSize: vertical ? 30 : 26, color: "#fff",
+                letterSpacing: 1, lineHeight: 1.1, marginBottom: 8,
+                textShadow: "0 2px 4px rgba(0,0,0,0.6)",
+                textTransform: "uppercase",
+              }}>
+                {v.titel}
+              </div>
+              {v.beschreibung && (
+                <div style={{
+                  position: "relative",
+                  fontFamily: BODY, fontSize: vertical ? 19 : 16,
+                  color: "rgba(255,255,255,0.75)", lineHeight: 1.4,
+                }}>
+                  {v.beschreibung}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ─── Variant R — PARTICLE UNIVERSE: cosmic stardust + constellations
+const SceneVorteileR = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 120, END = 240;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const W = vertical ? 1080 : 1920, H = vertical ? 1920 : 1080;
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const exit = ci(f, [END - START - 18, END - START], [1, 0], EIN);
+
+  // Stars
+  const stars = Array.from({ length: 100 }).map((_, i) => {
+    const seed = i + 1;
+    return {
+      x: random(`r-x-${seed}`) * 100,
+      y: random(`r-y-${seed}`) * 100,
+      size: 1 + random(`r-s-${seed}`) * 3,
+      twinkle: 0.3 + Math.sin(f * 0.05 + seed) * 0.5,
+    };
+  });
+
+  return (
+    <AbsoluteFill style={{
+      background: `radial-gradient(ellipse at 50% 50%, #1a0033 0%, #050015 70%, #000000 100%)`,
+      opacity: bgOp * exit,
+    }}>
+      {/* Star field */}
+      <AbsoluteFill style={{ pointerEvents: "none" }}>
+        {stars.map((s, i) => (
+          <div key={i} style={{
+            position: "absolute",
+            left: `${s.x}%`, top: `${s.y}%`,
+            width: s.size, height: s.size,
+            background: "#fff",
+            borderRadius: "50%",
+            opacity: s.twinkle,
+            boxShadow: `0 0 ${s.size * 4}px #fff`,
+          }} />
+        ))}
+      </AbsoluteFill>
+
+      {/* Nebula glow */}
+      <AbsoluteFill style={{
+        background: `radial-gradient(circle at 30% 40%, ${c.design.accent}44 0%, transparent 50%)`,
+        filter: "blur(60px)",
+      }} />
+      <AbsoluteFill style={{
+        background: `radial-gradient(circle at 70% 60%, #00f5ff44 0%, transparent 50%)`,
+        filter: "blur(60px)",
+      }} />
+
+      <Bokeh frame={frame} w={W} h={H} count={50} color="#fff" />
+
+      {/* Header */}
+      <div style={{
+        position: "absolute", top: vertical ? 200 : 100,
+        left: 0, right: 0, textAlign: "center",
+        opacity: ci(f, [4, 26], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: BODY, fontWeight: 700,
+          fontSize: vertical ? 24 : 22,
+          color: "rgba(255,255,255,0.7)", letterSpacing: 12,
+          marginBottom: 14,
+        }}>
+          ◦ INFINITY ◦
+        </div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700,
+          fontSize: vertical ? 130 : 120,
+          background: `linear-gradient(135deg, #fff 0%, ${c.design.accent} 50%, #00f5ff 100%)`,
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          letterSpacing: 2, lineHeight: 1,
+          filter: `drop-shadow(0 0 60px ${c.design.accent}88)`,
+        }}>
+          UNIVERSE
+        </div>
+      </div>
+
+      {/* Constellation cards */}
+      <div style={{
+        position: "absolute",
+        top: vertical ? 720 : 480,
+        left: 0, right: 0,
+        display: "flex", flexDirection: vertical ? "column" : "row",
+        justifyContent: "center", gap: vertical ? 32 : 50, padding: "0 80px",
+      }}>
+        {c.vorteile.map((v, i) => {
+          const sStart = 24 + i * 16;
+          const op = ci(f, [sStart, sStart + 24], [0, 1], EO);
+          const ty = ci(f, [sStart, sStart + 30], [60, 0], EO);
+          const sc = ci(f, [sStart, sStart + 32], [0.85, 1], POP);
+          const float = Math.sin((f - sStart) * 0.06) * 8;
+          return (
+            <div key={i} style={{
+              opacity: op,
+              transform: `translateY(${ty + float}px) scale(${sc})`,
+              flex: 1,
+              padding: vertical ? "36px 32px" : "44px 36px",
+              background: "rgba(255,255,255,0.03)",
+              backdropFilter: "blur(20px)",
+              border: `1px solid rgba(255,255,255,0.15)`,
+              borderRadius: 24,
+              boxShadow: `0 0 40px ${c.design.accent}33, inset 0 0 30px rgba(255,255,255,0.03)`,
+              textAlign: "center",
+            }}>
+              <div style={{
+                width: 80, height: 80, borderRadius: "50%",
+                background: `radial-gradient(circle, #fff 0%, ${c.design.accent} 60%, transparent 100%)`,
+                margin: "0 auto 18px",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontFamily: HEAD, fontSize: 32, fontWeight: 700,
+                color: "#000",
+                boxShadow: `0 0 50px #fff, 0 0 80px ${c.design.accent}`,
+              }}>
+                {String(i + 1).padStart(2, "0")}
+              </div>
+              <div style={{
+                fontFamily: HEAD, fontWeight: 700,
+                fontSize: vertical ? 32 : 28, color: "#fff",
+                letterSpacing: 1, lineHeight: 1.1, marginBottom: 10,
+                textShadow: `0 0 30px ${c.design.accent}aa`,
+                textTransform: "uppercase",
+              }}>
+                {v.titel}
+              </div>
+              {v.beschreibung && (
+                <div style={{
+                  fontFamily: BODY, fontSize: vertical ? 20 : 18,
+                  color: "rgba(255,255,255,0.8)", lineHeight: 1.4,
+                }}>
+                  {v.beschreibung}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ─── Variant S — VINTAGE CINEMA: sepia film aesthetic with grain
+const SceneVorteileS = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 120, END = 240;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const SCRIPT = font(c.design.fontScript);
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const exit = ci(f, [END - START - 18, END - START], [1, 0], EIN);
+  // Projector flicker
+  const flicker = 0.92 + (random(`s-fl-${Math.floor(f / 3)}`) * 0.08);
+
+  return (
+    <AbsoluteFill style={{
+      background: "linear-gradient(180deg, #2a1a0d 0%, #1a0f06 50%, #0a0604 100%)",
+      opacity: bgOp * exit,
+    }}>
+      {/* Film grain texture */}
+      <AbsoluteFill style={{
+        opacity: 0.15,
+        backgroundImage: `radial-gradient(circle at 30% 20%, #8a6a3a 1px, transparent 1px),
+                          radial-gradient(circle at 70% 80%, #6a4a2a 1px, transparent 1px),
+                          radial-gradient(circle at 10% 70%, #aa8a5a 1px, transparent 1px)`,
+        backgroundSize: "20px 20px, 30px 30px, 25px 25px",
+      }} />
+      {/* Vignette */}
+      <AbsoluteFill style={{
+        background: `radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(0,0,0,0.7) 100%)`,
+      }} />
+
+      {/* Header — vintage projector style */}
+      <div style={{
+        position: "absolute", top: vertical ? 200 : 100,
+        left: 0, right: 0, textAlign: "center",
+        opacity: ci(f, [4, 28], [0, 1], EO) * flicker,
+      }}>
+        <div style={{
+          fontFamily: SCRIPT, fontSize: vertical ? 60 : 60,
+          color: "#d4a04c", marginBottom: 10,
+          textShadow: "2px 2px 0 #5a3a1a, 0 0 30px rgba(212,160,76,0.4)",
+        }}>
+          presenting
+        </div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700,
+          fontSize: vertical ? 130 : 120, color: "#f4e4c4",
+          letterSpacing: 6, lineHeight: 1,
+          textShadow: "3px 3px 0 #5a3a1a, 6px 6px 0 #2a1a0d, 0 8px 30px rgba(0,0,0,0.7)",
+        }}>
+          A CLASSIC
+        </div>
+      </div>
+
+      {/* Filmstrip-style cards */}
+      <div style={{
+        position: "absolute",
+        top: vertical ? 720 : 480,
+        left: 0, right: 0,
+        display: "flex", flexDirection: vertical ? "column" : "row",
+        justifyContent: "center", gap: vertical ? 24 : 32, padding: "0 80px",
+      }}>
+        {c.vorteile.map((v, i) => {
+          const sStart = 28 + i * 16;
+          const op = ci(f, [sStart, sStart + 24], [0, 1], EO);
+          const ty = ci(f, [sStart, sStart + 28], [50, 0], EO);
+          return (
+            <div key={i} style={{
+              opacity: op * (0.95 + random(`s-c-${i}-${Math.floor(f / 4)}`) * 0.05),
+              transform: `translateY(${ty}px)`,
+              flex: 1,
+              padding: vertical ? "32px 30px" : "44px 36px",
+              background: "linear-gradient(180deg, rgba(212,160,76,0.08) 0%, rgba(0,0,0,0.5) 100%)",
+              border: "2px solid #d4a04c66",
+              borderTop: "8px solid #d4a04c",
+              borderBottom: "8px solid #d4a04c",
+              textAlign: "center",
+              position: "relative",
+            }}>
+              {/* Filmstrip perforations top/bottom */}
+              {[...Array(8)].map((_, k) => (
+                <React.Fragment key={k}>
+                  <div style={{
+                    position: "absolute", top: -8 + 0,
+                    left: `${10 + k * 10}%`,
+                    width: 8, height: 12,
+                    background: "#0a0604",
+                    border: "1px solid #d4a04c",
+                  }} />
+                </React.Fragment>
+              ))}
+              <div style={{
+                fontFamily: HEAD, fontWeight: 700,
+                fontSize: vertical ? 70 : 64,
+                color: "#d4a04c", lineHeight: 0.9,
+                letterSpacing: 4,
+                textShadow: "2px 2px 0 #5a3a1a",
+                marginBottom: 14,
+              }}>
+                Nº {String(i + 1).padStart(2, "0")}
+              </div>
+              <div style={{
+                fontFamily: HEAD, fontWeight: 700,
+                fontSize: vertical ? 28 : 24, color: "#f4e4c4",
+                letterSpacing: 2, lineHeight: 1.1, marginBottom: 8,
+                textShadow: "1px 1px 0 #5a3a1a",
+                textTransform: "uppercase",
+              }}>
+                {v.titel}
+              </div>
+              {v.beschreibung && (
+                <div style={{
+                  fontFamily: BODY, fontSize: vertical ? 18 : 16,
+                  color: "rgba(244,228,196,0.75)", lineHeight: 1.4,
+                  fontStyle: "italic",
+                }}>
+                  {v.beschreibung}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ─── Variant T — MAGAZINE SPREAD: editorial pull-quotes
+const SceneVorteileT = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 120, END = 240;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const exit = ci(f, [END - START - 18, END - START], [1, 0], EIN);
+
+  return (
+    <AbsoluteFill style={{
+      background: "#f5f1e8", // cream paper
+      opacity: bgOp * exit,
+    }}>
+      {/* Bold accent block */}
+      <div style={{
+        position: "absolute", top: 0, left: 0,
+        width: vertical ? "100%" : "40%",
+        height: vertical ? 250 : "100%",
+        background: c.design.accent,
+        transform: vertical
+          ? `translateY(${ci(f, [0, 24], [-250, 0], EO)}px)`
+          : `translateX(${ci(f, [0, 24], [-800, 0], EO)}px)`,
+      }} />
+
+      {/* Big numeral as decoration */}
+      <div style={{
+        position: "absolute",
+        top: vertical ? 60 : 80,
+        left: vertical ? "50%" : "20%",
+        transform: "translate(-50%, 0)",
+        fontFamily: HEAD, fontWeight: 700,
+        fontSize: vertical ? 220 : 280,
+        color: "#fff", lineHeight: 0.85,
+        letterSpacing: -10,
+        opacity: ci(f, [10, 30], [0, 1], EO),
+      }}>
+        Nº1
+      </div>
+
+      {/* Section label */}
+      <div style={{
+        position: "absolute",
+        top: vertical ? 320 : 80,
+        left: vertical ? 60 : "50%",
+        opacity: ci(f, [16, 36], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: BODY, fontWeight: 700,
+          fontSize: vertical ? 22 : 20,
+          color: c.design.accent, letterSpacing: 8, marginBottom: 8,
+          borderBottom: `2px solid ${c.design.accent}`,
+          display: "inline-block", paddingBottom: 6,
+        }}>
+          THE FEATURE
+        </div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700,
+          fontSize: vertical ? 90 : 80,
+          color: "#1a1a1a", lineHeight: 0.95,
+          letterSpacing: -2, marginTop: 8,
+          fontStyle: "italic",
+        }}>
+          Why we<br />stand out.
+        </div>
+      </div>
+
+      {/* Pull-quote items */}
+      <div style={{
+        position: "absolute",
+        top: vertical ? 720 : 380,
+        right: vertical ? 60 : 80,
+        left: vertical ? 60 : "50%",
+        display: "flex", flexDirection: "column", gap: vertical ? 24 : 30,
+      }}>
+        {c.vorteile.map((v, i) => {
+          const sStart = 24 + i * 14;
+          const op = ci(f, [sStart, sStart + 22], [0, 1], EO);
+          const tx = ci(f, [sStart, sStart + 26], [-60, 0], EO);
+          return (
+            <div key={i} style={{
+              opacity: op,
+              transform: `translateX(${tx}px)`,
+              borderLeft: `4px solid ${c.design.accent}`,
+              paddingLeft: 24,
+            }}>
+              <div style={{
+                fontFamily: BODY, fontWeight: 700, fontSize: 18,
+                color: c.design.accent, letterSpacing: 4,
+                marginBottom: 4,
+              }}>
+                CHAPTER {String(i + 1).padStart(2, "0")}
+              </div>
+              <div style={{
+                fontFamily: HEAD, fontWeight: 700,
+                fontSize: vertical ? 36 : 38,
+                color: "#1a1a1a", lineHeight: 1.05,
+                letterSpacing: -1,
+                marginBottom: 6,
+                fontStyle: "italic",
+              }}>
+                "{v.titel}"
+              </div>
+              {v.beschreibung && (
+                <div style={{
+                  fontFamily: BODY, fontWeight: 400,
+                  fontSize: vertical ? 20 : 18,
+                  color: "rgba(0,0,0,0.7)", lineHeight: 1.4,
+                }}>
+                  {v.beschreibung}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 // ─── SCENE 3 — Massive CTA ─────────────────────────────────
 const SceneCTA = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
   const START = 240, END = 330;
@@ -3205,6 +4051,11 @@ const SceneFinal = (props: { frame: number; c: AdConfig; vertical: boolean }) =>
   if (v === "m") return <SceneFinalM {...props} />;
   if (v === "n") return <SceneFinalN {...props} />;
   if (v === "o") return <SceneFinalO {...props} />;
+  if (v === "p") return <SceneFinalP {...props} />;
+  if (v === "q") return <SceneFinalQ {...props} />;
+  if (v === "r") return <SceneFinalR {...props} />;
+  if (v === "s") return <SceneFinalS {...props} />;
+  if (v === "t") return <SceneFinalT {...props} />;
   return <SceneFinalA {...props} />;
 };
 
@@ -5701,6 +6552,493 @@ const SceneFinalO = ({ frame, c, vertical }: { frame: number; c: AdConfig; verti
             ▸ {c.kontakt.website} ◂
           </div>
         )}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ── Final P — STUDIO SPOTLIGHT
+const SceneFinalP = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 330, END = 450;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const SCRIPT = font(c.design.fontScript);
+  const W = vertical ? 1080 : 1920, H = vertical ? 1920 : 1080;
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const fade = ci(f, [END - START - 14, END - START], [1, 0], EIN);
+  const phonePulse = 1 + Math.sin(f * 0.16) * 0.03;
+
+  return (
+    <AbsoluteFill style={{ background: "#0a0a0a", opacity: bgOp * fade }}>
+      {/* Single dramatic spotlight from top center */}
+      <div style={{
+        position: "absolute",
+        left: "50%", top: 0,
+        transform: "translateX(-50%)",
+        width: vertical ? "120%" : "70%",
+        height: "100%",
+        background: `radial-gradient(ellipse at 50% 0%, ${c.design.accent}66 0%, transparent 60%)`,
+        opacity: ci(f, [0, 30], [0, 1], EO),
+        filter: "blur(40px)",
+      }} />
+      <Bokeh frame={frame} w={W} h={H} count={30} color="#ffffff" />
+
+      <div style={{
+        position: "absolute", top: vertical ? 180 : 130, left: 0, right: 0, textAlign: "center", padding: "0 40px",
+        opacity: ci(f, [4, 28], [0, 1], EO),
+        transform: `translateY(${ci(f, [4, 28], [-30, 0], EO)}px)`,
+      }}>
+        <div style={{
+          fontFamily: SCRIPT, fontSize: vertical ? 64 : 64,
+          color: c.design.accent, marginBottom: 8,
+          textShadow: `0 0 40px ${c.design.accent}aa`,
+        }}>{c.unternehmen.slogan}</div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700,
+          fontSize: vertical ? 80 : 90, color: c.design.white,
+          letterSpacing: 1, lineHeight: 1.0,
+          textShadow: `0 0 60px rgba(255,255,255,0.5), 0 0 120px ${c.design.accent}aa`,
+        }}>{c.unternehmen.name.toUpperCase()}</div>
+      </div>
+
+      <div style={{
+        position: "absolute", top: vertical ? 460 : 320, left: 0, right: 0, textAlign: "center",
+        opacity: ci(f, [22, 50], [0, 1], EO),
+        transform: `scale(${ci(f, [22, 50], [0.7, 1], POP) * phonePulse})`,
+      }}>
+        <div style={{
+          display: "inline-block", padding: vertical ? "36px 56px" : "44px 80px",
+          background: "rgba(0,0,0,0.55)",
+          border: `2px solid ${c.design.accent}`,
+          borderRadius: 18,
+          boxShadow: `0 0 80px ${c.design.accent}aa, inset 0 0 40px ${c.design.accent}22`,
+        }}>
+          <div style={{
+            fontFamily: BODY, fontWeight: 700,
+            fontSize: vertical ? 28 : 28,
+            color: c.design.accent, letterSpacing: 14, marginBottom: 14,
+            textShadow: `0 0 20px ${c.design.accent}`,
+          }}>☎  ANRUFEN</div>
+          <div style={{
+            fontFamily: HEAD, fontWeight: 700,
+            fontSize: vertical ? 110 : 140, color: c.design.white,
+            letterSpacing: 3, lineHeight: 1,
+            textShadow: `0 0 60px ${c.design.accent}, 0 0 120px ${c.design.accent}77`,
+          }}>{c.kontakt.telefon_buero}</div>
+        </div>
+      </div>
+
+      <div style={{
+        position: "absolute", bottom: vertical ? 130 : 90, left: 0, right: 0, textAlign: "center", padding: "0 40px",
+        opacity: ci(f, [44, 64], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 38 : 44,
+          color: c.design.white, lineHeight: 1.1,
+          textShadow: `0 0 30px ${c.design.accent}aa`,
+        }}>{c.kontakt.adresse_zeile1}, {c.kontakt.adresse_zeile2}</div>
+        {c.kontakt.website && (
+          <div style={{
+            marginTop: 10,
+            fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 32 : 36,
+            color: c.design.accent, letterSpacing: 2, textShadow: `0 0 30px ${c.design.accent}`,
+          }}>{c.kontakt.website}</div>
+        )}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ── Final Q — LIQUID CHROME
+const SceneFinalQ = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 330, END = 450;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const fade = ci(f, [END - START - 14, END - START], [1, 0], EIN);
+  const shimmer = (f * 2.5) % 200;
+
+  return (
+    <AbsoluteFill style={{
+      background: "linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 50%, #1a1a1a 100%)",
+      opacity: bgOp * fade,
+    }}>
+      <AbsoluteFill style={{
+        background: `linear-gradient(${(f * 0.5) % 360}deg, transparent 30%, rgba(255,255,255,0.08) 50%, transparent 70%)`,
+      }} />
+
+      <div style={{
+        position: "absolute", top: vertical ? 180 : 130, left: 0, right: 0, textAlign: "center", padding: "0 40px",
+        opacity: ci(f, [4, 28], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 70 : 80,
+          background: `linear-gradient(180deg, #ffffff 0%, #c0c0c0 35%, #606060 50%, #c0c0c0 65%, #ffffff 100%)`,
+          backgroundSize: "100% 200%", backgroundPosition: `0 ${shimmer}%`,
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          letterSpacing: 4, lineHeight: 1,
+          filter: `drop-shadow(0 4px 0 #404040) drop-shadow(0 12px 30px rgba(0,0,0,0.7))`,
+        }}>{c.unternehmen.name.toUpperCase()}</div>
+      </div>
+
+      <div style={{
+        position: "absolute", top: vertical ? 460 : 320, left: 0, right: 0, textAlign: "center",
+        opacity: ci(f, [22, 50], [0, 1], EO),
+        transform: `scale(${ci(f, [22, 50], [0.85, 1], POP)})`,
+      }}>
+        <div style={{
+          display: "inline-block", padding: vertical ? "36px 56px" : "50px 80px",
+          background: `linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(64,64,64,0.1) 100%)`,
+          border: "1px solid rgba(255,255,255,0.3)",
+          borderRadius: 16,
+          boxShadow: `0 12px 40px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.5)`,
+        }}>
+          <div style={{
+            fontFamily: BODY, fontWeight: 700, fontSize: vertical ? 26 : 26,
+            color: "#c0c0c0", letterSpacing: 10, marginBottom: 14,
+          }}>☎ TEL.</div>
+          <div style={{
+            fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 100 : 130,
+            background: `linear-gradient(180deg, #ffffff 0%, #c0c0c0 50%, #808080 100%)`,
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            letterSpacing: 3, lineHeight: 1,
+            filter: `drop-shadow(0 4px 0 #404040)`,
+          }}>{c.kontakt.telefon_buero}</div>
+        </div>
+      </div>
+
+      <div style={{
+        position: "absolute", bottom: vertical ? 130 : 90, left: 0, right: 0, textAlign: "center", padding: "0 60px",
+        opacity: ci(f, [44, 64], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 36 : 42,
+          color: "#fff", lineHeight: 1.1,
+          textShadow: "0 2px 8px rgba(0,0,0,0.7)",
+        }}>{c.kontakt.adresse_zeile1}, {c.kontakt.adresse_zeile2}</div>
+        {c.kontakt.website && (
+          <div style={{
+            marginTop: 10,
+            fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 30 : 34,
+            background: `linear-gradient(180deg, #ffffff 0%, #c0c0c0 100%)`,
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            letterSpacing: 2,
+          }}>{c.kontakt.website}</div>
+        )}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ── Final R — PARTICLE UNIVERSE
+const SceneFinalR = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 330, END = 450;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const SCRIPT = font(c.design.fontScript);
+  const W = vertical ? 1080 : 1920, H = vertical ? 1920 : 1080;
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const fade = ci(f, [END - START - 14, END - START], [1, 0], EIN);
+  const stars = Array.from({ length: 80 }).map((_, i) => {
+    const s = i + 1;
+    return {
+      x: random(`fr-x-${s}`) * 100, y: random(`fr-y-${s}`) * 100,
+      size: 1 + random(`fr-s-${s}`) * 3,
+      twinkle: 0.3 + Math.sin(f * 0.05 + s) * 0.5,
+    };
+  });
+
+  return (
+    <AbsoluteFill style={{
+      background: `radial-gradient(ellipse at 50% 50%, #1a0033 0%, #050015 70%, #000 100%)`,
+      opacity: bgOp * fade,
+    }}>
+      <AbsoluteFill>
+        {stars.map((s, i) => (
+          <div key={i} style={{
+            position: "absolute", left: `${s.x}%`, top: `${s.y}%`,
+            width: s.size, height: s.size,
+            background: "#fff", borderRadius: "50%",
+            opacity: s.twinkle, boxShadow: `0 0 ${s.size * 4}px #fff`,
+          }} />
+        ))}
+      </AbsoluteFill>
+      <AbsoluteFill style={{
+        background: `radial-gradient(circle at 50% 50%, ${c.design.accent}55 0%, transparent 50%)`,
+        filter: "blur(60px)",
+      }} />
+      <Bokeh frame={frame} w={W} h={H} count={40} color="#fff" />
+
+      <div style={{
+        position: "absolute", top: vertical ? 180 : 130, left: 0, right: 0, textAlign: "center", padding: "0 40px",
+        opacity: ci(f, [4, 28], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: SCRIPT, fontSize: vertical ? 60 : 60,
+          color: c.design.accent, textShadow: `0 0 40px ${c.design.accent}, 0 0 80px ${c.design.accent}55`,
+          marginBottom: 8,
+        }}>{c.unternehmen.slogan}</div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 76 : 88,
+          background: `linear-gradient(135deg, #fff 0%, ${c.design.accent} 50%, #00f5ff 100%)`,
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          letterSpacing: 1, lineHeight: 1,
+          filter: `drop-shadow(0 0 60px ${c.design.accent}aa)`,
+        }}>{c.unternehmen.name.toUpperCase()}</div>
+      </div>
+
+      <div style={{
+        position: "absolute", top: vertical ? 470 : 330, left: 0, right: 0, textAlign: "center",
+        opacity: ci(f, [22, 50], [0, 1], EO),
+        transform: `scale(${ci(f, [22, 50], [0.8, 1], POP)})`,
+      }}>
+        <div style={{
+          display: "inline-block", padding: vertical ? "36px 56px" : "44px 80px",
+          background: "rgba(255,255,255,0.05)", backdropFilter: "blur(20px)",
+          border: `1px solid rgba(255,255,255,0.2)`,
+          borderRadius: 24,
+          boxShadow: `0 0 60px ${c.design.accent}66, inset 0 0 30px rgba(255,255,255,0.05)`,
+        }}>
+          <div style={{
+            fontFamily: BODY, fontWeight: 700, fontSize: vertical ? 24 : 24,
+            color: "rgba(255,255,255,0.85)", letterSpacing: 12, marginBottom: 14,
+          }}>◦ ANRUFEN ◦</div>
+          <div style={{
+            fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 100 : 130,
+            background: `linear-gradient(180deg, #fff 0%, ${c.design.accent} 100%)`,
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            letterSpacing: 3, lineHeight: 1,
+            filter: `drop-shadow(0 0 40px ${c.design.accent}aa)`,
+          }}>{c.kontakt.telefon_buero}</div>
+        </div>
+      </div>
+
+      <div style={{
+        position: "absolute", bottom: vertical ? 130 : 90, left: 0, right: 0, textAlign: "center", padding: "0 60px",
+        opacity: ci(f, [44, 64], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 600, fontSize: vertical ? 32 : 38,
+          color: "rgba(255,255,255,0.9)", lineHeight: 1.2,
+          textShadow: `0 0 20px ${c.design.accent}77`,
+        }}>{c.kontakt.adresse_zeile1}, {c.kontakt.adresse_zeile2}</div>
+        {c.kontakt.website && (
+          <div style={{
+            marginTop: 10,
+            fontFamily: BODY, fontWeight: 700, fontSize: vertical ? 24 : 26,
+            color: c.design.accent, letterSpacing: 6,
+            textShadow: `0 0 20px ${c.design.accent}`,
+          }}>{c.kontakt.website}</div>
+        )}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ── Final S — VINTAGE CINEMA
+const SceneFinalS = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 330, END = 450;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const SCRIPT = font(c.design.fontScript);
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const fade = ci(f, [END - START - 14, END - START], [1, 0], EIN);
+  const flicker = 0.92 + (random(`fs-fl-${Math.floor(f / 3)}`) * 0.08);
+
+  return (
+    <AbsoluteFill style={{
+      background: "linear-gradient(180deg, #2a1a0d 0%, #1a0f06 50%, #0a0604 100%)",
+      opacity: bgOp * fade,
+    }}>
+      <AbsoluteFill style={{
+        opacity: 0.18,
+        backgroundImage: `radial-gradient(circle at 30% 20%, #8a6a3a 1px, transparent 1px),
+                          radial-gradient(circle at 70% 80%, #6a4a2a 1px, transparent 1px)`,
+        backgroundSize: "20px 20px, 30px 30px",
+      }} />
+      <AbsoluteFill style={{
+        background: `radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(0,0,0,0.7) 100%)`,
+      }} />
+
+      {/* Frame border (film projection) */}
+      <div style={{
+        position: "absolute", top: 60, bottom: 60, left: 60, right: 60,
+        border: "2px solid #d4a04caa",
+        boxShadow: "0 0 40px rgba(212,160,76,0.2)",
+        opacity: ci(f, [4, 28], [0, 1], EO),
+      }} />
+
+      <div style={{
+        position: "absolute", top: vertical ? 180 : 130, left: 0, right: 0, textAlign: "center", padding: "0 80px",
+        opacity: ci(f, [12, 36], [0, 1], EO) * flicker,
+      }}>
+        <div style={{
+          fontFamily: SCRIPT, fontSize: vertical ? 60 : 64,
+          color: "#d4a04c", marginBottom: 10,
+          textShadow: "2px 2px 0 #5a3a1a",
+        }}>{c.unternehmen.slogan}</div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 70 : 80,
+          color: "#f4e4c4", letterSpacing: 4, lineHeight: 1.0,
+          textShadow: "3px 3px 0 #5a3a1a, 6px 6px 0 #2a1a0d, 0 8px 30px rgba(0,0,0,0.7)",
+        }}>{c.unternehmen.name.toUpperCase()}</div>
+      </div>
+
+      <div style={{
+        position: "absolute", top: vertical ? 480 : 340, left: 0, right: 0, textAlign: "center",
+        opacity: ci(f, [30, 56], [0, 1], EO) * flicker,
+      }}>
+        <div style={{
+          display: "inline-block", padding: vertical ? "36px 56px" : "44px 80px",
+          background: "rgba(0,0,0,0.5)",
+          border: "3px solid #d4a04c",
+          boxShadow: "0 0 30px rgba(212,160,76,0.4), inset 0 0 30px rgba(212,160,76,0.1)",
+        }}>
+          <div style={{
+            fontFamily: BODY, fontWeight: 700, fontSize: vertical ? 24 : 24,
+            color: "#d4a04c", letterSpacing: 14, marginBottom: 14,
+            textShadow: "1px 1px 0 #5a3a1a",
+          }}>★ TEL. ★</div>
+          <div style={{
+            fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 90 : 110,
+            color: "#f4e4c4", letterSpacing: 4, lineHeight: 1,
+            textShadow: "2px 2px 0 #5a3a1a, 4px 4px 0 #2a1a0d",
+          }}>{c.kontakt.telefon_buero}</div>
+        </div>
+      </div>
+
+      <div style={{
+        position: "absolute", bottom: vertical ? 160 : 120, left: 0, right: 0, textAlign: "center", padding: "0 80px",
+        opacity: ci(f, [50, 70], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 600, fontSize: vertical ? 28 : 32,
+          color: "#f4e4c4", lineHeight: 1.2, letterSpacing: 1,
+          textShadow: "1px 1px 0 #5a3a1a",
+        }}>{c.kontakt.adresse_zeile1} · {c.kontakt.adresse_zeile2}</div>
+        {c.kontakt.website && (
+          <div style={{
+            marginTop: 12, fontFamily: SCRIPT, fontSize: vertical ? 36 : 42,
+            color: "#d4a04c",
+            textShadow: "2px 2px 0 #5a3a1a",
+          }}>{c.kontakt.website}</div>
+        )}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ── Final T — MAGAZINE SPREAD
+const SceneFinalT = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertical: boolean }) => {
+  const START = 330, END = 450;
+  if (frame < START || frame >= END) return null;
+  const f = frame - START;
+  const HEAD = font(c.design.fontHead);
+  const BODY = font(c.design.fontBody);
+  const bgOp = ci(f, [0, 14], [0, 1], EO);
+  const fade = ci(f, [END - START - 14, END - START], [1, 0], EIN);
+
+  return (
+    <AbsoluteFill style={{ background: "#f5f1e8", opacity: bgOp * fade }}>
+      {/* Half-page accent block */}
+      <div style={{
+        position: "absolute", top: 0, left: 0,
+        width: vertical ? "100%" : "45%",
+        height: vertical ? 320 : "100%",
+        background: c.design.accent,
+        transform: vertical
+          ? `translateY(${ci(f, [0, 24], [-320, 0], EO)}px)`
+          : `translateX(${ci(f, [0, 24], [-900, 0], EO)}px)`,
+      }} />
+
+      {/* Brand block on accent */}
+      <div style={{
+        position: "absolute",
+        top: vertical ? 50 : 60, left: vertical ? 50 : 60,
+        opacity: ci(f, [12, 36], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: BODY, fontWeight: 700, fontSize: 18,
+          color: "#fff", letterSpacing: 8,
+          borderBottom: "2px solid #fff",
+          display: "inline-block", paddingBottom: 4,
+          marginBottom: 12,
+        }}>VOLUME 01</div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700,
+          fontSize: vertical ? 76 : 80,
+          color: "#fff", lineHeight: 0.9,
+          letterSpacing: -2,
+          fontStyle: "italic",
+        }}>{c.unternehmen.name}</div>
+        <div style={{
+          fontFamily: BODY, fontWeight: 600, fontSize: vertical ? 24 : 26,
+          color: "rgba(255,255,255,0.9)", marginTop: 14,
+          lineHeight: 1.3,
+        }}>{c.unternehmen.slogan}</div>
+      </div>
+
+      {/* Big phone editorial style */}
+      <div style={{
+        position: "absolute",
+        top: vertical ? 460 : 60,
+        right: vertical ? 50 : 60,
+        left: vertical ? 50 : "50%",
+        opacity: ci(f, [22, 50], [0, 1], EO),
+      }}>
+        <div style={{
+          fontFamily: BODY, fontWeight: 700, fontSize: 18,
+          color: c.design.accent, letterSpacing: 8,
+          marginBottom: 12, paddingBottom: 4,
+          borderBottom: `2px solid ${c.design.accent}`,
+          display: "inline-block",
+        }}>CONTACT</div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 30 : 28,
+          color: "#1a1a1a", letterSpacing: 4, marginBottom: 6,
+          fontStyle: "italic",
+        }}>"Reach out today."</div>
+        <div style={{
+          fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 72 : 90,
+          color: "#1a1a1a", lineHeight: 0.95, letterSpacing: -2, marginBottom: 18,
+        }}>{c.kontakt.telefon_buero}</div>
+        <div style={{
+          fontFamily: BODY, fontWeight: 500, fontSize: vertical ? 24 : 22,
+          color: "rgba(0,0,0,0.7)", lineHeight: 1.5,
+        }}>
+          {c.kontakt.adresse_zeile1}<br />
+          {c.kontakt.adresse_zeile2}
+        </div>
+        {c.kontakt.website && (
+          <div style={{
+            marginTop: 16,
+            fontFamily: HEAD, fontWeight: 700, fontSize: vertical ? 28 : 28,
+            color: c.design.accent, letterSpacing: 1,
+          }}>{c.kontakt.website}</div>
+        )}
+      </div>
+
+      {/* Folio mark bottom */}
+      <div style={{
+        position: "absolute", bottom: 30,
+        left: vertical ? 50 : 60, right: vertical ? 50 : 60,
+        display: "flex", justifyContent: "space-between",
+        opacity: ci(f, [50, 70], [0, 1], EO),
+        fontFamily: BODY, fontSize: 14, color: "rgba(0,0,0,0.5)",
+        letterSpacing: 4,
+        borderTop: "1px solid rgba(0,0,0,0.2)", paddingTop: 12,
+      }}>
+        <span>{c.unternehmen.name.toUpperCase()}</span>
+        <span>· EDITORIAL ·</span>
+        <span>PAGE 01</span>
       </div>
     </AbsoluteFill>
   );

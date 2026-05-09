@@ -8,9 +8,8 @@
 <script src="/static/templates.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Oswald:wght@400;700&family=Anton&family=Bebas+Neue&family=Playfair+Display:wght@700&family=Cinzel:wght@600&family=Outfit:wght@600&family=Cormorant+Garamond:wght@600&family=Archivo+Black&family=Audiowide&family=Manrope:wght@600&family=DM+Sans:wght@600&family=Lora:wght@600&family=Kanit:wght@700&family=Righteous&family=Montserrat:wght@600&family=Lato:wght@700&family=Caveat:wght@600&display=swap" rel="stylesheet">
-<style>
-  body { font-family: 'Inter', system-ui, sans-serif; }
-  .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+<style>body { font-family: 'Inter', system-ui, sans-serif; }
+ .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
   .gradient-text { background: linear-gradient(135deg,#ff6b6b 0%,#ffa500 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .scroll-thin::-webkit-scrollbar { width: 8px; }
   .scroll-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
@@ -24,21 +23,21 @@
 
 <!-- Header -->
 <header class="sticky top-0 z-30 bg-[#0a0a0f]/80 backdrop-blur-md border-b border-white/5">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-red-600 flex items-center justify-center text-xl">▶</div>
-      <div>
-        <div class="text-lg font-bold leading-none">Werbevideo Generator</div>
-        <div class="text-xs text-white/50 leading-none mt-1">KI-gestützte Werbespots aus deinen Postern</div>
-      </div>
-    </div>
-    <div class="flex items-center gap-3">
-      <button @click="view='library'" :class="view==='library' ? 'bg-white/10' : 'hover:bg-white/5'" class="px-4 py-2 rounded-lg text-sm font-medium transition">📚 Bibliothek</button>
-      <button @click="view='website'; resetWebsite()" :class="view==='website' ? 'bg-cyan-500/30 text-cyan-200' : 'bg-cyan-500/15 text-cyan-300 hover:bg-cyan-500/25'" class="px-4 py-2 rounded-lg text-sm font-medium transition">🌐 Aus Website</button>
-      <button @click="showTemplateModal = true" class="px-4 py-2 rounded-lg text-sm font-medium bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 transition">⚡ Template</button>
-      <button @click="view='upload'; resetWizard()" :class="view==='upload' ? 'bg-amber-500 text-black' : 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30'" class="px-4 py-2 rounded-lg text-sm font-bold transition">+ Neues Video</button>
-    </div>
-  </div>
+ <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+ <div class="flex items-center gap-3">
+ <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-red-600 flex items-center justify-center text-xl"></div>
+ <div>
+ <div class="text-lg font-bold leading-none">Werbevideo Generator</div>
+ <div class="text-xs text-white/50 leading-none mt-1">KI-gestützte Werbespots aus deinen Postern</div>
+ </div>
+ </div>
+ <div class="flex items-center gap-3">
+ <button @click="view='library'" :class="view==='library' ? 'bg-white/10' : 'hover:bg-white/5'" class="px-4 py-2 rounded-lg text-sm font-medium transition">Bibliothek</button>
+ <button @click="view='website'; resetWebsite()" :class="view==='website' ? 'bg-cyan-500/30 text-cyan-200' : 'bg-cyan-500/15 text-cyan-300 hover:bg-cyan-500/25'" class="px-4 py-2 rounded-lg text-sm font-medium transition">Aus Website</button>
+ <button @click="showTemplateModal = true" class="px-4 py-2 rounded-lg text-sm font-medium bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 transition">Template</button>
+ <button @click="view='upload'; resetWizard()" :class="view==='upload' ? 'bg-amber-500 text-black' : 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30'" class="px-4 py-2 rounded-lg text-sm font-bold transition">+ Neues Video</button>
+ </div>
+ </div>
 </header>
 
 <main class="max-w-7xl mx-auto px-6 py-10">
@@ -46,736 +45,717 @@
 <!-- ──────── LIBRARY VIEW ──────── -->
 <template x-if="view==='library'">
 <div>
-  <div class="mb-8">
-    <h1 class="text-4xl font-black gradient-text">Deine Werbevideos</h1>
-    <p class="text-white/50 mt-2" x-text="`${configs.length} Videos in deiner Bibliothek`"></p>
-  </div>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <template x-for="cfg in configs" :key="cfg.id">
-      <div class="glass rounded-2xl overflow-hidden hover:scale-[1.02] transition cursor-pointer group" @click="openVideo(cfg)">
-        <div class="aspect-video relative overflow-hidden" :style="`background:linear-gradient(135deg,${cfg.primary},${cfg.accent})`">
-          <template x-if="cfg.hero">
-            <img :src="`/posters/${cfg.hero}`" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition" />
-          </template>
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent"></div>
-          <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between">
-            <div>
-              <div class="text-xs uppercase tracking-widest font-bold" :style="`color:${cfg.accent}`">Variant <span x-text="cfg.variant.toUpperCase()"></span></div>
-              <div class="text-lg font-bold leading-tight" x-text="cfg.name"></div>
-            </div>
-            <template x-if="cfg.hasVideo">
-              <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-2xl">▶</div>
-            </template>
-          </div>
-        </div>
-        <div class="p-4 flex items-center justify-between">
-          <div class="text-sm text-white/60 italic" x-text="cfg.slogan"></div>
-          <div class="flex gap-2">
-            <button @click.stop="editConfig(cfg.id)" class="text-xs px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg">✏️ Bearbeiten</button>
-            <button @click.stop="deleteConfig(cfg.id)" class="text-xs px-3 py-1.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg">🗑</button>
-          </div>
-        </div>
-      </div>
-    </template>
-    <template x-if="configs.length === 0">
-      <div class="col-span-3 glass rounded-2xl p-16 text-center">
-        <div class="text-6xl mb-4">🎬</div>
-        <div class="text-xl font-bold mb-2">Noch keine Videos</div>
-        <div class="text-white/50 mb-6">Lade dein erstes Poster hoch, um zu starten.</div>
-        <button @click="view='upload'" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-lg">+ Video erstellen</button>
-      </div>
-    </template>
-  </div>
+ <div class="mb-8">
+ <h1 class="text-4xl font-black gradient-text">Deine Werbevideos</h1>
+ <p class="text-white/50 mt-2" x-text="`${configs.length} Videos in deiner Bibliothek`"></p>
+ </div>
+ <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+ <template x-for="cfg in configs" :key="cfg.id">
+ <div class="glass rounded-2xl overflow-hidden hover:scale-[1.02] transition cursor-pointer group" @click="openVideo(cfg)">
+ <div class="aspect-video relative overflow-hidden" :style="`background:linear-gradient(135deg,${cfg.primary},${cfg.accent})`">
+ <template x-if="cfg.hero">
+ <img :src="`/posters/${cfg.hero}`" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition" />
+ </template>
+ <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent"></div>
+ <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+ <div>
+ <div class="text-xs uppercase tracking-widest font-bold" :style="`color:${cfg.accent}`">Variant <span x-text="cfg.variant.toUpperCase()"></span></div>
+ <div class="text-lg font-bold leading-tight" x-text="cfg.name"></div>
+ </div>
+ <template x-if="cfg.hasVideo">
+ <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-2xl"></div>
+ </template>
+ </div>
+ </div>
+ <div class="p-4 flex items-center justify-between">
+ <div class="text-sm text-white/60 italic" x-text="cfg.slogan"></div>
+ <div class="flex gap-2">
+ <button @click.stop="editConfig(cfg.id)" class="text-xs px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg">Bearbeiten</button>
+ <button @click.stop="deleteConfig(cfg.id)" class="text-xs px-3 py-1.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg">Löschen</button>
+ </div>
+ </div>
+ </div>
+ </template>
+ <template x-if="configs.length === 0">
+ <div class="col-span-3 glass rounded-2xl p-16 text-center">
+ <div class="text-6xl mb-4"></div>
+ <div class="text-xl font-bold mb-2">Noch keine Videos</div>
+ <div class="text-white/50 mb-6">Lade dein erstes Poster hoch, um zu starten.</div>
+ <button @click="view='upload'" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-lg">+ Video erstellen</button>
+ </div>
+ </template>
+ </div>
 </div>
 </template>
 
 <!-- ──────── POSTER CREATOR VIEW (OpenAI) ──────── -->
 <template x-if="view==='poster'">
 <div>
-  <div class="text-center mb-8">
-    <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 text-xs font-bold uppercase tracking-widest mb-4">
-      🎨 Powered by OpenAI · gpt-image-1
-    </div>
-    <h1 class="text-5xl font-black gradient-text mb-3">Werbeposter generieren</h1>
-    <p class="text-white/60 text-lg max-w-2xl mx-auto">
-      Fülle die Felder aus, lade dein Logo hoch — KI erstellt ein professionelles Werbeposter in ~30 Sekunden.
-    </p>
-  </div>
+ <div class="text-center mb-8">
+ <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 text-xs font-bold uppercase tracking-widest mb-4">Powered by OpenAI · gpt-image-1
+ </div>
+ <h1 class="text-5xl font-black gradient-text mb-3">Werbeposter generieren</h1>
+ <p class="text-white/60 text-lg max-w-2xl mx-auto">Fülle die Felder aus, lade dein Logo hoch · KI erstellt ein professionelles Werbeposter in ~30 Sekunden.
+ </p>
+ </div>
 
-  <template x-if="!posterResult">
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Form (2/3) -->
-    <div class="lg:col-span-2 space-y-5">
-      <!-- Pflichtfelder -->
-      <div class="glass rounded-2xl p-6">
-        <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Pflichtfelder</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="text-xs text-white/50 block mb-1">Unternehmen *</label>
-            <input type="text" x-model="poster.unternehmen" placeholder="z.B. Müller Bau GmbH"
+ <template x-if="!posterResult">
+ <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+ <!-- Form (2/3) -->
+ <div class="lg:col-span-2 space-y-5">
+ <!-- Pflichtfelder -->
+ <div class="glass rounded-2xl p-6">
+ <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Pflichtfelder</h3>
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Unternehmen *</label>
+ <input type="text" x-model="poster.unternehmen" placeholder="z.B. Müller Bau GmbH"
                    class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500" />
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-1">Branche *</label>
-            <input type="text" x-model="poster.branche" placeholder="z.B. Dachdeckerei, Zahnarztpraxis, Restaurant"
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Branche *</label>
+ <input type="text" x-model="poster.branche" placeholder="z.B. Dachdeckerei, Zahnarztpraxis, Restaurant"
                    class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500" />
-          </div>
-        </div>
-      </div>
+ </div>
+ </div>
+ </div>
 
-      <!-- Inhalte -->
-      <div class="glass rounded-2xl p-6">
-        <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Werbe-Inhalte</h3>
-        <div class="space-y-4">
-          <div>
-            <label class="text-xs text-white/50 block mb-1">Slogan</label>
-            <input type="text" x-model="poster.slogan" placeholder="z.B. 'Stark wie ein Dach.'"
+ <!-- Inhalte -->
+ <div class="glass rounded-2xl p-6">
+ <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Werbe-Inhalte</h3>
+ <div class="space-y-4">
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Slogan</label>
+ <input type="text" x-model="poster.slogan" placeholder="z.B. 'Stark wie ein Dach.'"
                    class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-1">Leistungen (kommagetrennt)</label>
-            <textarea x-model="poster.leistungen" rows="2" placeholder="z.B. Sanierung, Neubau, Wartung, Beratung"
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Leistungen (kommagetrennt)</label>
+ <textarea x-model="poster.leistungen" rows="2" placeholder="z.B. Sanierung, Neubau, Wartung, Beratung"
                       class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3"></textarea>
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-1">Call-to-Action</label>
-            <input type="text" x-model="poster.cta" placeholder="z.B. 'Jetzt Termin sichern'"
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Call-to-Action</label>
+ <input type="text" x-model="poster.cta" placeholder="z.B. 'Jetzt Termin sichern'"
                    class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
-          </div>
-        </div>
-      </div>
+ </div>
+ </div>
+ </div>
 
-      <!-- Kontakt -->
-      <div class="glass rounded-2xl p-6">
-        <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Kontakt</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="text-xs text-white/50 block mb-1">Adresse</label>
-            <input type="text" x-model="poster.adresse" placeholder="Straße 1, 12345 Stadt"
+ <!-- Kontakt -->
+ <div class="glass rounded-2xl p-6">
+ <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Kontakt</h3>
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Adresse</label>
+ <input type="text" x-model="poster.adresse" placeholder="Straße 1, 12345 Stadt"
                    class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-1">Telefon</label>
-            <input type="text" x-model="poster.telefon" placeholder="+49 ..."
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Telefon</label>
+ <input type="text" x-model="poster.telefon" placeholder="+49 ..."
                    class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-1">E-Mail</label>
-            <input type="text" x-model="poster.email" placeholder="info@..."
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-1">E-Mail</label>
+ <input type="text" x-model="poster.email" placeholder="info@..."
                    class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-1">Website</label>
-            <input type="text" x-model="poster.website" placeholder="www..."
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Website</label>
+ <input type="text" x-model="poster.website" placeholder="www..."
                    class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
-          </div>
-        </div>
-      </div>
+ </div>
+ </div>
+ </div>
 
-      <!-- Format -->
-      <div class="glass rounded-2xl p-6">
-        <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Format</h3>
-        <div class="grid grid-cols-2 gap-3">
-          <div @click="poster.format='horizontal'"
+ <!-- Format -->
+ <div class="glass rounded-2xl p-6">
+ <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Format</h3>
+ <div class="grid grid-cols-2 gap-3">
+ <div @click="poster.format='horizontal'"
                :class="poster.format==='horizontal' ? 'border-cyan-400 bg-cyan-500/10' : 'border-white/10 hover:border-white/30'"
                class="cursor-pointer rounded-lg border-2 p-4 transition text-center">
-            <div class="text-3xl mb-1">▭</div>
-            <div class="font-bold">Horizontal</div>
-            <div class="text-xs text-white/50">1536 × 1024 · 16:9</div>
-          </div>
-          <div @click="poster.format='vertikal'"
+ <div class="text-3xl mb-1"></div>
+ <div class="font-bold">Horizontal</div>
+ <div class="text-xs text-white/50">1536 1024 · 16:9</div>
+ </div>
+ <div @click="poster.format='vertikal'"
                :class="poster.format==='vertikal' ? 'border-cyan-400 bg-cyan-500/10' : 'border-white/10 hover:border-white/30'"
                class="cursor-pointer rounded-lg border-2 p-4 transition text-center">
-            <div class="text-3xl mb-1">▯</div>
-            <div class="font-bold">Vertikal</div>
-            <div class="text-xs text-white/50">1024 × 1536 · 9:16</div>
-          </div>
-        </div>
-      </div>
-    </div>
+ <div class="text-3xl mb-1"></div>
+ <div class="font-bold">Vertikal</div>
+ <div class="text-xs text-white/50">1024 1536 · 9:16</div>
+ </div>
+ </div>
+ </div>
+ </div>
 
-    <!-- Sidebar (1/3): Logo Upload + Generate -->
-    <div class="space-y-4">
-      <!-- Logo upload -->
-      <div class="glass rounded-2xl p-6">
-        <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Logo</h3>
-        <div @dragover.prevent="logoDragActive=true"
+ <!-- Sidebar (1/3): Logo Upload + Generate -->
+ <div class="space-y-4">
+ <!-- Logo upload -->
+ <div class="glass rounded-2xl p-6">
+ <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Logo</h3>
+ <div @dragover.prevent="logoDragActive=true"
              @dragleave.prevent="logoDragActive=false"
              @drop.prevent="logoDragActive=false; handleLogoFile($event.dataTransfer.files[0])"
              @click="$refs.logoInput.click()"
              :class="logoDragActive ? 'border-cyan-500 bg-cyan-500/10' : 'border-white/15'"
              class="cursor-pointer rounded-xl border-2 border-dashed p-6 text-center hover:border-cyan-500/50 hover:bg-white/5 transition">
-          <input type="file" x-ref="logoInput" class="hidden" accept="image/*" @change="handleLogoFile($event.target.files[0])" />
-          <template x-if="poster.logoPreview">
-            <div>
-              <img :src="poster.logoPreview" class="max-h-32 mx-auto mb-3 rounded" />
-              <div class="text-xs text-cyan-400" x-text="poster.logoName"></div>
-              <button @click.stop="poster.logoFile=null; poster.logoPreview=null" class="text-xs text-red-400 hover:text-red-300 mt-2">✕ Entfernen</button>
-            </div>
-          </template>
-          <template x-if="!poster.logoPreview">
-            <div>
-              <div class="text-4xl mb-2">📤</div>
-              <div class="font-bold mb-1">Logo hochladen</div>
-              <div class="text-xs text-white/50">PNG mit Transparenz empfohlen</div>
-            </div>
-          </template>
-        </div>
-        <div class="text-xs text-white/40 mt-3 italic">
-          Das Logo wird oben links auf das generierte Poster komponiert.
-        </div>
-      </div>
+ <input type="file" x-ref="logoInput" class="hidden" accept="image/*" @change="handleLogoFile($event.target.files[0])" />
+ <template x-if="poster.logoPreview">
+ <div>
+ <img :src="poster.logoPreview" class="max-h-32 mx-auto mb-3 rounded" />
+ <div class="text-xs text-cyan-400" x-text="poster.logoName"></div>
+ <button @click.stop="poster.logoFile=null; poster.logoPreview=null" class="text-xs text-red-400 hover:text-red-300 mt-2">Entfernen</button>
+ </div>
+ </template>
+ <template x-if="!poster.logoPreview">
+ <div>
+ <div class="text-4xl mb-2"></div>
+ <div class="font-bold mb-1">Logo hochladen</div>
+ <div class="text-xs text-white/50">PNG mit Transparenz empfohlen</div>
+ </div>
+ </template>
+ </div>
+ <div class="text-xs text-white/40 mt-3 italic">Das Logo wird oben links auf das generierte Poster komponiert.
+ </div>
+ </div>
 
-      <!-- Generate Button -->
-      <div class="glass rounded-2xl p-4">
-        <button @click="generatePoster()"
+ <!-- Generate Button -->
+ <div class="glass rounded-2xl p-4">
+ <button @click="generatePoster()"
                 :disabled="!poster.unternehmen || !poster.branche"
                 :class="(!poster.unternehmen || !poster.branche) ? 'opacity-50 cursor-not-allowed' : ''"
-                class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black py-4 rounded-xl text-lg shadow-lg shadow-cyan-500/30 transition">
-          🎨 Poster generieren<br><span class="text-xs opacity-70 font-semibold">~30 Sek · OpenAI gpt-image-1</span>
-        </button>
-        <div class="text-xs text-white/40 mt-3 text-center">
-          ~0,04 € pro Generierung
+                class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black py-4 rounded-xl text-lg shadow-lg shadow-cyan-500/30 transition">Poster generieren<br><span class="text-xs opacity-70 font-semibold">~30 Sek · OpenAI gpt-image-1</span>
+ </button>
+ <div class="text-xs text-white/40 mt-3 text-center">
+ ~0,04 € pro Generierung
         </div>
-      </div>
-    </div>
-  </div>
-  </template>
+ </div>
+ </div>
+ </div>
+ </template>
 
-  <!-- LOADING STATE -->
-  <template x-if="posterLoading">
-  <div class="text-center py-20">
-    <div class="w-32 h-32 mx-auto mb-8 relative">
-      <div class="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping"></div>
-      <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-6xl">🎨</div>
-    </div>
-    <h2 class="text-3xl font-black mb-4">KI erstellt dein Poster…</h2>
-    <p class="text-white/60 text-lg">Das dauert ~30 Sekunden. Bitte Seite offen lassen.</p>
-  </div>
-  </template>
+ <!-- LOADING STATE -->
+ <template x-if="posterLoading">
+ <div class="text-center py-20">
+ <div class="w-32 h-32 mx-auto mb-8 relative">
+ <div class="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping"></div>
+ <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-6xl"></div>
+ </div>
+ <h2 class="text-3xl font-black mb-4">KI erstellt dein Poster…</h2>
+ <p class="text-white/60 text-lg">Das dauert ~30 Sekunden. Bitte Seite offen lassen.</p>
+ </div>
+ </template>
 
-  <!-- RESULT -->
-  <template x-if="posterResult && !posterLoading">
-  <div>
-    <div class="text-center mb-6">
-      <div class="text-6xl mb-3">✨</div>
-      <h2 class="text-4xl font-black gradient-text mb-2">Poster fertig!</h2>
-      <p class="text-white/60">Verwende es direkt für ein Werbevideo oder lade es herunter.</p>
-    </div>
-    <div class="glass rounded-2xl p-2 mb-6 max-w-3xl mx-auto">
-      <img :src="posterResult.posterUrl + '?t=' + Date.now()" class="w-full rounded-xl" />
-    </div>
-    <div class="flex flex-wrap justify-center gap-4">
-      <button @click="useAsVideoSource()"
-              class="bg-gradient-to-r from-amber-500 to-red-600 text-black font-black px-8 py-4 rounded-xl shadow-lg">
-        🎬 Daraus Video erstellen
-      </button>
-      <a :href="posterResult.posterUrl" :download="`${posterResult.id}-poster.png`"
-         class="bg-white/10 hover:bg-white/15 px-8 py-4 rounded-xl font-bold">
-        ⬇ Poster herunterladen
-      </a>
-      <button @click="resetPoster()" class="bg-white/5 hover:bg-white/10 px-8 py-4 rounded-xl font-bold">
-        ↺ Erneut generieren
-      </button>
-    </div>
-  </div>
-  </template>
+ <!-- RESULT -->
+ <template x-if="posterResult && !posterLoading">
+ <div>
+ <div class="text-center mb-6">
+ <div class="text-6xl mb-3"></div>
+ <h2 class="text-4xl font-black gradient-text mb-2">Poster fertig!</h2>
+ <p class="text-white/60">Verwende es direkt für ein Werbevideo oder lade es herunter.</p>
+ </div>
+ <div class="glass rounded-2xl p-2 mb-6 max-w-3xl mx-auto">
+ <img :src="posterResult.posterUrl + '?t=' + Date.now()" class="w-full rounded-xl" />
+ </div>
+ <div class="flex flex-wrap justify-center gap-4">
+ <button @click="useAsVideoSource()"
+              class="bg-gradient-to-r from-amber-500 to-red-600 text-black font-black px-8 py-4 rounded-xl shadow-lg">Daraus Video erstellen
+ </button>
+ <a :href="posterResult.posterUrl" :download="`${posterResult.id}-poster.png`"
+         class="bg-white/10 hover:bg-white/15 px-8 py-4 rounded-xl font-bold">Poster herunterladen
+ </a>
+ <button @click="resetPoster()" class="bg-white/5 hover:bg-white/10 px-8 py-4 rounded-xl font-bold">Erneut generieren
+ </button>
+ </div>
+ </div>
+ </template>
 </div>
 </template>
 
-<!-- ──────── WEBSITE VIEW (URL + Logo → Claude analysiert) ──────── -->
+<!-- ──────── WEBSITE VIEW (URL + Logo, KI analysiert) ──────── -->
 <template x-if="view==='website'">
 <div class="max-w-3xl mx-auto">
-  <div class="text-center mb-8">
-    <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 text-xs font-bold uppercase tracking-widest mb-4">
-      🌐 Powered by Claude — analysiert Webseiten automatisch
-    </div>
-    <h1 class="text-5xl font-black gradient-text mb-3">Video aus Website</h1>
-    <p class="text-white/60 text-lg max-w-xl mx-auto">
-      Gib eine Website-URL ein und lade dein Logo hoch — die KI extrahiert automatisch alle Inhalte und erstellt einen Werbespot.
-    </p>
-  </div>
+ <div class="text-center mb-8">
+ <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 text-xs font-bold uppercase tracking-widest mb-4">KI analysiert Webseiten automatisch
+ </div>
+ <h1 class="text-5xl font-black gradient-text mb-3">Video aus Website</h1>
+ <p class="text-white/60 text-lg max-w-xl mx-auto">Gib eine Website-URL ein und lade dein Logo hoch · die KI extrahiert automatisch alle Inhalte und erstellt einen Werbespot.
+ </p>
+ </div>
 
-  <template x-if="!websiteLoading">
-  <div class="space-y-5">
-    <!-- URL -->
-    <div class="glass rounded-2xl p-6">
-      <label class="text-xs uppercase tracking-widest text-cyan-400 font-bold block mb-3">Website-URL *</label>
-      <div class="flex items-center gap-3">
-        <span class="text-2xl">🌐</span>
-        <input type="text" x-model="website.url"
+ <template x-if="!websiteLoading">
+ <div class="space-y-5">
+ <!-- URL -->
+ <div class="glass rounded-2xl p-6">
+ <label class="text-xs uppercase tracking-widest text-cyan-400 font-bold block mb-3">Website-URL *</label>
+ <div class="flex items-center gap-3">
+ <span class="text-2xl"></span>
+ <input type="text" x-model="website.url"
                placeholder="z.B. https://www.beispielfirma.de"
                @keydown.enter="analyzeWebsite()"
                class="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-4 focus:outline-none focus:border-cyan-500 text-lg" />
-      </div>
-      <div class="text-xs text-white/40 mt-3">
-        Die Website muss öffentlich erreichbar sein. Claude liest Texte und Inhalte aus.
-      </div>
-    </div>
+ </div>
+ <div class="text-xs text-white/40 mt-3">Die Website muss öffentlich erreichbar sein. Die KI liest Texte und Inhalte aus.
+ </div>
+ </div>
 
-    <!-- Logo Upload (optional — wird sonst auto-extrahiert) -->
-    <div class="glass rounded-2xl p-6">
-      <div class="flex items-center justify-between mb-3">
-        <label class="text-xs uppercase tracking-widest text-cyan-400 font-bold">Logo</label>
-        <span class="text-xs text-white/40 italic">wird sonst von Webseite automatisch geladen</span>
-      </div>
-      <div @dragover.prevent="websiteLogoDrag=true"
+ <!-- Logo Upload (optional · wird sonst auto-extrahiert) -->
+ <div class="glass rounded-2xl p-6">
+ <div class="flex items-center justify-between mb-3">
+ <label class="text-xs uppercase tracking-widest text-cyan-400 font-bold">Logo</label>
+ <span class="text-xs text-white/40 italic">wird sonst von Webseite automatisch geladen</span>
+ </div>
+ <div @dragover.prevent="websiteLogoDrag=true"
            @dragleave.prevent="websiteLogoDrag=false"
            @drop.prevent="websiteLogoDrag=false; handleWebsiteLogo($event.dataTransfer.files[0])"
            @click="$refs.websiteLogoInput.click()"
            :class="websiteLogoDrag ? 'border-cyan-500 bg-cyan-500/10' : 'border-white/15'"
            class="cursor-pointer rounded-xl border-2 border-dashed p-6 text-center hover:border-cyan-500/50 hover:bg-white/5 transition">
-        <input type="file" x-ref="websiteLogoInput" class="hidden" accept="image/*" @change="handleWebsiteLogo($event.target.files[0])" />
-        <template x-if="website.logoPreview">
-          <div>
-            <img :src="website.logoPreview" class="max-h-32 mx-auto mb-3 rounded" />
-            <div class="text-xs text-cyan-400" x-text="website.logoName"></div>
-            <button @click.stop="website.logoFile=null; website.logoPreview=null" class="text-xs text-red-400 hover:text-red-300 mt-2">✕ Entfernen</button>
-          </div>
-        </template>
-        <template x-if="!website.logoPreview">
-          <div>
-            <div class="text-4xl mb-2">🤖</div>
-            <div class="font-bold mb-1">Logo (optional manuell)</div>
-            <div class="text-xs text-white/50">Falls leer: System holt das Logo automatisch von der Webseite</div>
-          </div>
-        </template>
-      </div>
-    </div>
+ <input type="file" x-ref="websiteLogoInput" class="hidden" accept="image/*" @change="handleWebsiteLogo($event.target.files[0])" />
+ <template x-if="website.logoPreview">
+ <div>
+ <img :src="website.logoPreview" class="max-h-32 mx-auto mb-3 rounded" />
+ <div class="text-xs text-cyan-400" x-text="website.logoName"></div>
+ <button @click.stop="website.logoFile=null; website.logoPreview=null" class="text-xs text-red-400 hover:text-red-300 mt-2">Entfernen</button>
+ </div>
+ </template>
+ <template x-if="!website.logoPreview">
+ <div>
+ <div class="text-4xl mb-2"></div>
+ <div class="font-bold mb-1">Logo (optional manuell)</div>
+ <div class="text-xs text-white/50">Falls leer: System holt das Logo automatisch von der Webseite</div>
+ </div>
+ </template>
+ </div>
+ </div>
 
-    <!-- Analyse-Button -->
-    <button @click="analyzeWebsite()"
+ <!-- Analyse-Button -->
+ <button @click="analyzeWebsite()"
             :disabled="!website.url"
             :class="!website.url ? 'opacity-50 cursor-not-allowed' : ''"
-            class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black py-5 rounded-xl text-lg shadow-lg shadow-cyan-500/30 transition">
-      🔍 Webseite analysieren<br><span class="text-xs opacity-70 font-semibold">~10 Sekunden · Claude liest Inhalte</span>
-    </button>
+            class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black py-5 rounded-xl text-lg shadow-lg shadow-cyan-500/30 transition">Webseite analysieren<br><span class="text-xs opacity-70 font-semibold">~10 Sekunden · KI liest Inhalte</span>
+ </button>
 
-    <div class="text-xs text-white/40 text-center italic">
-      Claude extrahiert: Firmenname, Slogan, Vorteile, Adresse, Telefon, E-Mail, Markenfarben.<br>
-      Anschließend kannst du alles im Editor anpassen.
-    </div>
-  </div>
-  </template>
+ <div class="text-xs text-white/40 text-center italic">Die KI extrahiert: Firmenname, Slogan, Vorteile, Adresse, Telefon, E-Mail, Markenfarben.<br>Anschließend kannst du alles im Editor anpassen.
+ </div>
+ </div>
+ </template>
 
-  <!-- LOADING -->
-  <template x-if="websiteLoading">
-  <div class="text-center py-20">
-    <div class="w-32 h-32 mx-auto mb-8 relative">
-      <div class="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping"></div>
-      <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-6xl">🔍</div>
-    </div>
-    <h2 class="text-3xl font-black mb-4">Claude analysiert die Website…</h2>
-    <p class="text-white/60 text-lg">Webseite wird geladen, Inhalte werden extrahiert.<br>Dauert ungefähr 10 Sekunden.</p>
-  </div>
-  </template>
+ <!-- LOADING -->
+ <template x-if="websiteLoading">
+ <div class="text-center py-20">
+ <div class="w-32 h-32 mx-auto mb-8 relative">
+ <div class="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping"></div>
+ <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-6xl"></div>
+ </div>
+ <h2 class="text-3xl font-black mb-4">KI analysiert die Website…</h2>
+ <p class="text-white/60 text-lg">Webseite wird geladen, Inhalte werden extrahiert.<br>Dauert ungefähr 10 Sekunden.</p>
+ </div>
+ </template>
 </div>
 </template>
 
 <!-- ──────── UPLOAD VIEW ──────── -->
 <template x-if="view==='upload' && step==='dropzone'">
 <div class="max-w-3xl mx-auto">
-  <div class="text-center mb-10">
-    <h1 class="text-5xl font-black gradient-text mb-4">Poster hochladen</h1>
-    <p class="text-white/60 text-lg">Lade ein Werbeposter hoch — die KI extrahiert automatisch alle Inhalte.</p>
-  </div>
+ <div class="text-center mb-10">
+ <h1 class="text-5xl font-black gradient-text mb-4">Poster hochladen</h1>
+ <p class="text-white/60 text-lg">Lade ein Werbeposter hoch · die KI extrahiert automatisch alle Inhalte.</p>
+ </div>
 
-  <div
+ <div
     @dragover.prevent="dragActive=true"
     @dragleave.prevent="dragActive=false"
     @drop.prevent="dragActive=false; handleFile($event.dataTransfer.files[0])"
     @click="$refs.fileInput.click()"
     :class="dragActive ? 'dropzone-active' : ''"
     class="glass rounded-2xl border-2 border-dashed border-white/20 hover:border-amber-500/50 hover:bg-white/5 transition cursor-pointer p-16 text-center">
-    <input type="file" x-ref="fileInput" class="hidden" accept="image/*" @change="handleFile($event.target.files[0])" />
-    <div class="text-7xl mb-6">📤</div>
-    <div class="text-2xl font-bold mb-3">Poster hierher ziehen</div>
-    <div class="text-white/50 mb-6">oder klicken zum Auswählen</div>
-    <div class="inline-flex items-center gap-2 text-xs text-white/40 bg-white/5 px-4 py-2 rounded-full">
-      📷 PNG, JPG, WebP · max 30 MB
-    </div>
-  </div>
+ <input type="file" x-ref="fileInput" class="hidden" accept="image/*" @change="handleFile($event.target.files[0])" />
+ <div class="text-7xl mb-6"></div>
+ <div class="text-2xl font-bold mb-3">Poster hierher ziehen</div>
+ <div class="text-white/50 mb-6">oder klicken zum Auswählen</div>
+ <div class="inline-flex items-center gap-2 text-xs text-white/40 bg-white/5 px-4 py-2 rounded-full">PNG, JPG, WebP · max 30 MB
+ </div>
+ </div>
 </div>
 </template>
 
 <!-- ──────── EXTRACTING ──────── -->
 <template x-if="view==='upload' && step==='extracting'">
 <div class="max-w-2xl mx-auto text-center py-20">
-  <div class="w-32 h-32 mx-auto mb-8 relative">
-    <div class="absolute inset-0 rounded-full bg-amber-500/20 animate-ping"></div>
-    <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-amber-500 to-red-600 flex items-center justify-center text-6xl">🤖</div>
-  </div>
-  <h2 class="text-3xl font-black mb-4">KI analysiert dein Poster…</h2>
-  <p class="text-white/60 text-lg">Das dauert ungefähr 10 Sekunden. Claude liest Texte, Farben und Layout aus.</p>
+ <div class="w-32 h-32 mx-auto mb-8 relative">
+ <div class="absolute inset-0 rounded-full bg-amber-500/20 animate-ping"></div>
+ <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-amber-500 to-red-600 flex items-center justify-center text-6xl"></div>
+ </div>
+ <h2 class="text-3xl font-black mb-4">KI analysiert dein Poster…</h2>
+ <p class="text-white/60 text-lg">Das dauert ungefähr 10 Sekunden. Die KI liest Texte, Farben und Layout aus.</p>
 </div>
 </template>
 
 <!-- ──────── EDIT CONFIG ──────── -->
 <template x-if="view==='upload' && step==='edit' && config">
 <div>
-  <div class="flex items-center justify-between mb-8">
-    <div>
-      <h1 class="text-4xl font-black gradient-text">Daten prüfen & anpassen</h1>
-      <p class="text-white/50 mt-2">Korrigiere was die KI falsch erkannt hat.</p>
-    </div>
-    <div class="flex items-center gap-3">
-      <button @click="templateApplyMode = true; showTemplateModal = true"
-              class="text-sm bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 px-4 py-2 rounded-lg font-medium">
-        ⚡ Template anwenden
-      </button>
-      <button @click="step='dropzone'" class="text-white/50 hover:text-white text-sm">← Zurück</button>
-    </div>
-  </div>
+ <div class="flex items-center justify-between mb-8">
+ <div>
+ <h1 class="text-4xl font-black gradient-text">Daten prüfen & anpassen</h1>
+ <p class="text-white/50 mt-2">Korrigiere was die KI falsch erkannt hat.</p>
+ </div>
+ <div class="flex items-center gap-3">
+ <button @click="templateApplyMode = true; showTemplateModal = true"
+              class="text-sm bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 px-4 py-2 rounded-lg font-medium">Template anwenden
+ </button>
+ <button @click="step='dropzone'" class="text-white/50 hover:text-white text-sm">Zurück</button>
+ </div>
+ </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Form -->
-    <div class="lg:col-span-2 space-y-6">
-      <!-- Firma -->
-      <div class="glass rounded-2xl p-6">
-        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Unternehmen</h3>
-        <div class="space-y-4">
-          <div>
-            <label class="text-xs text-white/50 block mb-1">Firmenname</label>
-            <input type="text" x-model="config.unternehmen.name" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500" />
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-1">Slogan</label>
-            <input type="text" x-model="config.unternehmen.slogan" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500" />
-          </div>
-        </div>
-      </div>
+ <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+ <!-- Form -->
+ <div class="lg:col-span-2 space-y-6">
+ <!-- Firma -->
+ <div class="glass rounded-2xl p-6">
+ <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Unternehmen</h3>
+ <div class="space-y-4">
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Firmenname</label>
+ <input type="text" x-model="config.unternehmen.name" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500" />
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Slogan</label>
+ <input type="text" x-model="config.unternehmen.slogan" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500" />
+ </div>
+ </div>
+ </div>
 
-      <!-- Headline -->
-      <div class="glass rounded-2xl p-6">
-        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Hauptbotschaft</h3>
-        <div class="space-y-4">
-          <div>
-            <label class="text-xs text-white/50 block mb-1">Headline (2 Zeilen — Enter für Zeilenumbruch)</label>
-            <textarea x-model="config.headline" rows="2" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500 font-bold text-lg"></textarea>
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-1">Untertitel</label>
-            <input type="text" x-model="config.subheadline" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500" />
-          </div>
-        </div>
-      </div>
+ <!-- Headline -->
+ <div class="glass rounded-2xl p-6">
+ <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Hauptbotschaft</h3>
+ <div class="space-y-4">
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Headline (2 Zeilen · Enter für Zeilenumbruch)</label>
+ <textarea x-model="config.headline" rows="2" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500 font-bold text-lg"></textarea>
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Untertitel</label>
+ <input type="text" x-model="config.subheadline" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500" />
+ </div>
+ </div>
+ </div>
 
-      <!-- Vorteile -->
-      <div class="glass rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold">Vorteile (3)</h3>
-          <input type="text" x-model="config.vorteile_label" placeholder="Label z.B. 'Ihre Vorteile'"
+ <!-- Vorteile -->
+ <div class="glass rounded-2xl p-6">
+ <div class="flex items-center justify-between mb-4">
+ <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold">Vorteile (3)</h3>
+ <input type="text" x-model="config.vorteile_label" placeholder="Label z.B. 'Ihre Vorteile'"
                  class="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-sm w-48" />
-        </div>
-        <div class="space-y-3">
-          <template x-for="(v, i) in config.vorteile" :key="i">
-            <div class="bg-white/5 rounded-lg p-4 border border-white/5">
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-8 h-8 rounded-full bg-amber-500 text-black font-black flex items-center justify-center" x-text="i+1"></div>
-                <input type="text" x-model="v.titel" placeholder="Titel" class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 font-bold" />
-              </div>
-              <input type="text" x-model="v.beschreibung" placeholder="Beschreibung (optional)" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm" />
-            </div>
-          </template>
-        </div>
-      </div>
+ </div>
+ <div class="space-y-3">
+ <template x-for="(v, i) in config.vorteile" :key="i">
+ <div class="bg-white/5 rounded-lg p-4 border border-white/5">
+ <div class="flex items-center gap-3 mb-3">
+ <div class="w-8 h-8 rounded-full bg-amber-500 text-black font-black flex items-center justify-center" x-text="i+1"></div>
+ <input type="text" x-model="v.titel" placeholder="Titel" class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 font-bold" />
+ </div>
+ <input type="text" x-model="v.beschreibung" placeholder="Beschreibung (optional)" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm" />
+ </div>
+ </template>
+ </div>
+ </div>
 
-      <!-- CTA -->
-      <div class="glass rounded-2xl p-6">
-        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Call-to-Action</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="text-xs text-white/50 block mb-1">Kicker (klein, oben)</label>
-            <input type="text" x-model="config.cta.kicker" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-1">CTA-Text (groß)</label>
-            <input type="text" x-model="config.cta.text" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-bold" />
-          </div>
-        </div>
-      </div>
+ <!-- CTA -->
+ <div class="glass rounded-2xl p-6">
+ <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Call-to-Action</h3>
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Kicker (klein, oben)</label>
+ <input type="text" x-model="config.cta.kicker" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-1">CTA-Text (groß)</label>
+ <input type="text" x-model="config.cta.text" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-bold" />
+ </div>
+ </div>
+ </div>
 
-      <!-- Kontakt -->
-      <div class="glass rounded-2xl p-6">
-        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Kontakt</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="text-xs text-white/50 block mb-1">📍 Adresse Zeile 1</label>
-            <input type="text" x-model="config.kontakt.adresse_zeile1" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-1">📍 Adresse Zeile 2</label>
-            <input type="text" x-model="config.kontakt.adresse_zeile2" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-1">☎ Telefon</label>
-            <input type="text" x-model="config.kontakt.telefon_buero" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-bold text-lg" />
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-1">☎ 2. Telefon (optional)</label>
-            <input type="text" x-model="config.kontakt.telefon_lager" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-1">✉ E-Mail</label>
-            <input type="text" x-model="config.kontakt.email" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-1">🌐 Website</label>
-            <input type="text" x-model="config.kontakt.website" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
-          </div>
-        </div>
-      </div>
+ <!-- Kontakt -->
+ <div class="glass rounded-2xl p-6">
+ <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Kontakt</h3>
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Adresse Zeile 1</label>
+ <input type="text" x-model="config.kontakt.adresse_zeile1" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Adresse Zeile 2</label>
+ <input type="text" x-model="config.kontakt.adresse_zeile2" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Telefon</label>
+ <input type="text" x-model="config.kontakt.telefon_buero" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-bold text-lg" />
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-1">2. Telefon (optional)</label>
+ <input type="text" x-model="config.kontakt.telefon_lager" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-1">E-Mail</label>
+ <input type="text" x-model="config.kontakt.email" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-1">Website</label>
+ <input type="text" x-model="config.kontakt.website" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+ </div>
+ </div>
+ </div>
 
-      <!-- Farben -->
-      <div class="glass rounded-2xl p-6">
-        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Markenfarben</h3>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="text-xs text-white/50 block mb-2">Primär (Hintergrund)</label>
-            <div class="flex items-center gap-2">
-              <input type="color" x-model="config.design.primary" class="w-14 h-14 bg-transparent border-0 rounded-lg cursor-pointer" />
-              <input type="text" x-model="config.design.primary" class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-3 font-mono" />
-            </div>
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-2">Akzent (CTA, Highlights)</label>
-            <div class="flex items-center gap-2">
-              <input type="color" x-model="config.design.accent" class="w-14 h-14 bg-transparent border-0 rounded-lg cursor-pointer" />
-              <input type="text" x-model="config.design.accent" class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-3 font-mono" />
-            </div>
-          </div>
-        </div>
-      </div>
+ <!-- Farben -->
+ <div class="glass rounded-2xl p-6">
+ <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Markenfarben</h3>
+ <div class="grid grid-cols-2 gap-4">
+ <div>
+ <label class="text-xs text-white/50 block mb-2">Primär (Hintergrund)</label>
+ <div class="flex items-center gap-2">
+ <input type="color" x-model="config.design.primary" class="w-14 h-14 bg-transparent border-0 rounded-lg cursor-pointer" />
+ <input type="text" x-model="config.design.primary" class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-3 font-mono" />
+ </div>
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-2">Akzent (CTA, Highlights)</label>
+ <div class="flex items-center gap-2">
+ <input type="color" x-model="config.design.accent" class="w-14 h-14 bg-transparent border-0 rounded-lg cursor-pointer" />
+ <input type="text" x-model="config.design.accent" class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-3 font-mono" />
+ </div>
+ </div>
+ </div>
+ </div>
 
-      <!-- Logo + Hintergrundbilder (Drag & Drop) -->
-      <div class="glass rounded-2xl p-6">
-        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-2">Logo & Hintergrundbilder</h3>
-        <p class="text-xs text-white/50 mb-4">Logo schwebt riesig im Hintergrund. Bis zu 2 weitere Bilder wechseln sich dahinter mit Cross-Fade + Ken-Burns ab.</p>
+ <!-- Logo + Hintergrundbilder (Drag & Drop) -->
+ <div class="glass rounded-2xl p-6">
+ <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-2">Logo & Hintergrundbilder</h3>
+ <p class="text-xs text-white/50 mb-4">Logo schwebt riesig im Hintergrund. Bis zu 2 weitere Bilder wechseln sich dahinter mit Cross-Fade + Ken-Burns ab.</p>
 
-        <!-- Logo (Riesengroß im Hintergrund) -->
-        <div class="mb-4">
-          <label class="text-xs text-white/50 block mb-2">🏷 Logo <span class="text-white/30">(schwebt im Hintergrund)</span></label>
-          <div @click="$refs.logoEditInput.click()"
+ <!-- Logo (Riesengroß im Hintergrund) -->
+ <div class="mb-4">
+ <label class="text-xs text-white/50 block mb-2">Logo <span class="text-white/30">(schwebt im Hintergrund)</span></label>
+ <div @click="$refs.logoEditInput.click()"
                @dragover.prevent="logoDrag = true"
                @dragleave.prevent="logoDrag = false"
                @drop.prevent="logoDrag = false; uploadBackground('logo', $event.dataTransfer.files[0])"
                :class="logoDrag ? 'border-amber-400 bg-amber-500/10' : 'border-white/15 hover:border-amber-500/50 hover:bg-white/5'"
                class="cursor-pointer rounded-lg border-2 border-dashed transition h-32 flex items-center justify-center overflow-hidden relative">
-            <input type="file" x-ref="logoEditInput" class="hidden" accept="image/*"
+ <input type="file" x-ref="logoEditInput" class="hidden" accept="image/*"
                    @change="uploadBackground('logo', $event.target.files[0])" />
-            <template x-if="config.assets && config.assets.logo">
-              <img :src="`/posters/${config.assets.logo}?t=${assetReloadKey}`" class="max-h-28 max-w-full object-contain" />
-            </template>
-            <template x-if="!config.assets || !config.assets.logo">
-              <div class="text-center text-white/40">
-                <div class="text-3xl mb-1">🏷</div>
-                <div class="text-xs">Logo hochladen<br><span class="text-white/30">oder reinziehen</span></div>
-              </div>
-            </template>
-          </div>
-          <template x-if="config.assets && config.assets.logo">
-            <button @click="deleteBackground('logo')" class="text-xs text-red-400 hover:text-red-300 mt-2">✕ Logo entfernen</button>
-          </template>
-        </div>
+ <template x-if="config.assets && config.assets.logo">
+ <img :src="`/posters/${config.assets.logo}?t=${assetReloadKey}`" class="max-h-28 max-w-full object-contain" />
+ </template>
+ <template x-if="!config.assets || !config.assets.logo">
+ <div class="text-center text-white/40">
+ <div class="text-3xl mb-1"></div>
+ <div class="text-xs">Logo hochladen<br><span class="text-white/30">oder reinziehen</span></div>
+ </div>
+ </template>
+ </div>
+ <template x-if="config.assets && config.assets.logo">
+ <button @click="deleteBackground('logo')" class="text-xs text-red-400 hover:text-red-300 mt-2">Logo entfernen</button>
+ </template>
+ </div>
 
-        <div class="grid grid-cols-2 gap-4">
-          <!-- Hero 1 -->
-          <div>
-            <label class="text-xs text-white/50 block mb-2">Hintergrund 1</label>
-            <div @click="$refs.bg1Input.click()"
+ <div class="grid grid-cols-2 gap-4">
+ <!-- Hero 1 -->
+ <div>
+ <label class="text-xs text-white/50 block mb-2">Hintergrund 1</label>
+ <div @click="$refs.bg1Input.click()"
                  @dragover.prevent="bg1Drag = true"
                  @dragleave.prevent="bg1Drag = false"
                  @drop.prevent="bg1Drag = false; uploadBackground('hero', $event.dataTransfer.files[0])"
                  :class="bg1Drag ? 'border-amber-400 bg-amber-500/10' : 'border-white/15 hover:border-amber-500/50 hover:bg-white/5'"
                  class="cursor-pointer rounded-lg border-2 border-dashed transition aspect-video flex items-center justify-center overflow-hidden relative">
-              <input type="file" x-ref="bg1Input" class="hidden" accept="image/*"
+ <input type="file" x-ref="bg1Input" class="hidden" accept="image/*"
                      @change="uploadBackground('hero', $event.target.files[0])" />
-              <template x-if="config.assets && config.assets.hero">
-                <img :src="`/posters/${config.assets.hero}?t=${assetReloadKey}`" class="w-full h-full object-cover" />
-              </template>
-              <template x-if="!config.assets || !config.assets.hero">
-                <div class="text-center text-white/40">
-                  <div class="text-3xl mb-1">📤</div>
-                  <div class="text-xs">Bild hochladen<br><span class="text-white/30">oder reinziehen</span></div>
-                </div>
-              </template>
-            </div>
-            <template x-if="config.assets && config.assets.hero">
-              <button @click="deleteBackground('hero')" class="text-xs text-red-400 hover:text-red-300 mt-2">✕ Entfernen</button>
-            </template>
-          </div>
-          <!-- Hero 2 -->
-          <div>
-            <label class="text-xs text-white/50 block mb-2">Hintergrund 2 <span class="text-white/30">(optional)</span></label>
-            <div @click="$refs.bg2Input.click()"
+ <template x-if="config.assets && config.assets.hero">
+ <img :src="`/posters/${config.assets.hero}?t=${assetReloadKey}`" class="w-full h-full object-cover" />
+ </template>
+ <template x-if="!config.assets || !config.assets.hero">
+ <div class="text-center text-white/40">
+ <div class="text-3xl mb-1"></div>
+ <div class="text-xs">Bild hochladen<br><span class="text-white/30">oder reinziehen</span></div>
+ </div>
+ </template>
+ </div>
+ <template x-if="config.assets && config.assets.hero">
+ <button @click="deleteBackground('hero')" class="text-xs text-red-400 hover:text-red-300 mt-2">Entfernen</button>
+ </template>
+ </div>
+ <!-- Hero 2 -->
+ <div>
+ <label class="text-xs text-white/50 block mb-2">Hintergrund 2 <span class="text-white/30">(optional)</span></label>
+ <div @click="$refs.bg2Input.click()"
                  @dragover.prevent="bg2Drag = true"
                  @dragleave.prevent="bg2Drag = false"
                  @drop.prevent="bg2Drag = false; uploadBackground('hero2', $event.dataTransfer.files[0])"
                  :class="bg2Drag ? 'border-amber-400 bg-amber-500/10' : 'border-white/15 hover:border-amber-500/50 hover:bg-white/5'"
                  class="cursor-pointer rounded-lg border-2 border-dashed transition aspect-video flex items-center justify-center overflow-hidden relative">
-              <input type="file" x-ref="bg2Input" class="hidden" accept="image/*"
+ <input type="file" x-ref="bg2Input" class="hidden" accept="image/*"
                      @change="uploadBackground('hero2', $event.target.files[0])" />
-              <template x-if="config.assets && config.assets.hero2">
-                <img :src="`/posters/${config.assets.hero2}?t=${assetReloadKey}`" class="w-full h-full object-cover" />
-              </template>
-              <template x-if="!config.assets || !config.assets.hero2">
-                <div class="text-center text-white/40">
-                  <div class="text-3xl mb-1">📤</div>
-                  <div class="text-xs">2. Bild (optional)<br><span class="text-white/30">oder reinziehen</span></div>
-                </div>
-              </template>
-            </div>
-            <template x-if="config.assets && config.assets.hero2">
-              <button @click="deleteBackground('hero2')" class="text-xs text-red-400 hover:text-red-300 mt-2">✕ Entfernen</button>
-            </template>
-          </div>
-        </div>
-      </div>
+ <template x-if="config.assets && config.assets.hero2">
+ <img :src="`/posters/${config.assets.hero2}?t=${assetReloadKey}`" class="w-full h-full object-cover" />
+ </template>
+ <template x-if="!config.assets || !config.assets.hero2">
+ <div class="text-center text-white/40">
+ <div class="text-3xl mb-1"></div>
+ <div class="text-xs">2. Bild (optional)<br><span class="text-white/30">oder reinziehen</span></div>
+ </div>
+ </template>
+ </div>
+ <template x-if="config.assets && config.assets.hero2">
+ <button @click="deleteBackground('hero2')" class="text-xs text-red-400 hover:text-red-300 mt-2">Entfernen</button>
+ </template>
+ </div>
+ </div>
+ </div>
 
-      <!-- Schrift + Dauer -->
-      <div class="glass rounded-2xl p-6">
-        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Schrift & Dauer</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="text-xs text-white/50 block mb-2">Schriftstil <span class="text-white/30">(13 Stilrichtungen)</span></label>
-            <div class="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto scroll-thin pr-2">
-              <template x-for="fp in fontPresets" :key="fp.id">
-                <div @click="config.fontPreset = fp.id"
+ <!-- Schrift + Dauer -->
+ <div class="glass rounded-2xl p-6">
+ <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Schrift & Dauer</h3>
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+ <div>
+ <label class="text-xs text-white/50 block mb-2">Schriftstil <span class="text-white/30">(13 Stilrichtungen)</span></label>
+ <div class="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto scroll-thin pr-2">
+ <template x-for="fp in fontPresets" :key="fp.id">
+ <div @click="config.fontPreset = fp.id"
                      :class="(config.fontPreset || 'modern') === fp.id ? 'border-amber-400 bg-amber-500/10' : 'border-white/10 hover:border-white/30'"
                      class="cursor-pointer rounded-lg border-2 px-4 py-3 transition">
-                  <div class="flex items-center justify-between mb-1">
-                    <div class="font-bold text-sm" x-text="fp.name"></div>
-                    <div class="text-amber-400" x-show="(config.fontPreset || 'modern') === fp.id">✓</div>
-                  </div>
-                  <div class="text-2xl mb-1" :style="`font-family:${fp.preview};letter-spacing:0.5px`">
-                    Aa Bb 123
-                  </div>
-                  <div class="text-xs text-white/50" x-text="fp.desc"></div>
-                </div>
-              </template>
-            </div>
-          </div>
-          <div>
-            <label class="text-xs text-white/50 block mb-2">Dauer</label>
-            <div class="grid grid-cols-1 gap-2">
-              <template x-for="d in durations" :key="d.sec">
-                <div @click="config.duration = d.sec"
+ <div class="flex items-center justify-between mb-1">
+ <div class="font-bold text-sm" x-text="fp.name"></div>
+ <div class="text-amber-400" x-show="(config.fontPreset || 'modern') === fp.id"></div>
+ </div>
+ <div class="text-2xl mb-1" :style="`font-family:${fp.preview};letter-spacing:0.5px`">Aa Bb 123
+ </div>
+ <div class="text-xs text-white/50" x-text="fp.desc"></div>
+ </div>
+ </template>
+ </div>
+ </div>
+ <div>
+ <label class="text-xs text-white/50 block mb-2">Dauer</label>
+ <div class="grid grid-cols-1 gap-2">
+ <template x-for="d in durations" :key="d.sec">
+ <div @click="config.duration = d.sec"
                      :class="(config.duration || 15) === d.sec ? 'border-amber-400 bg-amber-500/10' : 'border-white/10 hover:border-white/30'"
                      class="cursor-pointer rounded-lg border-2 px-4 py-3 transition flex items-center justify-between">
-                  <div>
-                    <div class="font-bold text-lg" x-text="d.sec + ' Sekunden'"></div>
-                    <div class="text-xs text-white/50" x-text="d.desc"></div>
-                  </div>
-                  <div class="text-amber-400 text-lg" x-show="(config.duration || 15) === d.sec">✓</div>
-                </div>
-              </template>
-            </div>
-          </div>
-        </div>
-      </div>
+ <div>
+ <div class="font-bold text-lg" x-text="d.sec + ' Sekunden'"></div>
+ <div class="text-xs text-white/50" x-text="d.desc"></div>
+ </div>
+ <div class="text-amber-400 text-lg" x-show="(config.duration || 15) === d.sec"></div>
+ </div>
+ </template>
+ </div>
+ </div>
+ </div>
+ </div>
 
-      <!-- Variant Picker -->
-      <div class="glass rounded-2xl p-6">
-        <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Stil-Variante <span class="text-white/40 normal-case">(15 Animationen & Layouts)</span></h3>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-[28rem] overflow-y-auto scroll-thin pr-2">
-          <template x-for="v in variants" :key="v.id">
-            <div @click="config.variant=v.id"
+ <!-- Variant Picker -->
+ <div class="glass rounded-2xl p-6">
+ <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Stil-Variante <span class="text-white/40 normal-case">(20 Animationen & Layouts)</span></h3>
+ <div class="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-[28rem] overflow-y-auto scroll-thin pr-2">
+ <template x-for="v in variants" :key="v.id">
+ <div @click="config.variant=v.id"
                  :class="config.variant===v.id ? 'selected' : 'border-white/10 hover:border-white/30'"
                  class="variant-card cursor-pointer rounded-xl border-2 p-4 transition"
                  :style="`background:linear-gradient(135deg,${config.design.primary}33,${config.design.accent}22)`">
-              <div class="text-3xl font-black mb-2" :style="`color:${config.design.accent}`" x-text="v.id.toUpperCase()"></div>
-              <div class="text-sm font-bold mb-1" x-text="v.name"></div>
-              <div class="text-xs text-white/60" x-text="v.desc"></div>
-            </div>
-          </template>
-        </div>
-      </div>
-    </div>
+ <div class="text-3xl font-black mb-2" :style="`color:${config.design.accent}`" x-text="v.id.toUpperCase()"></div>
+ <div class="text-sm font-bold mb-1" x-text="v.name"></div>
+ <div class="text-xs text-white/60" x-text="v.desc"></div>
+ </div>
+ </template>
+ </div>
+ </div>
+ </div>
 
-    <!-- Sidebar: Poster preview + Render button -->
-    <div class="space-y-4">
-      <div class="glass rounded-2xl p-4 sticky top-24">
-        <div class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-3">Original-Poster</div>
-        <template x-if="config.assets && config.assets.hero">
-          <img :src="`/posters/${config.assets.hero}`" class="w-full rounded-lg mb-4" />
-        </template>
-        <button @click="saveAndRender()"
-                class="w-full bg-gradient-to-r from-amber-500 to-red-600 hover:from-amber-400 hover:to-red-500 text-black font-black py-4 rounded-xl text-lg shadow-lg shadow-amber-500/30 transition pulse-ring">
-          🎬 Video erstellen
-        </button>
-        <button @click="saveOnly()" class="w-full mt-2 bg-white/5 hover:bg-white/10 py-3 rounded-xl text-sm font-medium">💾 Nur speichern</button>
-      </div>
-    </div>
-  </div>
+ <!-- Sidebar: Poster preview + Render button -->
+ <div class="space-y-4">
+ <div class="glass rounded-2xl p-4 sticky top-24">
+ <div class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-3">Original-Poster</div>
+ <template x-if="config.assets && config.assets.hero">
+ <img :src="`/posters/${config.assets.hero}`" class="w-full rounded-lg mb-4" />
+ </template>
+ <button @click="saveAndRender()"
+                class="w-full bg-gradient-to-r from-amber-500 to-red-600 hover:from-amber-400 hover:to-red-500 text-black font-black py-4 rounded-xl text-lg shadow-lg shadow-amber-500/30 transition pulse-ring">Video erstellen
+ </button>
+ <button @click="saveOnly()" class="w-full mt-2 bg-white/5 hover:bg-white/10 py-3 rounded-xl text-sm font-medium">Nur speichern</button>
+ </div>
+ </div>
+ </div>
 </div>
 </template>
 
 <!-- ──────── RENDERING ──────── -->
 <template x-if="view==='upload' && step==='rendering' && job">
 <div class="max-w-2xl mx-auto py-12">
-  <div class="text-center mb-10">
-    <div class="text-6xl mb-4">🎬</div>
-    <h2 class="text-3xl font-black mb-2">Video wird erstellt…</h2>
-    <p class="text-white/50">Das dauert ungefähr 3–5 Minuten. Du kannst diese Seite offen lassen.</p>
-  </div>
+ <div class="text-center mb-10">
+ <div class="text-6xl mb-4"></div>
+ <h2 class="text-3xl font-black mb-2">Video wird erstellt…</h2>
+ <p class="text-white/50">Das dauert ungefähr 3–5 Minuten. Du kannst diese Seite offen lassen.</p>
+ </div>
 
-  <div class="glass rounded-2xl p-6">
-    <div class="flex items-center justify-between text-sm mb-2">
-      <span class="text-white/70" x-text="job.phase === 'encoding' ? '🎞 Encodiere…' : '🖼 Rendere Frames…'"></span>
-      <span class="font-mono font-bold text-amber-400" x-text="`${job.progress} / ${job.total}`"></span>
-    </div>
-    <div class="h-3 bg-white/10 rounded-full overflow-hidden">
-      <div class="h-full bg-gradient-to-r from-amber-500 to-red-600 transition-all" :style="`width:${(job.progress/job.total)*100}%`"></div>
-    </div>
-    <div class="text-xs text-white/40 mt-3 font-mono" x-text="`${Math.round((job.progress/job.total)*100)}%`"></div>
-  </div>
+ <div class="glass rounded-2xl p-6">
+ <div class="flex items-center justify-between text-sm mb-2">
+ <span class="text-white/70" x-text="job.phase === 'encoding' ? ' Encodiere…' : ' Rendere Frames…'"></span>
+ <span class="font-mono font-bold text-amber-400" x-text="`${job.progress} / ${job.total}`"></span>
+ </div>
+ <div class="h-3 bg-white/10 rounded-full overflow-hidden">
+ <div class="h-full bg-gradient-to-r from-amber-500 to-red-600 transition-all" :style="`width:${(job.progress/job.total)*100}%`"></div>
+ </div>
+ <div class="text-xs text-white/40 mt-3 font-mono" x-text="`${Math.round((job.progress/job.total)*100)}%`"></div>
+ </div>
 
-  <details class="mt-6 glass rounded-xl p-4">
-    <summary class="text-sm text-white/60 cursor-pointer">Live-Log</summary>
-    <pre class="text-xs text-white/40 mt-3 font-mono whitespace-pre-wrap max-h-48 overflow-y-auto scroll-thin" x-text="(job.log||[]).join('')"></pre>
-  </details>
+ <details class="mt-6 glass rounded-xl p-4">
+ <summary class="text-sm text-white/60 cursor-pointer">Live-Log</summary>
+ <pre class="text-xs text-white/40 mt-3 font-mono whitespace-pre-wrap max-h-48 overflow-y-auto scroll-thin" x-text="(job.log||[]).join('')"></pre>
+ </details>
 </div>
 </template>
 
 <!-- ──────── DONE ──────── -->
 <template x-if="view==='upload' && step==='done'">
 <div class="max-w-4xl mx-auto py-12">
-  <div class="text-center mb-8">
-    <div class="text-7xl mb-4">🎉</div>
-    <h2 class="text-4xl font-black gradient-text mb-3">Fertig!</h2>
-    <p class="text-white/60 text-lg">Dein Werbevideo ist bereit.</p>
-  </div>
+ <div class="text-center mb-8">
+ <div class="text-7xl mb-4"></div>
+ <h2 class="text-4xl font-black gradient-text mb-3">Fertig!</h2>
+ <p class="text-white/60 text-lg">Dein Werbevideo ist bereit.</p>
+ </div>
 
-  <div class="glass rounded-2xl p-2 mb-6">
-    <video :src="finalVideoUrl" controls autoplay class="w-full rounded-xl bg-black"></video>
-  </div>
+ <div class="glass rounded-2xl p-2 mb-6">
+ <video :src="finalVideoUrl" controls autoplay class="w-full rounded-xl bg-black"></video>
+ </div>
 
-  <div class="flex flex-wrap justify-center gap-4">
-    <a :href="finalVideoUrl" :download="`${currentId}-werbevideo.mp4`"
-       class="bg-amber-500 hover:bg-amber-400 text-black font-black px-8 py-4 rounded-xl shadow-lg">
-      ⬇ Video herunterladen
-    </a>
-    <button @click="view='library'; loadConfigs()" class="bg-white/5 hover:bg-white/10 px-8 py-4 rounded-xl font-bold">
-      📚 Zur Bibliothek
+ <div class="flex flex-wrap justify-center gap-4">
+ <a :href="finalVideoUrl" :download="`${currentId}-werbevideo.mp4`"
+       class="bg-amber-500 hover:bg-amber-400 text-black font-black px-8 py-4 rounded-xl shadow-lg">Video herunterladen
+ </a>
+ <button @click="view='library'; loadConfigs()" class="bg-white/5 hover:bg-white/10 px-8 py-4 rounded-xl font-bold">Zur Bibliothek
+ </button>
+ <button @click="view='upload'; resetWizard()" class="bg-white/5 hover:bg-white/10 px-8 py-4 rounded-xl font-bold">
+ + Weiteres Video
     </button>
-    <button @click="view='upload'; resetWizard()" class="bg-white/5 hover:bg-white/10 px-8 py-4 rounded-xl font-bold">
-      + Weiteres Video
-    </button>
-  </div>
+ </div>
 </div>
 </template>
 
 <!-- ──────── ERROR TOAST ──────── -->
 <template x-if="error">
 <div class="fixed bottom-6 right-6 bg-red-500/90 backdrop-blur-md text-white px-6 py-4 rounded-xl shadow-2xl max-w-md z-50">
-  <div class="flex items-start gap-3">
-    <div class="text-xl">⚠️</div>
-    <div class="flex-1">
-      <div class="font-bold mb-1">Fehler</div>
-      <div class="text-sm text-white/90" x-text="error"></div>
-    </div>
-    <button @click="error=null" class="text-white/70 hover:text-white">×</button>
-  </div>
+ <div class="flex items-start gap-3">
+ <div class="text-xl"></div>
+ <div class="flex-1">
+ <div class="font-bold mb-1">Fehler</div>
+ <div class="text-sm text-white/90" x-text="error"></div>
+ </div>
+ <button @click="error=null" class="text-white/70 hover:text-white"></button>
+ </div>
 </div>
 </template>
 
@@ -784,64 +764,62 @@
 <!-- Template Picker Modal -->
 <template x-if="showTemplateModal">
 <div class="fixed inset-0 bg-black/85 backdrop-blur-md z-40 flex items-center justify-center p-6 overflow-y-auto" @click="showTemplateModal=false">
-  <div class="max-w-6xl w-full" @click.stop>
-    <div class="text-center mb-8">
-      <h2 class="text-4xl font-black gradient-text mb-2">Branchen-Templates</h2>
-      <p class="text-white/60">Wähle eine Branche — fertige Variante, Farben, Schriften und Beispieltexte sind sofort einsatzbereit.</p>
-    </div>
+ <div class="max-w-6xl w-full" @click.stop>
+ <div class="text-center mb-8">
+ <h2 class="text-4xl font-black gradient-text mb-2">Branchen-Templates</h2>
+ <p class="text-white/60">Wähle eine Branche · fertige Variante, Farben, Schriften und Beispieltexte sind sofort einsatzbereit.</p>
+ </div>
 
-    <div x-show="!templateApplyMode" class="mb-4 text-center">
-      <input x-model="templateNewName" type="text" placeholder="Firmenname (z.B. 'Müller GmbH')"
+ <div x-show="!templateApplyMode" class="mb-4 text-center">
+ <input x-model="templateNewName" type="text" placeholder="Firmenname (z.B. 'Müller GmbH')"
              class="w-full max-w-md bg-white/5 border border-white/15 rounded-xl px-5 py-3 text-center font-bold text-lg" />
-    </div>
+ </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <template x-for="t in templates" :key="t.id">
-        <div @click="applyTemplate(t)"
+ <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+ <template x-for="t in templates" :key="t.id">
+ <div @click="applyTemplate(t)"
              class="glass rounded-2xl p-5 cursor-pointer hover:scale-[1.02] transition border border-white/10 hover:border-amber-500/60"
              :style="`background:linear-gradient(135deg,${t.design.primary}33,${t.design.accent}22)`">
-          <div class="flex items-start gap-3 mb-3">
-            <div class="text-4xl" x-text="t.icon"></div>
-            <div class="flex-1">
-              <div class="text-xl font-black" x-text="t.name"></div>
-              <div class="text-xs text-white/60 leading-snug mt-1" x-text="t.desc"></div>
-            </div>
-          </div>
-          <div class="flex items-center gap-2 mb-3">
-            <div class="w-6 h-6 rounded" :style="`background:${t.design.primary}`"></div>
-            <div class="w-6 h-6 rounded" :style="`background:${t.design.accent}`"></div>
-            <div class="ml-auto text-xs uppercase tracking-widest font-bold" :style="`color:${t.design.accent}`">
-              Variant <span x-text="t.variant.toUpperCase()"></span>
-            </div>
-          </div>
-          <div class="text-xs text-white/50 italic" x-text="`'${t.placeholders.headline.replace(/\n/g, ' / ')}'`"></div>
-          <div class="mt-3 text-xs text-amber-400 font-bold opacity-0 group-hover:opacity-100">→ Auswählen</div>
-        </div>
-      </template>
-    </div>
+ <div class="flex items-start gap-3 mb-3">
+ <div class="text-4xl" x-text="t.icon"></div>
+ <div class="flex-1">
+ <div class="text-xl font-black" x-text="t.name"></div>
+ <div class="text-xs text-white/60 leading-snug mt-1" x-text="t.desc"></div>
+ </div>
+ </div>
+ <div class="flex items-center gap-2 mb-3">
+ <div class="w-6 h-6 rounded" :style="`background:${t.design.primary}`"></div>
+ <div class="w-6 h-6 rounded" :style="`background:${t.design.accent}`"></div>
+ <div class="ml-auto text-xs uppercase tracking-widest font-bold" :style="`color:${t.design.accent}`">Variant <span x-text="t.variant.toUpperCase()"></span>
+ </div>
+ </div>
+ <div class="text-xs text-white/50 italic" x-text="`'${t.placeholders.headline.replace(/\n/g, ' / ')}'`"></div>
+ <div class="mt-3 text-xs text-amber-400 font-bold opacity-0 group-hover:opacity-100">Auswählen</div>
+ </div>
+ </template>
+ </div>
 
-    <div class="text-center mt-8">
-      <button @click="showTemplateModal=false" class="text-white/50 hover:text-white text-sm">Abbrechen</button>
-    </div>
-  </div>
+ <div class="text-center mt-8">
+ <button @click="showTemplateModal=false" class="text-white/50 hover:text-white text-sm">Abbrechen</button>
+ </div>
+ </div>
 </div>
 </template>
 
 <!-- Video modal in library -->
 <template x-if="modalVideo">
 <div class="fixed inset-0 bg-black/90 backdrop-blur-md z-40 flex items-center justify-center p-6" @click="modalVideo=null">
-  <div class="max-w-5xl w-full" @click.stop>
-    <video :src="modalVideo" controls autoplay class="w-full rounded-2xl bg-black"></video>
-    <div class="text-center mt-4">
-      <a :href="modalVideo" download class="inline-block bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl">⬇ Herunterladen</a>
-    </div>
-  </div>
+ <div class="max-w-5xl w-full" @click.stop>
+ <video :src="modalVideo" controls autoplay class="w-full rounded-2xl bg-black"></video>
+ <div class="text-center mt-4">
+ <a :href="modalVideo" download class="inline-block bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl">Herunterladen</a>
+ </div>
+ </div>
 </div>
 </template>
 
-<script>
-function app() {
-  return {
+<script>function app() {
+ return {
     view: 'library',  // library | upload
     step: 'dropzone', // dropzone | extracting | edit | rendering | done
     dragActive: false,
@@ -888,12 +866,17 @@ function app() {
       { id: 'g', name: 'Explosive Burst', desc: 'Schockwellen + Sun-Rays + Radial-Phone' },
       { id: 'h', name: 'Liquid Flow', desc: 'Morphing-Blobs + organische Bewegung' },
       { id: 'i', name: 'Retro Synthwave', desc: '80s-Sun + Grid-Floor + Chrome-3D' },
-      { id: 'j', name: '✨ Prism Holographic', desc: 'Rainbow-Shimmer + Diamond-Karten + holografisch' },
-      { id: 'k', name: '✨ Motion Studio', desc: 'Bauhaus-Geometrie + Strict-Grid + Editorial' },
-      { id: 'l', name: '✨ Cinema Noir', desc: 'Letterbox + Lens-Flare + dramatische Zooms' },
-      { id: 'm', name: '🌌 Aurora Premium', desc: 'Aurora-Borealis Wellen + Glow-Karten' },
-      { id: 'n', name: '🏛 Architectural', desc: 'Brutalist Concrete + massive Type' },
-      { id: 'o', name: '👑 Luxury Gold', desc: 'Velvet + geprägtes Gold + Edelrahmen' },
+      { id: 'j', name: ' Prism Holographic', desc: 'Rainbow-Shimmer + Diamond-Karten + holografisch' },
+      { id: 'k', name: ' Motion Studio', desc: 'Bauhaus-Geometrie + Strict-Grid + Editorial' },
+      { id: 'l', name: ' Cinema Noir', desc: 'Letterbox + Lens-Flare + dramatische Zooms' },
+      { id: 'm', name: 'Aurora Premium', desc: 'Aurora-Borealis Wellen + Glow-Karten' },
+      { id: 'n', name: 'Architectural', desc: 'Brutalist Concrete + massive Type' },
+      { id: 'o', name: 'Luxury Gold', desc: 'Velvet + geprägtes Gold + Edelrahmen' },
+      { id: 'p', name: 'Studio Spotlight', desc: 'Theatrale Bühnen-Spotlights + Rauch + Lichtkegel' },
+      { id: 'q', name: 'Liquid Chrome', desc: 'Verspiegelte Chrome-Oberflächen + Mirror-Text' },
+      { id: 'r', name: 'Particle Universe', desc: 'Kosmische Sterne + Stardust + Konstellationen' },
+      { id: 's', name: 'Vintage Cinema', desc: 'Filmkorn + Sepia + Projektor-Ästhetik' },
+      { id: 't', name: 'Magazine Spread', desc: 'Editorial Pull-Quotes + Vogue-Style' },
     ],
     fontPresets: [
       { id: 'modern',     name: 'Modern',      desc: 'Clean & professionell',  preview: '"Oswald", sans-serif' },
@@ -901,19 +884,19 @@ function app() {
       { id: 'elegant',    name: 'Elegant',     desc: 'Edel & klassisch',        preview: '"Playfair Display", serif' },
       { id: 'industrial', name: 'Industrial',  desc: 'Markant & technisch',     preview: '"Bebas Neue", sans-serif' },
       { id: 'editorial',  name: 'Editorial',   desc: 'Magazin-Stil',            preview: '"Playfair Display", serif' },
-      { id: 'luxury',     name: '👑 Luxury',    desc: 'Premium & exklusiv',      preview: '"Cinzel", serif' },
-      { id: 'premium',    name: '✨ Premium',   desc: 'High-end editorial',      preview: '"Cormorant Garamond", serif' },
-      { id: 'tech',       name: '⚡ Tech',      desc: 'Modern & geometric',      preview: '"Outfit", sans-serif' },
-      { id: 'heavy',      name: '🔥 Heavy',     desc: 'Maximaler Impact',        preview: '"Archivo Black", sans-serif' },
-      { id: 'futuristic', name: '🚀 Futuristic', desc: 'Sci-Fi & cyber',         preview: '"Audiowide", sans-serif' },
-      { id: 'refined',    name: '🎩 Refined',    desc: 'Sophisticated calm',     preview: '"Manrope", sans-serif' },
-      { id: 'power',      name: '⚡ Power',      desc: 'Dynamic athletic',       preview: '"Kanit", sans-serif' },
-      { id: 'retro',      name: '🌈 Retro',      desc: '70s funky display',      preview: '"Righteous", sans-serif' },
+      { id: 'luxury',     name: ' Luxury',    desc: 'Premium & exklusiv',      preview: '"Cinzel", serif' },
+      { id: 'premium',    name: ' Premium',   desc: 'High-end editorial',      preview: '"Cormorant Garamond", serif' },
+      { id: 'tech',       name: ' Tech',      desc: 'Modern & geometric',      preview: '"Outfit", sans-serif' },
+      { id: 'heavy',      name: ' Heavy',     desc: 'Maximaler Impact',        preview: '"Archivo Black", sans-serif' },
+      { id: 'futuristic', name: ' Futuristic', desc: 'Sci-Fi & cyber',         preview: '"Audiowide", sans-serif' },
+      { id: 'refined',    name: ' Refined',    desc: 'Sophisticated calm',     preview: '"Manrope", sans-serif' },
+      { id: 'power',      name: ' Power',      desc: 'Dynamic athletic',       preview: '"Kanit", sans-serif' },
+      { id: 'retro',      name: ' Retro',      desc: '70s funky display',      preview: '"Righteous", sans-serif' },
     ],
     durations: [
-      { sec: 15, desc: 'Standard — kompakt, schnell, social-media-tauglich' },
-      { sec: 20, desc: 'Mehr Luft — etwas ruhiger, mehr Hold-Zeit' },
-      { sec: 30, desc: 'Premium — alle Animationen ausgespielt, ruhig und edel' },
+      { sec: 15, desc: 'Standard · kompakt, schnell, social-media-tauglich' },
+      { sec: 20, desc: 'Mehr Luft · etwas ruhiger, mehr Hold-Zeit' },
+      { sec: 30, desc: 'Premium · alle Animationen ausgespielt, ruhig und edel' },
     ],
 
     async init() {
@@ -1028,7 +1011,7 @@ function app() {
       this.posterResult = null;
       const fd = new FormData();
       ['unternehmen','branche','slogan','leistungen','adresse','telefon','email','website','cta','format']
-        .forEach(k => fd.append(k, this.poster[k] || ''));
+        .forEach(k =>fd.append(k, this.poster[k] || ''));
       if (this.poster.logoFile) fd.append('logo', this.poster.logoFile);
       try {
         const r = await fetch('/api/poster/generate', { method: 'POST', body: fd });
@@ -1122,7 +1105,7 @@ function app() {
       }
     },
     async applyTemplate(t) {
-      // Mode 1: bereits in Edit-Form → Template-Werte überschreiben aktuelle config
+      // Mode 1: bereits in Edit-Form  Template-Werte überschreiben aktuelle config
       if (this.templateApplyMode && this.config) {
         this.config.variant = t.variant;
         this.config.fontPreset = t.fontPreset;

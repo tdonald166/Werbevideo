@@ -25,7 +25,7 @@ export type AdConfig = {
     fontScript: string;
   };
   assets: { logo: string | null; hero: string | null; hero2?: string | null };
-  variant?: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o";
+  variant?: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t";
   vorteile_label?: string;
   duration?: number;          // Dauer in Sekunden (15, 20, 30) — Default 15
   fontPreset?: string;        // "modern" | "bold" | "elegant" | "industrial" | "editorial"
