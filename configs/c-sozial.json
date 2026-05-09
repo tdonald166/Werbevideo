@@ -1,0 +1,58 @@
+{
+  "id": "c-sozial",
+  "unternehmen": {
+    "name": "Communitas Sozialmarketing GmbH",
+    "slogan": "Gemeinschaftsgeist durch Sozialmarketing"
+  },
+  "headline": "Kostenfreie Produkte für\nsoziale Einrichtungen",
+  "subheadline": "Wir finanzieren Fahrzeuge, Terminals & Spielgeräte durch regionale Sponsoren – für Sie komplett kostenfrei.",
+  "vorteile": [
+    {
+      "titel": "100% kostenfrei",
+      "beschreibung": "Fabrikneue Produkte ohne Budget-Belastung für Ihre Einrichtung"
+    },
+    {
+      "titel": "Regionale Sponsoren",
+      "beschreibung": "Wir finden lokale Unternehmen, die Ihr Projekt finanzieren"
+    },
+    {
+      "titel": "Schnelle Umsetzung",
+      "beschreibung": "Von der Bedarfsanalyse bis zur Übergabefeier – alles aus einer Hand"
+    }
+  ],
+  "cta": {
+    "text": "Förderung anfragen",
+    "kicker": "Unverbindlich & kostenfrei beraten lassen"
+  },
+  "kontakt": {
+    "adresse_zeile1": "wihlemstraße 6",
+    "adresse_zeile2": "55543 bad kreuznach",
+    "telefon_buero": "0671-4833880-504",
+    "telefon_lager": "",
+    "email": "info@communitas.de",
+    "website": "www.c-sozial.de"
+  },
+  "oeffnungszeiten": {
+    "mo_do": "",
+    "fr": "",
+    "hinweis": ""
+  },
+  "design": {
+    "primary": "#e17f41",
+    "primaryLt": "#f5a975",
+    "accent": "#e17f41",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": "c-sozial/logo.png",
+    "hero": null
+  },
+  "variant": "a",
+  "vorteile_label": "Ihre Vorteile",
+  "duration": 15,
+  "fontPreset": "modern"
+}

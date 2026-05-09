@@ -1,0 +1,59 @@
+{
+  "id": "esthers-2",
+  "unternehmen": {
+    "name": "esther's events",
+    "slogan": "Eventverleih und Personalisiertes"
+  },
+  "headline": "Fotobox, Audio-Gästebuch\nund mehr!",
+  "subheadline": "Alles für dein Event.",
+  "vorteile": [
+    {
+      "titel": "Fotobox",
+      "beschreibung": "Professionelle Fotobox für unvergessliche Momente"
+    },
+    {
+      "titel": "Audio-Gästebuch",
+      "beschreibung": "Einzigartige Erinnerungen zum Hören"
+    },
+    {
+      "titel": "Personalisiert",
+      "beschreibung": "Individuell angepasst für dein Event"
+    }
+  ],
+  "cta": {
+    "text": "Jetzt buchen",
+    "kicker": "Fotobox oder Audio-Gästebuch"
+  },
+  "kontakt": {
+    "adresse_zeile1": "Schillerplatz 2",
+    "adresse_zeile2": "55232 Alzey",
+    "telefon_buero": "0175 234 7617",
+    "telefon_lager": "",
+    "email": "hi@esthers.events",
+    "website": "esthers.events"
+  },
+  "oeffnungszeiten": {
+    "mo_do": "",
+    "fr": "",
+    "hinweis": ""
+  },
+  "design": {
+    "primary": "#1a1a2e",
+    "primaryLt": "#3a3a5e",
+    "accent": "#e94560",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": "esthers-2/logo.png",
+    "hero": "esthers-2/hero.webp",
+    "hero2": "esthers-2/hero2.jpg"
+  },
+  "variant": "g",
+  "vorteile_label": "Ihre Vorteile",
+  "duration": 15,
+  "fontPreset": "elegant"
+}
