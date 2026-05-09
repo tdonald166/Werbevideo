@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": ">=18.17.0"
+  },
   "scripts": {
-    "start": "remotion studio",
+    "start": "node web/server.mjs",
+    "studio": "remotion studio",
     "web": "node web/server.mjs",
     "extract": "node scripts/extract-poster.mjs",
     "extract-all": "node scripts/batch-extract.mjs",
