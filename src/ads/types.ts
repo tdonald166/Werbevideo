@@ -29,4 +29,6 @@ export type AdConfig = {
   vorteile_label?: string;
   duration?: number;          // Dauer in Sekunden (15, 20, 30) — Default 15
   fontPreset?: string;        // "modern" | "bold" | "elegant" | "industrial" | "editorial"
+  textAnimation?: string;     // "kinetic" | "typewriter" | "wave" | "fade" | "slide" | "bounce" | "zoom" | "glitch" | "wordstack" | "wipe"
+  format?: string;            // "landscape" (16:9) | "vertical" (9:16) | "square" (1:1) | "portrait" (4:5)
 };

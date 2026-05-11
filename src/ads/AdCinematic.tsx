@@ -146,7 +146,187 @@ const KineticTitle: React.FC<{
   </div>
 );
 
-// ─── Headline-Reveal — 12 Varianten ────────────────────────
+// ─── Text-Animation Library — 10 Effekte (vom Variant unabhängig) ─────
+type TextAnimProps = {
+  text: string; startFrame: number; frame: number;
+  color: string; accentColor: string;
+  fontFamily: string; size: number; shadow: string;
+};
+
+const TextAnim_kinetic = (p: TextAnimProps) => (
+  <KineticTitle text={p.text} startFrame={p.startFrame} frame={p.frame}
+    color={p.color} fontFamily={p.fontFamily} size={p.size} perChar={2} shadow={p.shadow} />
+);
+
+const TextAnim_typewriter = (p: TextAnimProps) => {
+  const lf = p.frame - p.startFrame;
+  const visible = Math.max(0, Math.min(p.text.length, Math.floor(ci(lf, [0, p.text.length * 1.6], [0, p.text.length], EO))));
+  const cursorBlink = (p.frame * 0.3) % 2 < 1;
+  const showCursor = lf < p.text.length * 1.6 + 12;
+  return (
+    <div style={{
+      fontFamily: p.fontFamily, fontSize: p.size, fontWeight: 700,
+      color: p.color, letterSpacing: -1, lineHeight: 1.0,
+      textShadow: p.shadow,
+    }}>
+      {p.text.slice(0, visible)}
+      {showCursor && cursorBlink && <span style={{ color: p.accentColor, marginLeft: 6 }}>▌</span>}
+    </div>
+  );
+};
+
+const TextAnim_wave = (p: TextAnimProps) => (
+  <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", lineHeight: 1.0 }}>
+    {p.text.split("").map((ch, i) => {
+      const lf = p.frame - p.startFrame - i * 1.5;
+      const op = ci(lf, [0, 14], [0, 1], EO);
+      const ty = Math.sin((p.frame - p.startFrame - i * 3) * 0.15) * 8;
+      const tyIn = ci(lf, [0, 18], [50, 0], EO);
+      return (
+        <span key={i} style={{
+          display: "inline-block", opacity: op,
+          transform: `translateY(${tyIn + ty}px)`,
+          fontFamily: p.fontFamily, fontSize: p.size, fontWeight: 700,
+          color: p.color, letterSpacing: -1, whiteSpace: "pre",
+          textShadow: p.shadow,
+        }}>{ch === " " ? " " : ch}</span>
+      );
+    })}
+  </div>
+);
+
+const TextAnim_fade = (p: TextAnimProps) => {
+  const lf = p.frame - p.startFrame;
+  const op = ci(lf, [0, 24], [0, 1], EO);
+  return (
+    <div style={{
+      opacity: op,
+      fontFamily: p.fontFamily, fontSize: p.size, fontWeight: 700,
+      color: p.color, letterSpacing: -1, lineHeight: 1.0,
+      textShadow: p.shadow,
+    }}>{p.text}</div>
+  );
+};
+
+const TextAnim_slide = (p: TextAnimProps) => {
+  const lf = p.frame - p.startFrame;
+  const op = ci(lf, [0, 18], [0, 1], EO);
+  const ty = ci(lf, [0, 24], [80, 0], EO);
+  return (
+    <div style={{
+      opacity: op, transform: `translateY(${ty}px)`,
+      fontFamily: p.fontFamily, fontSize: p.size, fontWeight: 700,
+      color: p.color, letterSpacing: -1, lineHeight: 1.0,
+      textShadow: p.shadow,
+    }}>{p.text}</div>
+  );
+};
+
+const TextAnim_bounce = (p: TextAnimProps) => (
+  <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", lineHeight: 1.0 }}>
+    {p.text.split("").map((ch, i) => {
+      const lf = p.frame - p.startFrame - i * 2.5;
+      const op = ci(lf, [0, 14], [0, 1], EO);
+      const sc = ci(lf, [0, 22], [0, 1], POP);
+      const ty = ci(lf, [0, 24], [40, 0], EO);
+      return (
+        <span key={i} style={{
+          display: "inline-block", opacity: op,
+          transform: `translateY(${ty}px) scale(${sc})`,
+          transformOrigin: "center bottom",
+          fontFamily: p.fontFamily, fontSize: p.size, fontWeight: 700,
+          color: p.color, letterSpacing: -1, whiteSpace: "pre",
+          textShadow: p.shadow,
+        }}>{ch === " " ? " " : ch}</span>
+      );
+    })}
+  </div>
+);
+
+const TextAnim_zoom = (p: TextAnimProps) => {
+  const lf = p.frame - p.startFrame;
+  const op = ci(lf, [0, 18], [0, 1], EO);
+  const sc = ci(lf, [0, 26], [2.0, 1], EO);
+  const blur = ci(lf, [0, 22], [25, 0], EO);
+  return (
+    <div style={{
+      opacity: op, transform: `scale(${sc})`,
+      filter: blur > 0.3 ? `blur(${blur}px)` : undefined,
+      fontFamily: p.fontFamily, fontSize: p.size, fontWeight: 700,
+      color: p.color, letterSpacing: -1, lineHeight: 1.0,
+      textShadow: p.shadow,
+    }}>{p.text}</div>
+  );
+};
+
+const TextAnim_glitch = (p: TextAnimProps) => {
+  const lf = p.frame - p.startFrame;
+  const op = ci(lf, [0, 16], [0, 1], EO);
+  const splitX = ci(lf, [0, 22], [10, 0], EO);
+  return (
+    <div style={{ position: "relative", display: "inline-block", opacity: op,
+      fontFamily: p.fontFamily, fontSize: p.size, fontWeight: 700,
+      letterSpacing: -1, lineHeight: 1.0,
+    }}>
+      <span style={{ position: "absolute", inset: 0, color: p.accentColor, transform: `translateX(${-splitX}px)`, mixBlendMode: "screen", opacity: 0.7 }}>{p.text}</span>
+      <span style={{ position: "absolute", inset: 0, color: "#00f5ff", transform: `translateX(${splitX}px)`, mixBlendMode: "screen", opacity: 0.5 }}>{p.text}</span>
+      <span style={{ position: "relative", color: p.color, textShadow: p.shadow }}>{p.text}</span>
+    </div>
+  );
+};
+
+const TextAnim_wordstack = (p: TextAnimProps) => (
+  <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0 0.4em", lineHeight: 1.0 }}>
+    {p.text.split(" ").map((w, i) => {
+      const lf = p.frame - p.startFrame - i * 5;
+      const op = ci(lf, [0, 14], [0, 1], EO);
+      const ty = ci(lf, [0, 18], [40, 0], EO);
+      const sc = ci(lf, [0, 22], [0.5, 1], POP);
+      return (
+        <span key={i} style={{
+          display: "inline-block", opacity: op,
+          transform: `translateY(${ty}px) scale(${sc})`,
+          fontFamily: p.fontFamily, fontSize: p.size, fontWeight: 700,
+          color: p.color, letterSpacing: -1,
+          textShadow: p.shadow,
+        }}>{w}</span>
+      );
+    })}
+  </div>
+);
+
+const TextAnim_wipe = (p: TextAnimProps) => {
+  const lf = p.frame - p.startFrame;
+  const wipe = ci(lf, [0, 24], [100, 0], EO);
+  const ty = ci(lf, [0, 18], [40, 0], EO);
+  return (
+    <div style={{ position: "relative", display: "inline-block",
+      transform: `translateY(${ty}px)`,
+      clipPath: `inset(0 ${wipe}% 0 0)`,
+    }}>
+      <div style={{
+        fontFamily: p.fontFamily, fontSize: p.size, fontWeight: 700,
+        color: p.color, letterSpacing: -1, lineHeight: 1.0,
+        textShadow: p.shadow,
+      }}>{p.text}</div>
+    </div>
+  );
+};
+
+const TEXT_ANIMS: Record<string, (p: TextAnimProps) => React.ReactElement> = {
+  kinetic: TextAnim_kinetic,
+  typewriter: TextAnim_typewriter,
+  wave: TextAnim_wave,
+  fade: TextAnim_fade,
+  slide: TextAnim_slide,
+  bounce: TextAnim_bounce,
+  zoom: TextAnim_zoom,
+  glitch: TextAnim_glitch,
+  wordstack: TextAnim_wordstack,
+  wipe: TextAnim_wipe,
+};
+
+// ─── Headline-Reveal — 20 Varianten ────────────────────────
 const RevealedHeadline: React.FC<{
   variant: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t";
   frame: number;
@@ -157,9 +337,31 @@ const RevealedHeadline: React.FC<{
   colorAccent: string;
   line1Op: number;
   line2Op: number;
-}> = ({ variant, frame, lines, fontFamily, size, colorPrimary, colorAccent, line1Op, line2Op }) => {
+  textAnimation?: string;  // Optional override für Text-Animation
+}> = ({ variant, frame, lines, fontFamily, size, colorPrimary, colorAccent, line1Op, line2Op, textAnimation }) => {
   const shadowMain = `0 0 40px ${colorAccent}aa, 0 6px 30px rgba(0,0,0,0.8)`;
   const shadowAccent = `0 0 60px ${colorAccent}, 0 6px 30px rgba(0,0,0,0.8)`;
+
+  // ── Override: wenn textAnimation gesetzt, ignoriere Variant-Logik ──
+  if (textAnimation && TEXT_ANIMS[textAnimation]) {
+    const Anim = TEXT_ANIMS[textAnimation];
+    return (
+      <>
+        <div style={{ opacity: line1Op }}>
+          <Anim text={(lines[0] || "").toUpperCase()} startFrame={30} frame={frame}
+            color={colorPrimary} accentColor={colorAccent}
+            fontFamily={fontFamily} size={size} shadow={shadowMain} />
+        </div>
+        {lines[1] && (
+          <div style={{ opacity: line2Op, marginTop: 4 }}>
+            <Anim text={lines[1].toUpperCase()} startFrame={48} frame={frame}
+              color={colorAccent} accentColor={colorPrimary}
+              fontFamily={fontFamily} size={size} shadow={shadowAccent} />
+          </div>
+        )}
+      </>
+    );
+  }
 
   // Variant A — Letter by letter kinetic
   if (variant === "a") {
@@ -1005,6 +1207,7 @@ const SceneHero = ({ frame, c, vertical }: { frame: number; c: AdConfig; vertica
       }}>
         <RevealedHeadline
           variant={c.variant ?? "a"}
+          textAnimation={c.textAnimation}
           frame={frame}
           lines={lines}
           fontFamily={HEAD}

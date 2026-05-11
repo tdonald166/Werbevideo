@@ -1,7 +1,7 @@
-# 🎬 Reelmind
+﻿# ðŸŽ¬ Reelmind
 
-> **Vom Werbeposter zum fertigen Werbespot — in unter 5 Minuten.**
-> KI-gestützter Werbevideo-Generator mit 12 Premium-Animationsstilen.
+> **Vom Werbeposter zum fertigen Werbespot â€” in unter 5 Minuten.**
+> KI-gestÃ¼tzter Werbevideo-Generator mit 12 Premium-Animationsstilen.
 
 ![Made with Remotion](https://img.shields.io/badge/Made%20with-Remotion-FF6B6B)
 ![AI by Anthropic](https://img.shields.io/badge/AI-Claude%20Vision-D97706)
@@ -10,79 +10,79 @@
 
 ---
 
-## 🎯 Was macht Reelmind?
+## ðŸŽ¯ Was macht Reelmind?
 
-Reelmind ist ein selbst-gehostetes Tool, das aus einem hochgeladenen **Werbeposter** automatisch ein professionelles **animiertes Werbevideo** erstellt. Perfekt für Außendienstler, Marketing-Agenturen und kleine Betriebe.
+Reelmind ist ein selbst-gehostetes Tool, das aus einem hochgeladenen **Werbeposter** automatisch ein professionelles **animiertes Werbevideo** erstellt. Perfekt fÃ¼r AuÃŸendienstler, Marketing-Agenturen und kleine Betriebe.
 
 **Workflow:**
 1. Poster per Drag & Drop hochladen
 2. Claude Vision (KI) extrahiert automatisch Texte, Vorteile, Farben, Kontaktdaten
-3. Daten prüfen / korrigieren im Web-Interface
-4. Aus 12 Stil-Varianten + 5 Schriftpresets wählen
-5. „Video erstellen" → in 3–5 Min fertig (Full HD, MP4)
+3. Daten prÃ¼fen / korrigieren im Web-Interface
+4. Aus 12 Stil-Varianten + 5 Schriftpresets wÃ¤hlen
+5. â€žVideo erstellen" â†’ in 3â€“5 Min fertig (Full HD, MP4)
 
 ---
 
-## ✨ Features
+## âœ¨ Features
 
-### 🤖 KI-Power
+### ðŸ¤– KI-Power
 - **Auto-Extraktion** via Claude Vision: erkennt Headline, Slogan, Vorteile, CTA, Adresse, Telefon, Markenfarben
-- 1 Klick pro Poster — kein manuelles Abtippen mehr
+- 1 Klick pro Poster â€” kein manuelles Abtippen mehr
 
-### 🎨 12 Animationsstile (Cinematic-Tier)
+### ðŸŽ¨ 12 Animationsstile (Cinematic-Tier)
 | Variant | Beschreibung |
 |---------|--------------|
-| A — Letter Kinetic | Buchstabe-für-Buchstabe + Mega-Phone |
-| B — Word Slide | Manifesto + Split-Card-Final |
-| C — Zoom Burst | Stripes mit Riesenzahlen |
-| D — Mask Wipe | Editorial mit Watermark-Numbers |
-| E — Typewriter | TV-Broadcast Lower-Thirds |
-| F — 3D Flip | Hexagon-Karten + Frame |
-| G — Explosive Burst | Schockwellen + Sun-Rays |
-| H — Liquid Flow | Morphing Blob-Shapes |
-| I — Retro Synthwave | 80s Sun + Grid-Floor + Chrome-3D |
-| J — Prism Holographic | Rainbow-Shimmer + Diamond-Karten |
-| K — Motion Design | Bauhaus Geometrie + Strict-Grid |
-| L — Cinema Noir | Letterbox + Lens-Flare |
+| A â€” Letter Kinetic | Buchstabe-fÃ¼r-Buchstabe + Mega-Phone |
+| B â€” Word Slide | Manifesto + Split-Card-Final |
+| C â€” Zoom Burst | Stripes mit Riesenzahlen |
+| D â€” Mask Wipe | Editorial mit Watermark-Numbers |
+| E â€” Typewriter | TV-Broadcast Lower-Thirds |
+| F â€” 3D Flip | Hexagon-Karten + Frame |
+| G â€” Explosive Burst | Schockwellen + Sun-Rays |
+| H â€” Liquid Flow | Morphing Blob-Shapes |
+| I â€” Retro Synthwave | 80s Sun + Grid-Floor + Chrome-3D |
+| J â€” Prism Holographic | Rainbow-Shimmer + Diamond-Karten |
+| K â€” Motion Design | Bauhaus Geometrie + Strict-Grid |
+| L â€” Cinema Noir | Letterbox + Lens-Flare |
 
-### 📋 10 Branchen-Templates
+### ðŸ“‹ 10 Branchen-Templates
 Vorgefertigte Pakete (Variant + Farben + Schrift + Beispieltexte):
-🔨 Handwerk · 🩺 Gesundheit · 🍽 Gastro · 🏠 Immobilien · 🚗 KFZ · 💇 Beauty · 💪 Fitness · 📚 Bildung · 🌳 Garten · 💼 Finanzen
+ðŸ”¨ Handwerk Â· ðŸ©º Gesundheit Â· ðŸ½ Gastro Â· ðŸ  Immobilien Â· ðŸš— KFZ Â· ðŸ’‡ Beauty Â· ðŸ’ª Fitness Â· ðŸ“š Bildung Â· ðŸŒ³ Garten Â· ðŸ’¼ Finanzen
 
-### ⚙️ Vollständig anpassbar
-- **5 Schriftpresets**: Modern · Bold · Elegant · Industrial · Editorial
-- **3 Längen-Optionen**: 15s · 20s · 30s
-- **Color-Picker** für Markenfarben (Primary + Accent)
-- **Editierbares Formular** für alle Inhalte
+### âš™ï¸ VollstÃ¤ndig anpassbar
+- **5 Schriftpresets**: Modern Â· Bold Â· Elegant Â· Industrial Â· Editorial
+- **3 LÃ¤ngen-Optionen**: 15s Â· 20s Â· 30s
+- **Color-Picker** fÃ¼r Markenfarben (Primary + Accent)
+- **Editierbares Formular** fÃ¼r alle Inhalte
 
-### 💻 Modernes Web-Interface
+### ðŸ’» Modernes Web-Interface
 - Drag-&-Drop Poster-Upload
 - Live-Render-Progress mit Frame-Counter
 - Video-Bibliothek aller erstellten Spots
 - Glassmorphism-Design mit Tailwind CSS
 
-### 🚀 Massenbetrieb
+### ðŸš€ Massenbetrieb
 - Batch-Skripte: 50+ Kunden gleichzeitig extrahieren und rendern
-- CLI für CI/CD-Integration
+- CLI fÃ¼r CI/CD-Integration
 
 ---
 
-## 🛠 Tech Stack
+## ðŸ›  Tech Stack
 
-- **[Remotion](https://remotion.dev)** — programmatische Video-Generation in React
-- **[Claude Vision API](https://anthropic.com)** — KI-basierte Poster-Analyse
-- **Express + Alpine.js** — leichtgewichtiges Web-Interface (kein Build-Step nötig)
-- **Tailwind CSS** — modernes Design
+- **[Remotion](https://remotion.dev)** â€” programmatische Video-Generation in React
+- **[Claude Vision API](https://anthropic.com)** â€” KI-basierte Poster-Analyse
+- **Express + Alpine.js** â€” leichtgewichtiges Web-Interface (kein Build-Step nÃ¶tig)
+- **Tailwind CSS** â€” modernes Design
 - **TypeScript + React 19**
-- **`@remotion/google-fonts`** — 8 Schriftarten
+- **`@remotion/google-fonts`** â€” 8 Schriftarten
 
 ---
 
-## 🚀 Installation
+## ðŸš€ Installation
 
 ### Voraussetzungen
-- Node.js ≥ 18
-- [Anthropic API-Key](https://console.anthropic.com/settings/keys) (5 € Startguthaben gratis)
+- Node.js â‰¥ 18
+- [Anthropic API-Key](https://console.anthropic.com/settings/keys) (5 â‚¬ Startguthaben gratis)
 
 ### Setup
 
@@ -96,27 +96,27 @@ npm install
 
 # 3. API-Key konfigurieren
 cp .env.example .env
-# .env öffnen und ANTHROPIC_API_KEY einsetzen
+# .env Ã¶ffnen und ANTHROPIC_API_KEY einsetzen
 
 # 4. Web-Server starten
 npm run web
 ```
 
-→ Öffne **http://localhost:3000** im Browser.
+â†’ Ã–ffne **http://localhost:8080** im Browser.
 
 ---
 
-## 📖 Verwendung
+## ðŸ“– Verwendung
 
-### Web-Interface (für Außendienst & Endnutzer)
+### Web-Interface (fÃ¼r AuÃŸendienst & Endnutzer)
 
 ```bash
 npm run web
 ```
 
-Drag & Drop dein Poster, KI extrahiert die Inhalte, du wählst Stil → fertig.
+Drag & Drop dein Poster, KI extrahiert die Inhalte, du wÃ¤hlst Stil â†’ fertig.
 
-### Per CLI (für Power-User & Automation)
+### Per CLI (fÃ¼r Power-User & Automation)
 
 ```bash
 # 1 Kunde: Poster ablegen + auto-extrahieren
@@ -135,55 +135,55 @@ npm run extract-all
 npm run render-all
 ```
 
-### Remotion Studio (für Live-Vorschau)
+### Remotion Studio (fÃ¼r Live-Vorschau)
 
 ```bash
 npm start
 ```
 
-→ Öffnet Remotion Studio mit allen registrierten Compositions zur Live-Vorschau.
+â†’ Ã–ffnet Remotion Studio mit allen registrierten Compositions zur Live-Vorschau.
 
 ---
 
-## 📁 Projekt-Struktur
+## ðŸ“ Projekt-Struktur
 
 ```
 Reelmind/
-├── configs/                    Pro Kunde 1 JSON-Datei
-│   └── <kunden-id>.json
-├── public/                     Statische Assets pro Kunde
-│   └── <kunden-id>/
-│       └── poster.png
-├── out/                        Gerenderte MP4-Videos
-│   └── <kunden-id>-cinematic-h.mp4
-├── src/
-│   ├── ads/
-│   │   ├── types.ts            Config-Schema (TypeScript)
-│   │   ├── fonts.ts            Font-Loader & Presets
-│   │   ├── AdCinematic.tsx     12 Cinematic-Varianten
-│   │   ├── AdHorizontal.tsx    Classic-Stil (Horizontal)
-│   │   ├── AdVertical.tsx      Classic-Stil (Vertical)
-│   │   ├── AdNeon.tsx          Neon-Glitch-Stil
-│   │   └── configs.gen.ts      Auto-generierter Config-Index
-│   └── Root.tsx                Remotion-Compositions-Registry
-├── web/
-│   ├── server.mjs              Express-Backend
-│   └── public/
-│       ├── index.html          Single-Page Web-UI (Alpine.js)
-│       └── templates.js        10 Branchen-Templates
-├── scripts/
-│   ├── extract-poster.mjs      Einzel-Extraktion via Claude Vision
-│   ├── batch-extract.mjs       Massen-Extraktion (parallel)
-│   ├── render-ad.mjs           Einzel-Rendering
-│   ├── render-all.mjs          Massen-Rendering
-│   ├── reassign-variants.mjs   Variants gleichmäßig verteilen
-│   └── generate-configs-index.mjs    Auto-Index für Remotion
-└── .env                        API-Keys (NICHT committen!)
+â”œâ”€â”€ configs/                    Pro Kunde 1 JSON-Datei
+â”‚   â””â”€â”€ <kunden-id>.json
+â”œâ”€â”€ public/                     Statische Assets pro Kunde
+â”‚   â””â”€â”€ <kunden-id>/
+â”‚       â””â”€â”€ poster.png
+â”œâ”€â”€ out/                        Gerenderte MP4-Videos
+â”‚   â””â”€â”€ <kunden-id>-cinematic-h.mp4
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ ads/
+â”‚   â”‚   â”œâ”€â”€ types.ts            Config-Schema (TypeScript)
+â”‚   â”‚   â”œâ”€â”€ fonts.ts            Font-Loader & Presets
+â”‚   â”‚   â”œâ”€â”€ AdCinematic.tsx     12 Cinematic-Varianten
+â”‚   â”‚   â”œâ”€â”€ AdHorizontal.tsx    Classic-Stil (Horizontal)
+â”‚   â”‚   â”œâ”€â”€ AdVertical.tsx      Classic-Stil (Vertical)
+â”‚   â”‚   â”œâ”€â”€ AdNeon.tsx          Neon-Glitch-Stil
+â”‚   â”‚   â””â”€â”€ configs.gen.ts      Auto-generierter Config-Index
+â”‚   â””â”€â”€ Root.tsx                Remotion-Compositions-Registry
+â”œâ”€â”€ web/
+â”‚   â”œâ”€â”€ server.mjs              Express-Backend
+â”‚   â””â”€â”€ public/
+â”‚       â”œâ”€â”€ index.html          Single-Page Web-UI (Alpine.js)
+â”‚       â””â”€â”€ templates.js        10 Branchen-Templates
+â”œâ”€â”€ scripts/
+â”‚   â”œâ”€â”€ extract-poster.mjs      Einzel-Extraktion via Claude Vision
+â”‚   â”œâ”€â”€ batch-extract.mjs       Massen-Extraktion (parallel)
+â”‚   â”œâ”€â”€ render-ad.mjs           Einzel-Rendering
+â”‚   â”œâ”€â”€ render-all.mjs          Massen-Rendering
+â”‚   â”œâ”€â”€ reassign-variants.mjs   Variants gleichmÃ¤ÃŸig verteilen
+â”‚   â””â”€â”€ generate-configs-index.mjs    Auto-Index fÃ¼r Remotion
+â””â”€â”€ .env                        API-Keys (NICHT committen!)
 ```
 
 ---
 
-## 🎬 Beispiel-Workflow für 50 Kunden
+## ðŸŽ¬ Beispiel-Workflow fÃ¼r 50 Kunden
 
 ```bash
 # 1. 50 Poster in public/<id>/ ablegen (z.B. via Drag & Drop)
@@ -191,20 +191,20 @@ public/kunde-001/poster.png
 public/kunde-002/poster.png
 ...
 
-# 2. Massen-Extraktion via KI (parallel, ~3 Min für 50 Kunden)
+# 2. Massen-Extraktion via KI (parallel, ~3 Min fÃ¼r 50 Kunden)
 npm run extract-all
 
-# 3. Configs überfliegen, ggf. korrigieren
+# 3. Configs Ã¼berfliegen, ggf. korrigieren
 
-# 4. Massen-Rendering (sequentiell, läuft über Nacht)
+# 4. Massen-Rendering (sequentiell, lÃ¤uft Ã¼ber Nacht)
 npm run render-all
 
-# → 50 fertige Werbevideos in out/
+# â†’ 50 fertige Werbevideos in out/
 ```
 
 ---
 
-## 🎨 Schriftpresets im Detail
+## ðŸŽ¨ Schriftpresets im Detail
 
 | Preset | Headline | Body | Wirkung |
 |--------|----------|------|---------|
@@ -216,33 +216,34 @@ npm run render-all
 
 ---
 
-## 🌍 Roadmap
+## ðŸŒ Roadmap
 
-- [ ] 🎵 Hintergrundmusik (Bibliothek + Upload)
-- [ ] 📐 Multi-Format-Export (16:9 + 9:16 + 1:1 + 4:5 in 1 Klick)
-- [ ] 💬 Animierte Untertitel/Captions (TikTok-Style)
-- [ ] 🎙 KI-Voiceover (ElevenLabs-Integration)
-- [ ] 🎬 Video-Clips als Hero (statt Standbild)
-- [ ] 📤 Direct Social Share (Insta/TikTok/Facebook)
-- [ ] 👥 Multi-User / Team-Accounts
-- [ ] 📊 Analytics-Dashboard
-
----
-
-## 📄 Lizenz
-
-Proprietary — © 2026 Donald Tagne. Alle Rechte vorbehalten.
+- [ ] ðŸŽµ Hintergrundmusik (Bibliothek + Upload)
+- [ ] ðŸ“ Multi-Format-Export (16:9 + 9:16 + 1:1 + 4:5 in 1 Klick)
+- [ ] ðŸ’¬ Animierte Untertitel/Captions (TikTok-Style)
+- [ ] ðŸŽ™ KI-Voiceover (ElevenLabs-Integration)
+- [ ] ðŸŽ¬ Video-Clips als Hero (statt Standbild)
+- [ ] ðŸ“¤ Direct Social Share (Insta/TikTok/Facebook)
+- [ ] ðŸ‘¥ Multi-User / Team-Accounts
+- [ ] ðŸ“Š Analytics-Dashboard
 
 ---
 
-## 👤 Autor
+## ðŸ“„ Lizenz
+
+Proprietary â€” Â© 2026 Donald Tagne. Alle Rechte vorbehalten.
+
+---
+
+## ðŸ‘¤ Autor
 
 **Donald Tagne**
 - GitHub: [@donaldtagne](https://github.com/donaldtagne)
 
 ---
 
-## 🤝 Beiträge
+## ðŸ¤ BeitrÃ¤ge
 
-Pull-Requests sind willkommen für Bug-Fixes & Feature-Ergänzungen.
-Bei größeren Änderungen bitte vorher ein Issue eröffnen.
+Pull-Requests sind willkommen fÃ¼r Bug-Fixes & Feature-ErgÃ¤nzungen.
+Bei grÃ¶ÃŸeren Ã„nderungen bitte vorher ein Issue erÃ¶ffnen.
+

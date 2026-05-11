@@ -1,0 +1,59 @@
+{
+  "id": "fatidienstleistungen",
+  "unternehmen": {
+    "name": "FATI Dienstleistungen",
+    "slogan": ""
+  },
+  "headline": "Professionelle Dienstleistungen\nfür Ihr Unternehmen",
+  "subheadline": "Zuverlässig, schnell und kompetent – Ihr Partner für maßgeschneiderte Lösungen.",
+  "vorteile": [
+    {
+      "titel": "Zuverlässigkeit",
+      "beschreibung": "Pünktliche und verlässliche Ausführung aller Aufträge"
+    },
+    {
+      "titel": "Kompetenz",
+      "beschreibung": "Erfahrenes Team mit professionellem Know-how"
+    },
+    {
+      "titel": "Flexibilität",
+      "beschreibung": "Individuelle Lösungen nach Ihren Anforderungen"
+    }
+  ],
+  "cta": {
+    "text": "Jetzt anfragen",
+    "kicker": "Kostenlose Beratung"
+  },
+  "kontakt": {
+    "adresse_zeile1": "",
+    "adresse_zeile2": "",
+    "telefon_buero": "",
+    "telefon_lager": "",
+    "email": "",
+    "website": "fatidienstleistungen.de"
+  },
+  "oeffnungszeiten": {
+    "mo_do": "",
+    "fr": "",
+    "hinweis": ""
+  },
+  "design": {
+    "primary": "#3d9d5c",
+    "primaryLt": "#6bc184",
+    "accent": "#fdb913",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": "fatidienstleistungen/logo.png",
+    "hero": "fatidienstleistungen/hero.png",
+    "hero2": "fatidienstleistungen/hero2.jpeg"
+  },
+  "variant": "a",
+  "vorteile_label": "Ihre Vorteile",
+  "duration": 15,
+  "fontPreset": "modern"
+}

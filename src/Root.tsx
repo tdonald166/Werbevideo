@@ -29,6 +29,26 @@ export const RemotionRoot = () => {
             height={1920}
             defaultProps={{ config: cfg }}
           />
+          {/* Square 1:1 — Instagram Feed */}
+          <Composition
+            id={`${cfg.id}-cinematic-sq`}
+            component={AdCinematicV}
+            durationInFrames={(cfg.duration ?? 15) * 30}
+            fps={30}
+            width={1080}
+            height={1080}
+            defaultProps={{ config: cfg }}
+          />
+          {/* Portrait 4:5 — Instagram Portrait Feed */}
+          <Composition
+            id={`${cfg.id}-cinematic-pt`}
+            component={AdCinematicV}
+            durationInFrames={(cfg.duration ?? 15) * 30}
+            fps={30}
+            width={1080}
+            height={1350}
+            defaultProps={{ config: cfg }}
+          />
           <Composition
             id={`${cfg.id}-h`}
             component={AdHorizontal}

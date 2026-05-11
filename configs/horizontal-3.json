@@ -1,0 +1,57 @@
+{
+  "id": "horizontal-3",
+  "unternehmen": {
+    "name": "SB-Kittelmann",
+    "slogan": "Bagger & Abrissarbeiten"
+  },
+  "headline": "Ihr Partner für\nErd- und Abbrucharbeiten.",
+  "subheadline": "Seit mehr als 15 Jahren professionelle Erdbewegungen, fachgerechter Rückbau und zuverlässige Entsorgung.",
+  "vorteile": [
+    {
+      "titel": "Erdarbeiten",
+      "beschreibung": "Professionelle Erdbewegungen für jedes Bauvorhaben."
+    },
+    {
+      "titel": "Abbrucharbeiten",
+      "beschreibung": "Fachgerechter Rückbau und Abbruch – sicher und effizient."
+    },
+    {
+      "titel": "Entsorgung",
+      "beschreibung": "Zuverlässige Entsorgung von Bauschutt und Materialien."
+    }
+  ],
+  "cta": {
+    "text": "Jetzt anfragen und kostenloses Angebot sichern!",
+    "kicker": "Wir beraten Sie gerne persönlich."
+  },
+  "kontakt": {
+    "adresse_zeile1": "Am Stellwerk 1, Gau-Odernheim",
+    "adresse_zeile2": "55239, Rheinland-Pfalz, Deutschland",
+    "telefon_buero": "01714159461",
+    "telefon_lager": "",
+    "email": "info@sb-kittelmann.de",
+    "website": ""
+  },
+  "oeffnungszeiten": {
+    "mo_do": "",
+    "fr": "",
+    "hinweis": ""
+  },
+  "design": {
+    "primary": "#6b5e30",
+    "primaryLt": "#8b7d4a",
+    "accent": "#c89b3c",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": null,
+    "hero": "horizontal-3/poster.png"
+  },
+  "variant": "h",
+  "vorteile_label": "Ihre Vorteile",
+  "fontPreset": "heavy"
+}

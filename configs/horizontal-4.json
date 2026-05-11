@@ -1,0 +1,57 @@
+{
+  "id": "horizontal-4",
+  "unternehmen": {
+    "name": "Grub Container- und Transport GmbH & Co.KG",
+    "slogan": "STARKE LEISTUNG.\nZUVERLÄSSIG ANS ZIEL."
+  },
+  "headline": "STARKE LEISTUNG.\nZUVERLÄSSIG ANS ZIEL.",
+  "subheadline": "Ihr Partner für Container- und Spezialtransporte.",
+  "vorteile": [
+    {
+      "titel": "CONTAINERDIENST",
+      "beschreibung": "Container in verschiedenen Größen – schnell & flexibel."
+    },
+    {
+      "titel": "TRANSPORTE",
+      "beschreibung": "Sicherer Transport von Baumaschinen, Materialien & mehr."
+    },
+    {
+      "titel": "SPEZIALTRANSPORTE",
+      "beschreibung": "Schwertransporte mit Erfahrung und moderner Technik."
+    }
+  ],
+  "cta": {
+    "text": "JETZT ANFRAGEN!",
+    "kicker": "WIR BRINGEN IHR PROJEKT SICHER VORAN."
+  },
+  "kontakt": {
+    "adresse_zeile1": "Rheinstr. 27",
+    "adresse_zeile2": "55278 Mommenheim",
+    "telefon_buero": "+49(0)6138-902871",
+    "telefon_lager": "",
+    "email": "info@grub-transporte.de",
+    "website": "www.grub-transporte.de"
+  },
+  "oeffnungszeiten": {
+    "mo_do": "",
+    "fr": "",
+    "hinweis": ""
+  },
+  "design": {
+    "primary": "#b31d1d",
+    "primaryLt": "#d92626",
+    "accent": "#c41e1e",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": null,
+    "hero": "horizontal-4/poster.png"
+  },
+  "variant": "h",
+  "vorteile_label": "Unsere Stärken",
+  "textAnimation": "bounce"
+}

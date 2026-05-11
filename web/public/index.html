@@ -22,31 +22,51 @@
 <body class="bg-[#0a0a0f] text-white min-h-screen" x-data="app()" x-init="init()">
 
 <!-- Header -->
-<header class="sticky top-0 z-30 bg-[#0a0a0f]/80 backdrop-blur-md border-b border-white/5">
- <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
- <div class="flex items-center gap-3">
- <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-red-600 flex items-center justify-center text-xl"></div>
- <div>
- <div class="text-lg font-bold leading-none">Werbevideo Generator</div>
- <div class="text-xs text-white/50 leading-none mt-1">KI-gestützte Werbespots aus deinen Postern</div>
+<header class="sticky top-0 z-30 bg-[#0a0a0f]/90 backdrop-blur-md border-b border-white/5">
+ <div class="max-w-7xl mx-auto px-3 md:px-6 py-3 md:py-4 flex items-center justify-between gap-2">
+   <!-- Logo + Title -->
+   <div class="flex items-center gap-2 md:gap-3 min-w-0">
+     <div class="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-amber-500 to-red-600 flex items-center justify-center text-xl flex-shrink-0"></div>
+     <div class="min-w-0">
+       <div class="text-base md:text-lg font-bold leading-none truncate">Werbevideo Generator</div>
+       <div class="hidden sm:block text-xs text-white/50 leading-none mt-1">KI-gestützte Werbespots</div>
+     </div>
+   </div>
+   <!-- Desktop nav (md+) -->
+   <div class="hidden md:flex items-center gap-2 lg:gap-3">
+     <button @click="view='library'" :class="view==='library' ? 'bg-white/10' : 'hover:bg-white/5'" class="px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition">Bibliothek</button>
+     <button @click="view='website'; resetWebsite()" :class="view==='website' ? 'bg-cyan-500/30 text-cyan-200' : 'bg-cyan-500/15 text-cyan-300 hover:bg-cyan-500/25'" class="px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition">Aus Website</button>
+     <button @click="view='poster'" :class="view==='poster' ? 'bg-pink-500/30 text-pink-200' : 'bg-pink-500/15 text-pink-300 hover:bg-pink-500/25'" class="px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition">Poster erstellen</button>
+     <button @click="showTemplateModal = true" class="px-3 lg:px-4 py-2 rounded-lg text-sm font-medium bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 transition">Template</button>
+     <button @click="view='upload'; resetWizard()" :class="view==='upload' ? 'bg-amber-500 text-black' : 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30'" class="px-3 lg:px-4 py-2 rounded-lg text-sm font-bold transition whitespace-nowrap">+ Neues Video</button>
+   </div>
+   <!-- Mobile burger -->
+   <button @click="mobileMenu = !mobileMenu" class="md:hidden w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 flex flex-col items-center justify-center gap-1.5 flex-shrink-0">
+     <div class="w-5 h-0.5 bg-white transition-all" :class="mobileMenu ? 'translate-y-2 rotate-45' : ''"></div>
+     <div class="w-5 h-0.5 bg-white transition-all" :class="mobileMenu ? 'opacity-0' : ''"></div>
+     <div class="w-5 h-0.5 bg-white transition-all" :class="mobileMenu ? '-translate-y-2 -rotate-45' : ''"></div>
+   </button>
  </div>
- </div>
- <div class="flex items-center gap-3">
- <button @click="view='library'" :class="view==='library' ? 'bg-white/10' : 'hover:bg-white/5'" class="px-4 py-2 rounded-lg text-sm font-medium transition">Bibliothek</button>
- <button @click="view='website'; resetWebsite()" :class="view==='website' ? 'bg-cyan-500/30 text-cyan-200' : 'bg-cyan-500/15 text-cyan-300 hover:bg-cyan-500/25'" class="px-4 py-2 rounded-lg text-sm font-medium transition">Aus Website</button>
- <button @click="showTemplateModal = true" class="px-4 py-2 rounded-lg text-sm font-medium bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 transition">Template</button>
- <button @click="view='upload'; resetWizard()" :class="view==='upload' ? 'bg-amber-500 text-black' : 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30'" class="px-4 py-2 rounded-lg text-sm font-bold transition">+ Neues Video</button>
- </div>
+ <!-- Mobile dropdown -->
+ <div x-show="mobileMenu" @click.outside="mobileMenu = false" x-transition
+      class="md:hidden border-t border-white/5 bg-[#0a0a0f]/95 backdrop-blur-md">
+   <div class="px-3 py-3 flex flex-col gap-2">
+     <button @click="view='library'; mobileMenu=false" :class="view==='library' ? 'bg-white/10' : 'hover:bg-white/5'" class="px-4 py-3 rounded-lg text-sm font-medium transition text-left">Bibliothek</button>
+     <button @click="view='website'; resetWebsite(); mobileMenu=false" :class="view==='website' ? 'bg-cyan-500/30 text-cyan-200' : 'bg-cyan-500/15 text-cyan-300 hover:bg-cyan-500/25'" class="px-4 py-3 rounded-lg text-sm font-medium transition text-left">Aus Website</button>
+     <button @click="view='poster'; mobileMenu=false" :class="view==='poster' ? 'bg-pink-500/30 text-pink-200' : 'bg-pink-500/15 text-pink-300 hover:bg-pink-500/25'" class="px-4 py-3 rounded-lg text-sm font-medium transition text-left">Poster erstellen</button>
+     <button @click="showTemplateModal = true; mobileMenu=false" class="px-4 py-3 rounded-lg text-sm font-medium bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 transition text-left">Template</button>
+     <button @click="view='upload'; resetWizard(); mobileMenu=false" :class="view==='upload' ? 'bg-amber-500 text-black' : 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30'" class="px-4 py-3 rounded-lg text-sm font-bold transition text-left">+ Neues Video</button>
+   </div>
  </div>
 </header>
 
-<main class="max-w-7xl mx-auto px-6 py-10">
+<main class="max-w-7xl mx-auto px-3 md:px-6 py-6 md:py-10">
 
 <!-- ──────── LIBRARY VIEW ──────── -->
 <template x-if="view==='library'">
 <div>
  <div class="mb-8">
- <h1 class="text-4xl font-black gradient-text">Deine Werbevideos</h1>
+ <h1 class="text-2xl md:text-4xl font-black gradient-text">Deine Werbevideos</h1>
  <p class="text-white/50 mt-2" x-text="`${configs.length} Videos in deiner Bibliothek`"></p>
  </div>
  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -78,7 +98,7 @@
  </template>
  <template x-if="configs.length === 0">
  <div class="col-span-3 glass rounded-2xl p-16 text-center">
- <div class="text-6xl mb-4"></div>
+ <div class="text-4xl md:text-6xl mb-4"></div>
  <div class="text-xl font-bold mb-2">Noch keine Videos</div>
  <div class="text-white/50 mb-6">Lade dein erstes Poster hoch, um zu starten.</div>
  <button @click="view='upload'" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-lg">+ Video erstellen</button>
@@ -88,189 +108,229 @@
 </div>
 </template>
 
-<!-- ──────── POSTER CREATOR VIEW (OpenAI) ──────── -->
+<!-- ──────── POSTER/FLYER ERSTELLEN ──────── -->
 <template x-if="view==='poster'">
-<div>
- <div class="text-center mb-8">
- <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 text-xs font-bold uppercase tracking-widest mb-4">Powered by OpenAI · gpt-image-1
- </div>
- <h1 class="text-5xl font-black gradient-text mb-3">Werbeposter generieren</h1>
- <p class="text-white/60 text-lg max-w-2xl mx-auto">Fülle die Felder aus, lade dein Logo hoch · KI erstellt ein professionelles Werbeposter in ~30 Sekunden.
- </p>
+<div class="max-w-4xl mx-auto">
+ <h1 class="text-2xl md:text-4xl font-black gradient-text mb-6">Poster / Flyer erstellen</h1>
+
+ <!-- Custom Dropdown (über andere Karten) -->
+ <div class="glass rounded-2xl p-4 md:p-6 mb-5 relative" style="z-index:60;" x-data="{ open: false }">
+  <label class="text-xs uppercase tracking-widest text-amber-400 font-bold block mb-3">Welche Daten hast du?</label>
+  <div class="relative">
+   <button @click="open = !open"
+           class="w-full bg-white/5 hover:bg-white/8 border border-white/15 rounded-lg px-4 py-3 text-base text-left flex items-center justify-between focus:outline-none focus:border-amber-500">
+    <span x-text="posterCases.find(c => c.id === posterCase)?.label || 'Wähle einen Fall'"></span>
+    <span class="text-white/50 transition-transform" :class="open ? 'rotate-180' : ''">▾</span>
+   </button>
+   <div x-show="open" @click.outside="open = false" x-transition
+        class="absolute mt-2 w-full bg-[#1a1a24] border border-white/15 rounded-lg shadow-2xl overflow-hidden"
+        style="z-index:100;">
+    <template x-for="pc in posterCases" :key="pc.id">
+     <div @click="posterCase = pc.id; open = false"
+          :class="posterCase === pc.id ? 'bg-amber-500/15 text-amber-300' : 'hover:bg-white/5'"
+          class="px-4 py-3 cursor-pointer text-sm transition border-b border-white/5 last:border-b-0">
+      <span x-text="pc.label"></span>
+     </div>
+    </template>
+   </div>
+  </div>
  </div>
 
- <template x-if="!posterResult">
- <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
- <!-- Form (2/3) -->
- <div class="lg:col-span-2 space-y-5">
- <!-- Pflichtfelder -->
- <div class="glass rounded-2xl p-6">
- <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Pflichtfelder</h3>
- <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
- <div>
- <label class="text-xs text-white/50 block mb-1">Unternehmen *</label>
- <input type="text" x-model="poster.unternehmen" placeholder="z.B. Müller Bau GmbH"
-                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500" />
- </div>
- <div>
- <label class="text-xs text-white/50 block mb-1">Branche *</label>
- <input type="text" x-model="poster.branche" placeholder="z.B. Dachdeckerei, Zahnarztpraxis, Restaurant"
-                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500" />
- </div>
- </div>
+ <!-- Optionale Eingabefelder (je nach Fall) -->
+ <div class="glass rounded-2xl p-4 md:p-6 mb-5" x-show="posterCase">
+  <label class="text-xs uppercase tracking-widest text-amber-400 font-bold block mb-3">Felder ausfüllen (optional)</label>
+
+  <!-- Fall A: alle Felder -->
+  <div x-show="posterCase==='A'" class="space-y-3">
+   <div>
+    <label class="text-xs text-white/50 block mb-1">Unternehmen <span class="text-red-400">*</span></label>
+    <input type="text" x-model="posterForm.unternehmen" placeholder="z.B. Müller GmbH" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+   </div>
+   <div>
+    <label class="text-xs text-white/50 block mb-1">Branche <span class="text-red-400">*</span></label>
+    <input type="text" x-model="posterForm.branche" placeholder="z.B. Dachdeckerei" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+   </div>
+   <input type="text" x-model="posterForm.slogan" placeholder="Slogan" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+   <textarea x-model="posterForm.leistungen" rows="2" placeholder="Leistungen (kommagetrennt)" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3"></textarea>
+   <input type="text" x-model="posterForm.adresse" placeholder="Adresse" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+   <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <input type="text" x-model="posterForm.telefon" placeholder="Telefon" class="bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+    <input type="text" x-model="posterForm.email" placeholder="E-Mail" class="bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+   </div>
+   <input type="text" x-model="posterForm.website" placeholder="Website" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+   <input type="text" x-model="posterForm.cta" placeholder="Call-to-Action" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+  </div>
+
+  <!-- Fall B: URL + Analyse-Button -->
+  <div x-show="posterCase==='B'" class="space-y-3">
+   <label class="text-xs text-white/50 block mb-1">Website-URL <span class="text-red-400">*</span></label>
+   <div class="flex flex-col sm:flex-row gap-3">
+    <input type="text" x-model="posterForm.website" placeholder="https://www.example.de" @keydown.enter="analyzeWebsiteForPoster()" class="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+    <button @click="analyzeWebsiteForPoster()" :disabled="websitePosterAnalyzing"
+            :class="websitePosterAnalyzing ? 'opacity-60' : ''"
+            class="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 px-5 py-3 rounded-lg font-bold whitespace-nowrap">
+     <span x-show="!websitePosterAnalyzing">Webseite analysieren</span>
+     <span x-show="websitePosterAnalyzing">Analysiere...</span>
+    </button>
+   </div>
+   <div x-show="websitePosterError" class="text-xs text-red-400" x-text="websitePosterError"></div>
+   <!-- Vorschau extrahierter Daten -->
+   <div x-show="websitePosterDone" class="bg-cyan-500/5 border border-cyan-500/20 rounded-lg p-4 text-sm space-y-2">
+    <div class="text-xs text-cyan-400 font-bold uppercase tracking-widest mb-2">Aus der Website extrahiert</div>
+    <template x-for="(val, key) in posterForm" :key="key">
+     <div x-show="val" class="grid grid-cols-3 gap-2">
+      <div class="text-white/50 capitalize" x-text="key"></div>
+      <div class="col-span-2 text-white/90" x-text="val"></div>
+     </div>
+    </template>
+    <div class="text-xs text-white/40 italic mt-2">Diese Daten werden automatisch in den Prompt unten eingebaut.</div>
+   </div>
+  </div>
+
+  <!-- Fall C: Branche -->
+  <div x-show="posterCase==='C'">
+   <label class="text-xs text-white/50 block mb-1">Branche <span class="text-red-400">*</span></label>
+   <input type="text" x-model="posterForm.branche" placeholder="z.B. Auto-Waschanlage, Zahnarzt, Restaurant" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
+  </div>
+
+  <!-- Fall D: alter Poster Upload -->
+  <div x-show="posterCase==='D'">
+   <label class="text-xs text-white/50 block mb-2">Bestehendes Poster <span class="text-red-400">*</span></label>
+   <div @click="$refs.oldPosterInput.click()"
+        @dragover.prevent="oldPosterDrag = true"
+        @dragleave.prevent="oldPosterDrag = false"
+        @drop.prevent="oldPosterDrag = false; handleOldPoster($event.dataTransfer.files[0])"
+        :class="oldPosterDrag ? 'border-amber-400 bg-amber-500/10' : 'border-white/15 hover:border-amber-500/50'"
+        class="cursor-pointer rounded-lg border-2 border-dashed transition p-6 text-center">
+    <input type="file" x-ref="oldPosterInput" class="hidden" accept="image/*" @change="handleOldPoster($event.target.files[0])" />
+    <template x-if="oldPosterPreview">
+     <div>
+      <img :src="oldPosterPreview" class="max-h-48 mx-auto mb-2 rounded" />
+      <button @click.stop="oldPoster = null; oldPosterPreview = null" class="text-xs text-red-400 hover:text-red-300">Entfernen</button>
+     </div>
+    </template>
+    <template x-if="!oldPosterPreview">
+     <div class="text-white/50 text-sm">
+      <div class="text-2xl mb-1">+</div>
+      Bestehendes Poster hochladen oder reinziehen
+     </div>
+    </template>
+   </div>
+   <div class="text-xs text-white/40 mt-2 italic">KI nimmt dieses Poster als Vorlage und erstellt eine moderne, verbesserte Version.</div>
+  </div>
  </div>
 
- <!-- Inhalte -->
- <div class="glass rounded-2xl p-6">
- <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Werbe-Inhalte</h3>
- <div class="space-y-4">
- <div>
- <label class="text-xs text-white/50 block mb-1">Slogan</label>
- <input type="text" x-model="poster.slogan" placeholder="z.B. 'Stark wie ein Dach.'"
-                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
- </div>
- <div>
- <label class="text-xs text-white/50 block mb-1">Leistungen (kommagetrennt)</label>
- <textarea x-model="poster.leistungen" rows="2" placeholder="z.B. Sanierung, Neubau, Wartung, Beratung"
-                      class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3"></textarea>
- </div>
- <div>
- <label class="text-xs text-white/50 block mb-1">Call-to-Action</label>
- <input type="text" x-model="poster.cta" placeholder="z.B. 'Jetzt Termin sichern'"
-                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
- </div>
- </div>
- </div>
-
- <!-- Kontakt -->
- <div class="glass rounded-2xl p-6">
- <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Kontakt</h3>
- <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
- <div>
- <label class="text-xs text-white/50 block mb-1">Adresse</label>
- <input type="text" x-model="poster.adresse" placeholder="Straße 1, 12345 Stadt"
-                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
- </div>
- <div>
- <label class="text-xs text-white/50 block mb-1">Telefon</label>
- <input type="text" x-model="poster.telefon" placeholder="+49 ..."
-                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
- </div>
- <div>
- <label class="text-xs text-white/50 block mb-1">E-Mail</label>
- <input type="text" x-model="poster.email" placeholder="info@..."
-                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
- </div>
- <div>
- <label class="text-xs text-white/50 block mb-1">Website</label>
- <input type="text" x-model="poster.website" placeholder="www..."
-                   class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" />
- </div>
- </div>
+ <!-- Editierbarer Prompt -->
+ <div class="glass rounded-2xl p-4 md:p-6 mb-5">
+  <div class="flex items-center justify-between mb-3">
+   <label class="text-xs uppercase tracking-widest text-amber-400 font-bold">Prompt <span class="text-white/40 normal-case font-normal">(editierbar)</span></label>
+   <div class="flex items-center gap-3">
+    <span class="text-xs text-white/40" x-text="posterCopyStatus"></span>
+    <button @click="resetPromptToDefault()"
+            class="text-xs bg-white/5 hover:bg-white/10 px-3 py-1 rounded-md text-white/70 hover:text-white">
+     Zurücksetzen
+    </button>
+   </div>
+  </div>
+  <textarea x-model="customPrompt"
+            x-init="$watch('posterCase', () => { if (!promptManuallyEdited) customPrompt = generatedPrompt(); });
+                    $watch('posterForm', () => { if (!promptManuallyEdited) customPrompt = generatedPrompt(); }, { deep: true });
+                    if (!customPrompt) customPrompt = generatedPrompt();"
+            @input="promptManuallyEdited = true"
+            rows="14"
+            class="w-full bg-black/40 border border-white/10 rounded-lg p-4 text-sm whitespace-pre-wrap font-mono leading-relaxed focus:outline-none focus:border-amber-500 resize-y"
+            spellcheck="false"></textarea>
+  <div class="text-xs text-white/40 mt-2 italic">Die KI nutzt diesen Prompt für die Bild-Generierung. Du kannst ihn anpassen.</div>
  </div>
 
- <!-- Format -->
- <div class="glass rounded-2xl p-6">
- <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Format</h3>
- <div class="grid grid-cols-2 gap-3">
- <div @click="poster.format='horizontal'"
-               :class="poster.format==='horizontal' ? 'border-cyan-400 bg-cyan-500/10' : 'border-white/10 hover:border-white/30'"
-               class="cursor-pointer rounded-lg border-2 p-4 transition text-center">
- <div class="text-3xl mb-1"></div>
- <div class="font-bold">Horizontal</div>
- <div class="text-xs text-white/50">1536 1024 · 16:9</div>
- </div>
- <div @click="poster.format='vertikal'"
-               :class="poster.format==='vertikal' ? 'border-cyan-400 bg-cyan-500/10' : 'border-white/10 hover:border-white/30'"
-               class="cursor-pointer rounded-lg border-2 p-4 transition text-center">
- <div class="text-3xl mb-1"></div>
- <div class="font-bold">Vertikal</div>
- <div class="text-xs text-white/50">1024 1536 · 9:16</div>
- </div>
- </div>
- </div>
+ <!-- Format-Picker -->
+ <div class="glass rounded-2xl p-4 md:p-6 mb-5">
+  <label class="text-xs uppercase tracking-widest text-amber-400 font-bold block mb-3">Format</label>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+   <template x-for="fm in posterFormats" :key="fm.id">
+    <div @click="posterFormat = fm.id"
+         :class="posterFormat === fm.id ? 'border-amber-400 bg-amber-500/10' : 'border-white/10 hover:border-white/30'"
+         class="cursor-pointer rounded-lg border-2 p-3 transition text-center">
+     <div class="flex items-center justify-center mb-2 h-12">
+      <div :style="`aspect-ratio:${fm.ratio};background:rgba(255,255,255,0.15);border-radius:4px;height:${fm.previewH}`"></div>
+     </div>
+     <div class="font-bold text-sm" x-text="fm.name"></div>
+     <div class="text-xs text-white/50 mt-1" x-text="fm.dim"></div>
+    </div>
+   </template>
+  </div>
  </div>
 
- <!-- Sidebar (1/3): Logo Upload + Generate -->
- <div class="space-y-4">
- <!-- Logo upload -->
- <div class="glass rounded-2xl p-6">
- <h3 class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-4">Logo</h3>
- <div @dragover.prevent="logoDragActive=true"
-             @dragleave.prevent="logoDragActive=false"
-             @drop.prevent="logoDragActive=false; handleLogoFile($event.dataTransfer.files[0])"
-             @click="$refs.logoInput.click()"
-             :class="logoDragActive ? 'border-cyan-500 bg-cyan-500/10' : 'border-white/15'"
-             class="cursor-pointer rounded-xl border-2 border-dashed p-6 text-center hover:border-cyan-500/50 hover:bg-white/5 transition">
- <input type="file" x-ref="logoInput" class="hidden" accept="image/*" @change="handleLogoFile($event.target.files[0])" />
- <template x-if="poster.logoPreview">
- <div>
- <img :src="poster.logoPreview" class="max-h-32 mx-auto mb-3 rounded" />
- <div class="text-xs text-cyan-400" x-text="poster.logoName"></div>
- <button @click.stop="poster.logoFile=null; poster.logoPreview=null" class="text-xs text-red-400 hover:text-red-300 mt-2">Entfernen</button>
+ <!-- Logo Upload (nur bei Fall A/B) -->
+ <div class="glass rounded-2xl p-4 md:p-6 mb-5" x-show="posterCase === 'A' || posterCase === 'B'">
+  <label class="text-xs uppercase tracking-widest text-amber-400 font-bold block mb-3">Logo (optional)</label>
+  <div @click="$refs.posterLogoInput.click()"
+       @dragover.prevent="posterLogoDrag = true"
+       @dragleave.prevent="posterLogoDrag = false"
+       @drop.prevent="posterLogoDrag = false; handlePosterLogo($event.dataTransfer.files[0])"
+       :class="posterLogoDrag ? 'border-amber-400 bg-amber-500/10' : 'border-white/15 hover:border-amber-500/50'"
+       class="cursor-pointer rounded-lg border-2 border-dashed transition p-6 text-center">
+   <input type="file" x-ref="posterLogoInput" class="hidden" accept="image/*" @change="handlePosterLogo($event.target.files[0])" />
+   <template x-if="posterLogoPreview">
+    <div>
+     <img :src="posterLogoPreview" class="max-h-28 mx-auto mb-2 rounded" />
+     <button @click.stop="posterLogo = null; posterLogoPreview = null" class="text-xs text-red-400 hover:text-red-300">Entfernen</button>
+    </div>
+   </template>
+   <template x-if="!posterLogoPreview">
+    <div class="text-white/50 text-sm">
+     <div class="text-2xl mb-1">+</div>
+     Logo hochladen oder reinziehen
+    </div>
+   </template>
+  </div>
+  <div class="text-xs text-white/40 mt-2 italic">Logo wird oben links auf das Poster komponiert.</div>
  </div>
+
+ <!-- Action Buttons (versteckt während Generierung) -->
+ <div class="flex flex-wrap gap-3 mb-8" x-show="!posterGenerating">
+  <button @click="copyPrompt()" class="bg-white/10 hover:bg-white/15 px-6 py-3 rounded-xl font-bold flex-1 min-w-[150px]">Prompt kopieren</button>
+  <button @click="generatePoster()"
+          class="bg-gradient-to-r from-amber-500 to-red-600 hover:from-amber-400 hover:to-red-500 text-black font-black px-6 py-3 rounded-xl flex-[2] min-w-[200px]">
+   Poster generieren
+  </button>
+ </div>
+
+ <!-- Progress View während Generierung -->
+ <template x-if="posterGenerating">
+  <div class="glass rounded-2xl p-6 md:p-10 mb-5 text-center">
+   <!-- Animated spinner -->
+   <div class="w-24 h-24 mx-auto mb-6 relative">
+    <div class="absolute inset-0 rounded-full bg-gradient-to-br from-amber-500 to-red-600 animate-pulse"></div>
+    <div class="absolute inset-2 rounded-full bg-[#0a0a0f] flex items-center justify-center">
+     <svg class="animate-spin w-12 h-12 text-amber-400" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none"/>
+      <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4zm2 5.3A8 8 0 014 12H0c0 3 1.1 5.8 3 7.9l3-2.6z"/>
+     </svg>
+    </div>
+   </div>
+   <h2 class="text-2xl md:text-3xl font-black gradient-text mb-3" x-text="progressStep"></h2>
+   <p class="text-white/60 mb-6" x-text="progressDetail"></p>
+   <!-- Progress bar (zeitbasiert) -->
+   <div class="max-w-md mx-auto bg-white/5 rounded-full h-2 overflow-hidden">
+    <div class="h-full bg-gradient-to-r from-amber-500 to-red-600 transition-all duration-500"
+         :style="`width: ${progressPercent}%`"></div>
+   </div>
+   <div class="text-xs text-white/40 mt-3" x-text="`${Math.round(progressPercent)}%`"></div>
+  </div>
  </template>
- <template x-if="!poster.logoPreview">
- <div>
- <div class="text-4xl mb-2"></div>
- <div class="font-bold mb-1">Logo hochladen</div>
- <div class="text-xs text-white/50">PNG mit Transparenz empfohlen</div>
- </div>
- </template>
- </div>
- <div class="text-xs text-white/40 mt-3 italic">Das Logo wird oben links auf das generierte Poster komponiert.
- </div>
- </div>
 
- <!-- Generate Button -->
- <div class="glass rounded-2xl p-4">
- <button @click="generatePoster()"
-                :disabled="!poster.unternehmen || !poster.branche"
-                :class="(!poster.unternehmen || !poster.branche) ? 'opacity-50 cursor-not-allowed' : ''"
-                class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black py-4 rounded-xl text-lg shadow-lg shadow-cyan-500/30 transition">Poster generieren<br><span class="text-xs opacity-70 font-semibold">~30 Sek · OpenAI gpt-image-1</span>
- </button>
- <div class="text-xs text-white/40 mt-3 text-center">
- ~0,04 € pro Generierung
-        </div>
- </div>
- </div>
- </div>
- </template>
-
- <!-- LOADING STATE -->
- <template x-if="posterLoading">
- <div class="text-center py-20">
- <div class="w-32 h-32 mx-auto mb-8 relative">
- <div class="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping"></div>
- <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-6xl"></div>
- </div>
- <h2 class="text-3xl font-black mb-4">KI erstellt dein Poster…</h2>
- <p class="text-white/60 text-lg">Das dauert ~30 Sekunden. Bitte Seite offen lassen.</p>
- </div>
- </template>
-
- <!-- RESULT -->
- <template x-if="posterResult && !posterLoading">
- <div>
- <div class="text-center mb-6">
- <div class="text-6xl mb-3"></div>
- <h2 class="text-4xl font-black gradient-text mb-2">Poster fertig!</h2>
- <p class="text-white/60">Verwende es direkt für ein Werbevideo oder lade es herunter.</p>
- </div>
- <div class="glass rounded-2xl p-2 mb-6 max-w-3xl mx-auto">
- <img :src="posterResult.posterUrl + '?t=' + Date.now()" class="w-full rounded-xl" />
- </div>
- <div class="flex flex-wrap justify-center gap-4">
- <button @click="useAsVideoSource()"
-              class="bg-gradient-to-r from-amber-500 to-red-600 text-black font-black px-8 py-4 rounded-xl shadow-lg">Daraus Video erstellen
- </button>
- <a :href="posterResult.posterUrl" :download="`${posterResult.id}-poster.png`"
-         class="bg-white/10 hover:bg-white/15 px-8 py-4 rounded-xl font-bold">Poster herunterladen
- </a>
- <button @click="resetPoster()" class="bg-white/5 hover:bg-white/10 px-8 py-4 rounded-xl font-bold">Erneut generieren
- </button>
- </div>
- </div>
+ <!-- Result -->
+ <template x-if="posterResult && !posterGenerating">
+  <div class="glass rounded-2xl p-4 md:p-6 mb-5">
+   <label class="text-xs uppercase tracking-widest text-green-400 font-bold block mb-3">Generiertes Poster</label>
+   <img :src="posterResult.url" class="w-full rounded-lg mb-4" />
+   <div class="flex flex-wrap gap-3">
+    <a :href="posterResult.url" :download="`poster-${posterResult.id}.png`"
+       class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl flex-1 min-w-[150px] text-center">Herunterladen</a>
+    <button @click="posterResult = null" class="bg-white/10 hover:bg-white/15 px-6 py-3 rounded-xl font-bold flex-1 min-w-[150px]">Neu generieren</button>
+   </div>
+  </div>
  </template>
 </div>
 </template>
@@ -281,7 +341,7 @@
  <div class="text-center mb-8">
  <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 text-xs font-bold uppercase tracking-widest mb-4">KI analysiert Webseiten automatisch
  </div>
- <h1 class="text-5xl font-black gradient-text mb-3">Video aus Website</h1>
+ <h1 class="text-3xl md:text-5xl font-black gradient-text mb-3">Video aus Website</h1>
  <p class="text-white/60 text-lg max-w-xl mx-auto">Gib eine Website-URL ein und lade dein Logo hoch · die KI extrahiert automatisch alle Inhalte und erstellt einen Werbespot.
  </p>
  </div>
@@ -289,7 +349,7 @@
  <template x-if="!websiteLoading">
  <div class="space-y-5">
  <!-- URL -->
- <div class="glass rounded-2xl p-6">
+ <div class="glass rounded-2xl p-4 md:p-6">
  <label class="text-xs uppercase tracking-widest text-cyan-400 font-bold block mb-3">Website-URL *</label>
  <div class="flex items-center gap-3">
  <span class="text-2xl"></span>
@@ -303,7 +363,7 @@
  </div>
 
  <!-- Logo Upload (optional · wird sonst auto-extrahiert) -->
- <div class="glass rounded-2xl p-6">
+ <div class="glass rounded-2xl p-4 md:p-6">
  <div class="flex items-center justify-between mb-3">
  <label class="text-xs uppercase tracking-widest text-cyan-400 font-bold">Logo</label>
  <span class="text-xs text-white/40 italic">wird sonst von Webseite automatisch geladen</span>
@@ -362,7 +422,7 @@
 <template x-if="view==='upload' && step==='dropzone'">
 <div class="max-w-3xl mx-auto">
  <div class="text-center mb-10">
- <h1 class="text-5xl font-black gradient-text mb-4">Poster hochladen</h1>
+ <h1 class="text-3xl md:text-5xl font-black gradient-text mb-4">Poster hochladen</h1>
  <p class="text-white/60 text-lg">Lade ein Werbeposter hoch · die KI extrahiert automatisch alle Inhalte.</p>
  </div>
 
@@ -374,7 +434,7 @@
     :class="dragActive ? 'dropzone-active' : ''"
     class="glass rounded-2xl border-2 border-dashed border-white/20 hover:border-amber-500/50 hover:bg-white/5 transition cursor-pointer p-16 text-center">
  <input type="file" x-ref="fileInput" class="hidden" accept="image/*" @change="handleFile($event.target.files[0])" />
- <div class="text-7xl mb-6"></div>
+ <div class="text-5xl md:text-7xl mb-6"></div>
  <div class="text-2xl font-bold mb-3">Poster hierher ziehen</div>
  <div class="text-white/50 mb-6">oder klicken zum Auswählen</div>
  <div class="inline-flex items-center gap-2 text-xs text-white/40 bg-white/5 px-4 py-2 rounded-full">PNG, JPG, WebP · max 30 MB
@@ -398,24 +458,24 @@
 <!-- ──────── EDIT CONFIG ──────── -->
 <template x-if="view==='upload' && step==='edit' && config">
 <div>
- <div class="flex items-center justify-between mb-8">
+ <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 md:mb-8 gap-3">
  <div>
- <h1 class="text-4xl font-black gradient-text">Daten prüfen & anpassen</h1>
- <p class="text-white/50 mt-2">Korrigiere was die KI falsch erkannt hat.</p>
+ <h1 class="text-2xl md:text-4xl font-black gradient-text">Daten prüfen & anpassen</h1>
+ <p class="text-white/50 mt-2 text-sm md:text-base">Korrigiere was die KI falsch erkannt hat.</p>
  </div>
- <div class="flex items-center gap-3">
+ <div class="flex items-center gap-2 md:gap-3 flex-wrap">
  <button @click="templateApplyMode = true; showTemplateModal = true"
-              class="text-sm bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 px-4 py-2 rounded-lg font-medium">Template anwenden
+              class="text-xs md:text-sm bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 px-3 md:px-4 py-2 rounded-lg font-medium">Template anwenden
  </button>
- <button @click="step='dropzone'" class="text-white/50 hover:text-white text-sm">Zurück</button>
+ <button @click="step='dropzone'" class="text-white/50 hover:text-white text-xs md:text-sm">Zurück</button>
  </div>
  </div>
 
- <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+ <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
  <!-- Form -->
  <div class="lg:col-span-2 space-y-6">
  <!-- Firma -->
- <div class="glass rounded-2xl p-6">
+ <div class="glass rounded-2xl p-4 md:p-6">
  <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Unternehmen</h3>
  <div class="space-y-4">
  <div>
@@ -430,7 +490,7 @@
  </div>
 
  <!-- Headline -->
- <div class="glass rounded-2xl p-6">
+ <div class="glass rounded-2xl p-4 md:p-6">
  <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Hauptbotschaft</h3>
  <div class="space-y-4">
  <div>
@@ -445,7 +505,7 @@
  </div>
 
  <!-- Vorteile -->
- <div class="glass rounded-2xl p-6">
+ <div class="glass rounded-2xl p-4 md:p-6">
  <div class="flex items-center justify-between mb-4">
  <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold">Vorteile (3)</h3>
  <input type="text" x-model="config.vorteile_label" placeholder="Label z.B. 'Ihre Vorteile'"
@@ -465,7 +525,7 @@
  </div>
 
  <!-- CTA -->
- <div class="glass rounded-2xl p-6">
+ <div class="glass rounded-2xl p-4 md:p-6">
  <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Call-to-Action</h3>
  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
  <div>
@@ -480,7 +540,7 @@
  </div>
 
  <!-- Kontakt -->
- <div class="glass rounded-2xl p-6">
+ <div class="glass rounded-2xl p-4 md:p-6">
  <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Kontakt</h3>
  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
  <div>
@@ -511,7 +571,7 @@
  </div>
 
  <!-- Farben -->
- <div class="glass rounded-2xl p-6">
+ <div class="glass rounded-2xl p-4 md:p-6">
  <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Markenfarben</h3>
  <div class="grid grid-cols-2 gap-4">
  <div>
@@ -531,8 +591,28 @@
  </div>
  </div>
 
+ <!-- Format-Picker (Landscape, Vertical, Square, Portrait) -->
+ <div class="glass rounded-2xl p-4 md:p-6">
+ <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-2">Video-Format</h3>
+ <p class="text-xs text-white/50 mb-4">Wo wird das Video genutzt? Format bestimmt die Abmessungen.</p>
+ <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+ <template x-for="fm in formats" :key="fm.id">
+ <div @click="config.format = fm.id"
+              :class="(config.format || 'landscape') === fm.id ? 'border-amber-400 bg-amber-500/10' : 'border-white/10 hover:border-white/30'"
+              class="cursor-pointer rounded-lg border-2 p-3 transition text-center">
+ <div class="flex items-center justify-center mb-2 h-12">
+ <div :style="`aspect-ratio:${fm.ratio};background:rgba(255,255,255,0.15);border-radius:4px;height:${fm.previewH}`"></div>
+ </div>
+ <div class="font-bold text-sm" x-text="fm.name"></div>
+ <div class="text-xs text-white/50 mt-1" x-text="fm.dim"></div>
+ <div class="text-xs text-amber-400/80 mt-1" x-text="fm.usage"></div>
+ </div>
+ </template>
+ </div>
+ </div>
+
  <!-- Logo + Hintergrundbilder (Drag & Drop) -->
- <div class="glass rounded-2xl p-6">
+ <div class="glass rounded-2xl p-4 md:p-6">
  <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-2">Logo & Hintergrundbilder</h3>
  <p class="text-xs text-white/50 mb-4">Logo schwebt riesig im Hintergrund. Bis zu 2 weitere Bilder wechseln sich dahinter mit Cross-Fade + Ken-Burns ab.</p>
 
@@ -617,7 +697,7 @@
  </div>
 
  <!-- Schrift + Dauer -->
- <div class="glass rounded-2xl p-6">
+ <div class="glass rounded-2xl p-4 md:p-6">
  <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Schrift & Dauer</h3>
  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
  <div>
@@ -657,8 +737,30 @@
  </div>
  </div>
 
+ <!-- Text-Animation Picker -->
+ <div class="glass rounded-2xl p-4 md:p-6">
+ <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-2">Text-Animation</h3>
+ <p class="text-xs text-white/50 mb-4">Wie der Headline-Text animiert wird (unabhängig vom Stil-Layout). Leer lassen = Stil-Variante bestimmt es.</p>
+ <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+ <template x-for="ta in textAnimations" :key="ta.id">
+ <div @click="config.textAnimation = (config.textAnimation === ta.id) ? '' : ta.id"
+              :class="(config.textAnimation || '') === ta.id ? 'border-amber-400 bg-amber-500/10' : 'border-white/10 hover:border-white/30'"
+              class="cursor-pointer rounded-lg border-2 p-3 transition">
+ <div class="flex items-center justify-between mb-1">
+ <div class="text-sm font-bold" x-text="ta.name"></div>
+ <div class="text-amber-400" x-show="(config.textAnimation || '') === ta.id">●</div>
+ </div>
+ <div class="text-xs text-white/50" x-text="ta.desc"></div>
+ </div>
+ </template>
+ </div>
+ <div class="text-xs text-white/40 mt-3 italic">
+ Aktuell: <span x-text="config.textAnimation || '(Standard aus Stil-Variante)'"></span>
+ </div>
+ </div>
+
  <!-- Variant Picker -->
- <div class="glass rounded-2xl p-6">
+ <div class="glass rounded-2xl p-4 md:p-6">
  <h3 class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-4">Stil-Variante <span class="text-white/40 normal-case">(20 Animationen & Layouts)</span></h3>
  <div class="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-[28rem] overflow-y-auto scroll-thin pr-2">
  <template x-for="v in variants" :key="v.id">
@@ -696,12 +798,12 @@
 <template x-if="view==='upload' && step==='rendering' && job">
 <div class="max-w-2xl mx-auto py-12">
  <div class="text-center mb-10">
- <div class="text-6xl mb-4"></div>
+ <div class="text-4xl md:text-6xl mb-4"></div>
  <h2 class="text-3xl font-black mb-2">Video wird erstellt…</h2>
  <p class="text-white/50">Das dauert ungefähr 3–5 Minuten. Du kannst diese Seite offen lassen.</p>
  </div>
 
- <div class="glass rounded-2xl p-6">
+ <div class="glass rounded-2xl p-4 md:p-6">
  <div class="flex items-center justify-between text-sm mb-2">
  <span class="text-white/70" x-text="job.phase === 'encoding' ? ' Encodiere…' : ' Rendere Frames…'"></span>
  <span class="font-mono font-bold text-amber-400" x-text="`${job.progress} / ${job.total}`"></span>
@@ -723,8 +825,8 @@
 <template x-if="view==='upload' && step==='done'">
 <div class="max-w-4xl mx-auto py-12">
  <div class="text-center mb-8">
- <div class="text-7xl mb-4"></div>
- <h2 class="text-4xl font-black gradient-text mb-3">Fertig!</h2>
+ <div class="text-5xl md:text-7xl mb-4"></div>
+ <h2 class="text-2xl md:text-4xl font-black gradient-text mb-3">Fertig!</h2>
  <p class="text-white/60 text-lg">Dein Werbevideo ist bereit.</p>
  </div>
 
@@ -766,7 +868,7 @@
 <div class="fixed inset-0 bg-black/85 backdrop-blur-md z-40 flex items-center justify-center p-6 overflow-y-auto" @click="showTemplateModal=false">
  <div class="max-w-6xl w-full" @click.stop>
  <div class="text-center mb-8">
- <h2 class="text-4xl font-black gradient-text mb-2">Branchen-Templates</h2>
+ <h2 class="text-2xl md:text-4xl font-black gradient-text mb-2">Branchen-Templates</h2>
  <p class="text-white/60">Wähle eine Branche · fertige Variante, Farben, Schriften und Beispieltexte sind sofort einsatzbereit.</p>
  </div>
 
@@ -832,6 +934,46 @@
     modalVideo: null,
     error: null,
     templates: window.INDUSTRY_TEMPLATES || [],
+    // Poster/Flyer Prompt-Generator
+    posterCase: 'A',
+    posterCases: [
+      { id: 'A', label: 'Alle Daten + Logo' },
+      { id: 'B', label: 'Nur Website-URL' },
+      { id: 'C', label: 'Nur Branche - KI erfindet alles' },
+      { id: 'D', label: 'Bestehendes Poster verbessern' },
+    ],
+    posterForm: {
+      unternehmen: '', branche: '', slogan: '', leistungen: '',
+      adresse: '', telefon: '', email: '', website: '', cta: '',
+      primaerfarbe: '', sekundaerfarbe: '', bildmotive: '',
+    },
+    posterCopyStatus: '',
+    customPrompt: '',
+    promptManuallyEdited: false,
+    posterFormat: 'landscape',
+    posterFormats: [
+      { id: 'landscape', name: 'Landscape', dim: '1536×1024', ratio: '3/2',  previewH: '24px' },
+      { id: 'vertical',  name: 'Vertical',  dim: '1024×1536', ratio: '2/3',  previewH: '38px' },
+      { id: 'square',    name: 'Square',    dim: '1024×1024', ratio: '1/1',  previewH: '32px' },
+      { id: 'portrait',  name: 'Portrait',  dim: '1024×1536', ratio: '4/5',  previewH: '36px' },
+    ],
+    posterLogo: null,
+    posterLogoPreview: null,
+    posterLogoDrag: false,
+    posterGenerating: false,
+    posterResult: null,
+    progressStep: '',
+    progressDetail: '',
+    progressPercent: 0,
+    progressTimer: null,
+    // Fall B
+    websitePosterAnalyzing: false,
+    websitePosterDone: false,
+    websitePosterError: null,
+    // Fall D
+    oldPoster: null,
+    oldPosterPreview: null,
+    oldPosterDrag: false,
     showTemplateModal: false,
     templateApplyMode: false,
     templateNewName: "",
@@ -846,6 +988,7 @@
     bg1Drag: false,
     bg2Drag: false,
     logoDrag: false,
+    mobileMenu: false,
     // Poster Creator (OpenAI)
     poster: {
       unternehmen: "", branche: "", slogan: "", leistungen: "",
@@ -878,6 +1021,24 @@
       { id: 's', name: 'Vintage Cinema', desc: 'Filmkorn + Sepia + Projektor-Ästhetik' },
       { id: 't', name: 'Magazine Spread', desc: 'Editorial Pull-Quotes + Vogue-Style' },
     ],
+    formats: [
+      { id: 'landscape', name: 'Landscape', dim: '1920×1080', ratio: '16/9', previewH: '24px', usage: 'YouTube · Web · TV' },
+      { id: 'vertical',  name: 'Vertical',  dim: '1080×1920', ratio: '9/16', previewH: '38px', usage: 'TikTok · Reels · Stories' },
+      { id: 'square',    name: 'Square',    dim: '1080×1080', ratio: '1/1',  previewH: '32px', usage: 'Instagram Feed' },
+      { id: 'portrait',  name: 'Portrait',  dim: '1080×1350', ratio: '4/5',  previewH: '36px', usage: 'Instagram Portrait' },
+    ],
+    textAnimations: [
+      { id: 'kinetic',    name: 'Kinetic',     desc: 'Buchstabe für Buchstabe' },
+      { id: 'typewriter', name: 'Typewriter',  desc: 'Tippmaschine mit Cursor' },
+      { id: 'wave',       name: 'Wave',        desc: 'Wellenförmig + leichtes Wiegen' },
+      { id: 'fade',       name: 'Fade',        desc: 'Einfaches Einblenden' },
+      { id: 'slide',      name: 'Slide-Up',    desc: 'Von unten reingleiten' },
+      { id: 'bounce',     name: 'Bounce',      desc: 'Spring-Effekt pro Buchstabe' },
+      { id: 'zoom',       name: 'Zoom-Blur',   desc: 'Aus Unschärfe scharf werden' },
+      { id: 'glitch',     name: 'RGB-Glitch',  desc: 'Chromatic-Aberration' },
+      { id: 'wordstack',  name: 'Word-Stack',  desc: 'Wort für Wort' },
+      { id: 'wipe',       name: 'Reveal-Wipe', desc: 'Maskierter Vorhang' },
+    ],
     fontPresets: [
       { id: 'modern',     name: 'Modern',      desc: 'Clean & professionell',  preview: '"Oswald", sans-serif' },
       { id: 'bold',       name: 'Bold',        desc: 'Kraftvoll & impactstark', preview: '"Anton", sans-serif' },
@@ -899,6 +1060,275 @@
       { sec: 30, desc: 'Premium · alle Animationen ausgespielt, ruhig und edel' },
     ],
 
+    generatedPrompt() {
+      const f = this.posterForm;
+      // Nur ausgefüllte Felder hinzufügen — leere werden weggelassen
+      const lines = (pairs) => pairs.filter(([_, v]) => v && v.trim()).map(([k, v]) => `${k}: ${v.trim()}`).join("\n");
+
+      // Format-spezifische Layout-Anweisungen
+      const fmt = this.posterFormat || 'landscape';
+      const formatBriefing = ({
+        landscape: `Format: QUERFORMAT (16:9, breit, 1536x1024). Layout HORIZONTAL nutzen — linke Hälfte: Logo oben links + grosse Headline + CTA-Button; rechte Hälfte: grosses Hero-Bild. Unten ueber volle Breite: Service-Strip (dunkel) + Vorteils-Karten (hell) + Kontakt-Bar. DAS GANZE BILD ausfuellen, KEINE weissen Raender, KEIN Portrait innerhalb des Querformats.`,
+        vertical:  `Format: HOCHFORMAT (9:16, schmal, 1024x1536). Layout VERTIKAL gestapelt — oben Logo, darunter Headline, dann Hero-Bild, dann Service-Icons, dann Vorteils-Karten, unten Kontakt. Volle Breite nutzen.`,
+        square:    `Format: QUADRAT (1:1, 1024x1024). Kompaktes zentriertes Layout — Logo oben, Headline mittig gross, CTA-Button, Kontakt am unteren Rand. Klar und fokussiert.`,
+        portrait:  `Format: PORTRAIT (4:5, 1024x1536). Vertikales Magazin-Layout. Logo oben, Hero-Bild, Headline, Vorteile als Liste, Kontakt unten.`,
+      })[fmt];
+
+      if (this.posterCase === 'A') {
+        const fields = lines([
+          ['Unternehmen', f.unternehmen],
+          ['Branche', f.branche],
+          ['Slogan', f.slogan],
+          ['Leistungen', f.leistungen],
+          ['Adresse', f.adresse],
+          ['Telefon', f.telefon],
+          ['E-Mail', f.email],
+          ['Website', f.website],
+          ['Call-to-Action', f.cta],
+        ]);
+        return `Erstelle ein modernes, hochwertiges Werbe-Poster für ein Unternehmen.${fields ? '\n\n' + fields : ''}
+
+Design:
+modern, klar, hochwertig, starke Headline, saubere Struktur, hohe Kontraste
+
+${formatBriefing}
+
+Wichtig:
+Das Logo muss als Bild hochgeladen werden. Verwende ausschliesslich dieses bereitgestellte Logo. Kein Logo neu erstellen oder veraendern.`;
+      }
+      if (this.posterCase === 'B') {
+        const extracted = lines([
+          ['Unternehmen', f.unternehmen],
+          ['Branche', f.branche],
+          ['Slogan', f.slogan],
+          ['Leistungen', f.leistungen],
+          ['Adresse', f.adresse],
+          ['Telefon', f.telefon],
+          ['E-Mail', f.email],
+          ['Website', f.website],
+          ['Call-to-Action', f.cta],
+        ]);
+        if (extracted) {
+          const colorBlock = (f.primaerfarbe || f.sekundaerfarbe)
+            ? `\n\nMarkenfarben (verbindlich, GENAU diese Hex-Werte verwenden):\n- Primaerfarbe: ${f.primaerfarbe || '(keine)'}\n- Sekundaerfarbe: ${f.sekundaerfarbe || '(keine)'}\nNutze diese Farben fuer Hintergrund-Akzente, Headlines, Service-Strip, CTA-Button und Karten-Highlights. KEINE generischen Standardfarben.`
+            : '';
+          const imageBlock = f.bildmotive && f.bildmotive.trim()
+            ? `\n\nBild-Motive (photorealistisch ins Poster integrieren):\n${f.bildmotive.trim()}\nMindestens EIN grosses Hero-Bild + 2-3 kleinere thematische Bilder/Icons. Echte Fotografie-Anmutung, KEINE Illustrationen, KEINE leeren Flaechen.`
+            : `\n\nBild-Motive: Fuege passende photorealistische Hero-Bilder zur Branche hinzu (mindestens 1 grosses Hero + thematische Begleitbilder). KEINE leeren Flaechen.`;
+          // Daten wurden extrahiert (oder manuell eingegeben) — direkt einbauen
+          return `Erstelle ein modernes Werbe-Poster fuer dieses Unternehmen.
+
+${extracted}${colorBlock}${imageBlock}
+
+Erstelle daraus ein professionelles Poster mit:
+- grosser Headline
+- Subheadline
+- 3 - 4 Vorteilen
+- Call-to-Action
+- Kontaktbereich
+
+Design:
+modern, sauber, werblich, klare Struktur, kraeftige Markenfarben
+
+${formatBriefing}
+
+Wichtig:
+Kein Logo erfinden. Falls kein Logo vorhanden ist, nur Firmennamen als Text verwenden.`;
+        }
+        return `Analysiere die Webseite und erstelle daraus ein modernes Werbe-Poster mit:
+- grosser Headline
+- Subheadline
+- 3 - 4 Vorteilen
+- Call-to-Action
+- Kontaktbereich
+
+Design:
+modern, sauber, werblich, klare Struktur
+
+${formatBriefing}
+
+Wichtig:
+Kein Logo erfinden.`;
+      }
+      if (this.posterCase === 'C') {
+        const brancheLine = f.branche && f.branche.trim() ? `\n\nBranche: ${f.branche.trim()}` : '';
+        return `Erstelle ein vollstaendiges Werbe-Poster fuer ein fiktives Unternehmen.${brancheLine}
+
+Erfinde:
+- realistischen Firmennamen
+- passenden Slogan
+- Leistungen
+- Vorteile
+- Kontaktdaten
+- Call-to-Action
+
+Das Poster soll wirken wie ein echtes Unternehmen.
+
+Design:
+modern, hochwertig, klare Struktur, starke Headline, professionelle Werbeanzeige
+
+${formatBriefing}`;
+      }
+      if (this.posterCase === 'D') {
+        return `Erstelle eine MODERNE, PROFESSIONELLE Werbeagentur-Version dieses Posters. Das hochgeladene Bild zeigt das Original — nutze ALLE Inhalte (Firmenname, Texte, Kontaktdaten, Logo) UNVERÄNDERT.
+
+Behalte EXAKT:
+- Firmenname und Schreibweise
+- Logo (Form, Farben, Symbole) — visuell identisch wiederherstellen
+- Slogan / Headline (gleicher Wortlaut)
+- Markenfarben (selbe Hex-Werte)
+- Adresse, Telefon, E-Mail, Website (jedes Zeichen exakt)
+
+${formatBriefing}
+
+Verbessere RADIKAL:
+- Layout: moderne Werbeagentur-Komposition mit klarer Hierarchie
+- Hero-Bereich: füge ein passendes photorealistisches Hero-Bild zur Branche hinzu (z.B. LKW, Bagger, Container, Werkstatt — je nach Branche)
+- Service-Strip: dunkler horizontaler Streifen mit 4 Service-Icons + Beschreibungen
+- Vorteils-Karten: 4 helle Karten mit Check-Icons + Titel + 1-Zeilen-Beschreibung
+- Bottom-Bar: Kontakt mit Icons in einer Zeile (Pin / Phone / Mail / Web)
+- Typografie: schwere Sans-Serif für Headlines, lesbare Sans für Body
+- Farben: kräftig, gesättigt, hoher Kontrast (KEINE Pastelltöne)
+- CTA-Button: prominent in der Markenfarbe
+
+Stil: Premium German marketing flyer, agency-quality, photorealistic hero. Inspiriert von modernen B2B-Werbeanzeigen.
+
+WICHTIG: Texte müssen ABSOLUT lesbar sein, keine Tippfehler, keine erfundenen Wörter. Logo nicht neu erfinden — visuell wie im Original beibehalten.`;
+      }
+      return '';
+    },
+    handlePosterLogo(file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      this.posterLogo = file;
+      const reader = new FileReader();
+      reader.onload = (e) => { this.posterLogoPreview = e.target.result; };
+      reader.readAsDataURL(file);
+    },
+    handleOldPoster(file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      this.oldPoster = file;
+      const reader = new FileReader();
+      reader.onload = (e) => { this.oldPosterPreview = e.target.result; };
+      reader.readAsDataURL(file);
+    },
+    async analyzeWebsiteForPoster() {
+      const url = (this.posterForm.website || '').trim();
+      if (!url) { this.websitePosterError = 'Bitte URL eingeben'; return; }
+      this.websitePosterAnalyzing = true;
+      this.websitePosterError = null;
+      this.websitePosterDone = false;
+      try {
+        const r = await fetch('/api/poster/analyze-website', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url }),
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error || 'Analyse fehlgeschlagen');
+        // Daten in posterForm uebernehmen (nur ueberschreiben falls leer ODER neue Daten besser)
+        for (const k of ['unternehmen','branche','slogan','leistungen','adresse','telefon','email','website','cta','primaerfarbe','sekundaerfarbe','bildmotive']) {
+          if (data[k]) this.posterForm[k] = data[k];
+        }
+        this.websitePosterDone = true;
+      } catch (e) {
+        this.websitePosterError = e.message;
+      } finally {
+        this.websitePosterAnalyzing = false;
+      }
+    },
+    startProgressAnimation() {
+      const steps = this.posterCase === 'D'
+        ? [
+          { pct: 5,  step: 'Analysiere altes Poster...', detail: 'Claude liest Texte, Farben und Layout' },
+          { pct: 25, step: 'Extrahiere Markenfarben',     detail: 'Logo, Hex-Codes und Branding werden erfasst' },
+          { pct: 45, step: 'Erstelle Werbeagentur-Briefing', detail: 'Detaillierter Prompt für Bild-KI' },
+          { pct: 65, step: 'Generiere neues Poster',      detail: 'OpenAI gpt-image-1 entwirft das Layout' },
+          { pct: 85, step: 'Komponiere finales Bild',     detail: 'Letzte Details und Optimierung' },
+          { pct: 95, step: 'Fertigstellen...',            detail: 'Poster wird gespeichert' },
+        ]
+        : [
+          { pct: 10, step: 'Bereite Prompt vor...',       detail: 'Daten werden für die KI strukturiert' },
+          { pct: 30, step: 'Sende an OpenAI',             detail: 'gpt-image-1 erhält den Auftrag' },
+          { pct: 60, step: 'Generiere Layout',            detail: 'Hero-Bild, Text und Branding entstehen' },
+          { pct: 85, step: 'Komponiere Logo',             detail: 'Dein Logo wird oben links eingefügt' },
+          { pct: 95, step: 'Fertigstellen...',            detail: 'Poster wird gespeichert' },
+        ];
+      let i = 0;
+      this.progressStep = steps[0].step;
+      this.progressDetail = steps[0].detail;
+      this.progressPercent = steps[0].pct;
+      const totalDur = this.posterCase === 'D' ? 50000 : 35000;
+      const stepDur = totalDur / steps.length;
+      this.progressTimer = setInterval(() => {
+        i++;
+        if (i < steps.length) {
+          this.progressStep = steps[i].step;
+          this.progressDetail = steps[i].detail;
+          this.progressPercent = steps[i].pct;
+        } else {
+          this.progressPercent = Math.min(98, this.progressPercent + 0.3);
+        }
+      }, stepDur);
+    },
+    stopProgressAnimation() {
+      if (this.progressTimer) clearInterval(this.progressTimer);
+      this.progressTimer = null;
+      this.progressPercent = 100;
+    },
+    async generatePoster() {
+      // Pflichtfeld-Validierung pro Fall
+      const f = this.posterForm;
+      if (this.posterCase === 'A' && (!f.unternehmen?.trim() || !f.branche?.trim())) {
+        this.error = 'Pflichtfelder: Unternehmen und Branche'; return;
+      }
+      if (this.posterCase === 'B' && !f.website?.trim()) {
+        this.error = 'Pflichtfeld: Website-URL'; return;
+      }
+      if (this.posterCase === 'C' && !f.branche?.trim()) {
+        this.error = 'Pflichtfeld: Branche'; return;
+      }
+      if (this.posterCase === 'D' && !this.oldPoster) {
+        this.error = 'Pflichtfeld: bestehendes Poster hochladen'; return;
+      }
+      this.posterGenerating = true;
+      this.posterResult = null;
+      this.startProgressAnimation();
+      try {
+        const fd = new FormData();
+        fd.append('case', this.posterCase);
+        // Editierten Prompt verwenden, fallback auf generierten
+        fd.append('prompt', this.customPrompt || this.generatedPrompt());
+        fd.append('format', this.posterFormat);
+        if ((this.posterCase === 'A' || this.posterCase === 'B') && this.posterLogo) {
+          fd.append('logo', this.posterLogo);
+        }
+        if (this.posterCase === 'D' && this.oldPoster) {
+          fd.append('oldPoster', this.oldPoster);
+        }
+        const r = await fetch('/api/poster/generate', { method: 'POST', body: fd });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error || 'Generierung fehlgeschlagen');
+        this.posterResult = data;
+      } catch (e) {
+        this.error = e.message;
+      } finally {
+        this.stopProgressAnimation();
+        this.posterGenerating = false;
+      }
+    },
+    resetPromptToDefault() {
+      this.customPrompt = this.generatedPrompt();
+      this.promptManuallyEdited = false;
+    },
+    async copyPrompt() {
+      try {
+        await navigator.clipboard.writeText(this.customPrompt || this.generatedPrompt());
+        this.posterCopyStatus = 'Kopiert!';
+        setTimeout(() => { this.posterCopyStatus = ''; }, 2000);
+      } catch (e) {
+        this.posterCopyStatus = 'Fehler beim Kopieren';
+      }
+    },
     async init() {
       await this.loadConfigs();
     },
@@ -979,60 +1409,6 @@
         this.step = 'rendering';
         this.pollJob(data.jobId);
       } catch (e) { this.error = e.message; }
-    },
-    resetPoster() {
-      this.poster = {
-        unternehmen: "", branche: "", slogan: "", leistungen: "",
-        adresse: "", telefon: "", email: "", website: "",
-        cta: "", format: "horizontal",
-        logoFile: null, logoPreview: null, logoName: "",
-      };
-      this.posterResult = null;
-      this.posterLoading = false;
-    },
-    handleLogoFile(file) {
-      if (!file) return;
-      if (!file.type.startsWith('image/')) {
-        this.error = 'Bitte ein Bild als Logo hochladen.';
-        return;
-      }
-      this.poster.logoFile = file;
-      this.poster.logoName = file.name;
-      const reader = new FileReader();
-      reader.onload = (e) => { this.poster.logoPreview = e.target.result; };
-      reader.readAsDataURL(file);
-    },
-    async generatePoster() {
-      if (!this.poster.unternehmen || !this.poster.branche) {
-        this.error = 'Unternehmen und Branche sind Pflicht.';
-        return;
-      }
-      this.posterLoading = true;
-      this.posterResult = null;
-      const fd = new FormData();
-      ['unternehmen','branche','slogan','leistungen','adresse','telefon','email','website','cta','format']
-        .forEach(k =>fd.append(k, this.poster[k] || ''));
-      if (this.poster.logoFile) fd.append('logo', this.poster.logoFile);
-      try {
-        const r = await fetch('/api/poster/generate', { method: 'POST', body: fd });
-        const data = await r.json();
-        if (!r.ok) throw new Error(data.error || 'Generierung fehlgeschlagen');
-        this.posterResult = data;
-        await this.loadConfigs();
-      } catch (e) {
-        this.error = e.message;
-      } finally {
-        this.posterLoading = false;
-      }
-    },
-    useAsVideoSource() {
-      // Direkt zur Edit-Form mit der bereits erstellten Config
-      if (!this.posterResult) return;
-      this.config = this.posterResult.config;
-      this.currentId = this.posterResult.id;
-      this.view = 'upload';
-      this.step = 'edit';
-      this.posterResult = null;
     },
     async uploadBackground(slot, file) {
       if (!file) return;
@@ -1152,7 +1528,9 @@
           this.job = j;
           if (j.status === 'done') {
             clearInterval(this.pollInterval);
-            this.finalVideoUrl = `/videos/${this.currentId}-cinematic-h.mp4?t=${Date.now()}`;
+            const fmt = this.config?.format || 'landscape';
+            const suffix = { landscape: 'h', vertical: 'v', square: 'sq', portrait: 'pt' }[fmt] || 'h';
+            this.finalVideoUrl = `/videos/${this.currentId}-cinematic-${suffix}.mp4?t=${Date.now()}`;
             this.step = 'done';
             await this.loadConfigs();
           } else if (j.status === 'error') {

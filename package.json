@@ -20,6 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.93.0",
+    "@ngrok/ngrok": "^1.7.0",
     "@remotion/cli": "^4.0.454",
     "@remotion/google-fonts": "^4.0.455",
     "@remotion/light-leaks": "^4.0.454",
@@ -27,7 +28,9 @@
     "@remotion/transitions": "^4.0.454",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "formdata-node": "^6.0.3",
     "multer": "^2.1.1",
+    "openai": "^6.37.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "remotion": "^4.0.454",

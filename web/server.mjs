@@ -1,8 +1,12 @@
-// Web-UI Server für Werbevideo-Generator
+﻿// Web-UI Server fÃ¼r Werbevideo-Generator
 //   Start:   npm run web
-//   URL:     http://localhost:3000
+//   URL:     http://localhost:8080
 
 import "dotenv/config";
+// Polyfill globalThis.File fÃ¼r Node < 20 (OpenAI SDK braucht es fÃ¼r File-Uploads)
+import { File as PolyFile, Blob as PolyBlob } from "formdata-node";
+if (!globalThis.File) globalThis.File = PolyFile;
+if (!globalThis.Blob) globalThis.Blob = PolyBlob;
 import express from "express";
 import multer from "multer";
 import sharp from "sharp";
@@ -15,24 +19,25 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 const app = express();
 app.use(express.json({ limit: "20mb" }));
 app.use("/static", express.static(path.join(__dirname, "public")));
 app.use("/videos", express.static(path.join(ROOT, "out")));
 app.use("/posters", express.static(path.join(ROOT, "public")));
+app.use("/posters-out", express.static(path.join(ROOT, "out", "posters")));
 
 // In-memory job tracking
-const jobs = new Map(); // jobId → { id, status, progress, total, startedAt, error }
+const jobs = new Map(); // jobId â†’ { id, status, progress, total, startedAt, error }
 
-// ── Multer upload to temp folder ──
+// â”€â”€ Multer upload to temp folder â”€â”€
 const upload = multer({
   dest: path.join(ROOT, "tmp-uploads"),
   limits: { fileSize: 30 * 1024 * 1024 },
 });
 
-// ── Routes ──
+// â”€â”€ Routes â”€â”€
 app.get("/", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
@@ -45,15 +50,26 @@ app.get("/api/configs", async (_req, res) => {
     const list = await Promise.all(files.map(async (f) => {
       const id = f.replace(".json", "");
       const cfg = JSON.parse(await readFile(path.join(cfgsDir, f), "utf-8"));
-      const videoFile = `${id}-cinematic-h.mp4`;
-      const videoPath = path.join(ROOT, "out", videoFile);
-      const hasVideo = existsSync(videoPath);
-      const videoMtime = hasVideo ? (await stat(videoPath)).mtimeMs : 0;
+      // Determine video file based on format
+      const fmtSuffix = { landscape: "h", vertical: "v", square: "sq", portrait: "pt" }[cfg.format || "landscape"] || "h";
+      // Try the format-specific file first, else fall back to any rendered cinematic file
+      const candidates = [`${id}-cinematic-${fmtSuffix}.mp4`, `${id}-cinematic-h.mp4`, `${id}-cinematic-v.mp4`, `${id}-cinematic-sq.mp4`, `${id}-cinematic-pt.mp4`];
+      let videoFile = null, videoMtime = 0;
+      for (const c of candidates) {
+        const p = path.join(ROOT, "out", c);
+        if (existsSync(p)) {
+          videoFile = c;
+          videoMtime = (await stat(p)).mtimeMs;
+          break;
+        }
+      }
+      const hasVideo = !!videoFile;
       return {
         id,
         name: cfg.unternehmen?.name || id,
         slogan: cfg.unternehmen?.slogan || "",
         variant: cfg.variant || "a",
+        format: cfg.format || "landscape",
         hero: cfg.assets?.hero || null,
         primary: cfg.design?.primary || "#0d3b6e",
         accent: cfg.design?.accent || "#dc2626",
@@ -103,10 +119,13 @@ app.delete("/api/config/:id", async (req, res) => {
     const id = req.params.id;
     const cfgPath = path.join(ROOT, "configs", `${id}.json`);
     const assetsDir = path.join(ROOT, "public", id);
-    const videoFile = path.join(ROOT, "out", `${id}-cinematic-h.mp4`);
     const fs = await import("node:fs/promises");
     if (existsSync(cfgPath)) await fs.unlink(cfgPath);
-    if (existsSync(videoFile)) await fs.unlink(videoFile);
+    // Alle Video-Formate lÃ¶schen
+    for (const suffix of ["h", "v", "sq", "pt"]) {
+      const f = path.join(ROOT, "out", `${id}-cinematic-${suffix}.mp4`);
+      if (existsSync(f)) await fs.unlink(f);
+    }
     if (existsSync(assetsDir)) await fs.rm(assetsDir, { recursive: true, force: true });
     res.json({ ok: true });
   } catch (e) {
@@ -184,6 +203,240 @@ app.post("/api/upload", upload.single("poster"), async (req, res) => {
 });
 
 // Create new config from template payload (no poster needed)
+// â”€â”€â”€ Poster generieren via OpenAI gpt-image-1 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const posterUpload = multer({
+  dest: path.join(ROOT, "tmp-uploads"),
+  limits: { fileSize: 15 * 1024 * 1024 },
+});
+
+// Webseite analysieren â€” gibt Text-Daten zurÃ¼ck (fÃ¼r Fall B)
+app.post("/api/poster/analyze-website", express.json(), async (req, res) => {
+  try {
+    if (!process.env.ANTHROPIC_API_KEY)
+      return res.status(500).json({ error: "ANTHROPIC_API_KEY fehlt in .env" });
+    let url = (req.body?.url || "").trim();
+    if (!url) return res.status(400).json({ error: "URL fehlt" });
+    if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+
+    const r = await fetch(url, {
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; Reelmind/1.0)" },
+      redirect: "follow",
+    });
+    if (!r.ok) return res.status(400).json({ error: `HTTP ${r.status}` });
+    const html = await r.text();
+    const text = htmlToText(html).slice(0, 20000);
+
+    // Farb-Hinweise aus HTML extrahieren (theme-color, inline-CSS Hex-Codes)
+    const colorHints = new Set();
+    const themeColor = html.match(/<meta[^>]+name=["']theme-color["'][^>]+content=["']([^"']+)["']/i);
+    if (themeColor) colorHints.add(themeColor[1]);
+    const hexMatches = html.match(/#[0-9a-fA-F]{6}\b/g) || [];
+    for (const h of hexMatches.slice(0, 30)) colorHints.add(h.toLowerCase());
+    const colorHintStr = [...colorHints].slice(0, 15).join(", ");
+
+    const Anthropic = (await import("@anthropic-ai/sdk")).default;
+    const client = new Anthropic();
+    const message = await client.messages.create({
+      model: "claude-sonnet-4-5",
+      max_tokens: 1800,
+      messages: [{ role: "user", content: [{ type: "text", text:
+`Analysiere die Webseite und extrahiere Werbe-relevante Inhalte. Gib NUR JSON zurÃ¼ck:
+{
+  "unternehmen": "<Firmenname>",
+  "branche": "<Branche>",
+  "slogan": "<Slogan oder leer>",
+  "leistungen": "<3-5 Leistungen kommagetrennt>",
+  "adresse": "<Strasse PLZ Ort>",
+  "telefon": "<Tel>",
+  "email": "<Email>",
+  "website": "<Domain ohne https>",
+  "cta": "<Call-to-Action>",
+  "primaerfarbe": "<Haupt-Markenfarbe als HEX, z.B. #1a4d8c>",
+  "sekundaerfarbe": "<zweite Markenfarbe als HEX>",
+  "bildmotive": "<2-3 konkrete photorealistische Hero-Bild-Motive passend zur Branche, kommagetrennt, z.B. 'gepflegte Pflegekraft mit Senior, modernes Pflegeheim-Interieur, freundlicher Empfangsbereich'>"
+}
+Lasse Felder leer wenn nicht erkennbar. Farb-Hinweise aus Seite: ${colorHintStr || "(keine erkannt)"}.
+
+URL: ${url}
+
+TEXT:
+${text}` }] }],
+    });
+    const respText = message.content.find(c => c.type === "text")?.text ?? "";
+    const m = respText.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error("Claude lieferte kein JSON");
+    res.json(JSON.parse(m[0]));
+  } catch (e) {
+    console.error("[analyze-website] error:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post("/api/poster/generate", posterUpload.fields([
+  { name: "logo", maxCount: 1 },
+  { name: "oldPoster", maxCount: 1 },
+]), async (req, res) => {
+  try {
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({ error: "OPENAI_API_KEY fehlt in .env. Hol dir einen Key auf https://platform.openai.com/api-keys" });
+    }
+    const { case: caseType = "A", prompt, format = "landscape" } = req.body || {};
+    if (!prompt || prompt.trim().length < 20) {
+      return res.status(400).json({ error: "Prompt ist zu kurz." });
+    }
+
+    // Format â†’ OpenAI Size
+    const sizeMap = {
+      landscape: "1536x1024",
+      vertical:  "1024x1536",
+      square:    "1024x1024",
+      portrait:  "1024x1536",
+    };
+    const size = sizeMap[format] || "1536x1024";
+
+    const { default: OpenAI } = await import("openai");
+    const openai = new OpenAI();
+    let posterBuffer;
+
+    // Fall D: Bild + Prompt direkt an gpt-image-1 (kein Claude-Zwischenschritt â€” wie ChatGPT WebUI)
+    const oldPosterFile = req.files?.oldPoster?.[0];
+    if (caseType === "D" && oldPosterFile) {
+      const fsp = await import("node:fs/promises");
+      const rawBuf = await fsp.readFile(oldPosterFile.path);
+      const pngBuf = await sharp(rawBuf).resize({ width: 1500, height: 1500, fit: "inside" }).png().toBuffer();
+      await fsp.unlink(oldPosterFile.path).catch(() => {});
+
+      console.log(`[poster] D: sending image + prompt directly to gpt-image-1 (${size})â€¦`);
+      const fd = new FormData();
+      fd.append("model", "gpt-image-1");
+      fd.append("image", new Blob([pngBuf], { type: "image/png" }), "old-poster.png");
+      fd.append("prompt", prompt.slice(0, 32000));
+      fd.append("size", size);
+      fd.append("n", "1");
+      fd.append("quality", "high");
+
+      const editResp = await fetch("https://api.openai.com/v1/images/edits", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
+        body: fd,
+      });
+      if (!editResp.ok) {
+        const errBody = await editResp.text();
+        console.error("[poster] D: edits API error:", errBody);
+        throw new Error(`OpenAI Edits ${editResp.status}: ${errBody.slice(0, 300)}`);
+      }
+      const editJson = await editResp.json();
+      const b64 = editJson.data?.[0]?.b64_json;
+      if (!b64) throw new Error("OpenAI gab kein Bild zurÃ¼ck");
+      posterBuffer = Buffer.from(b64, "base64");
+    } else {
+      // Fall A/B/C: Claude-Prompt-Enhancer vorschalten (wie ChatGPT WebUI's prompt-rewrite)
+      let finalPrompt = prompt;
+      if (process.env.ANTHROPIC_API_KEY) {
+        try {
+          const Anthropic = (await import("@anthropic-ai/sdk")).default;
+          const client = new Anthropic();
+          const enhMsg = await client.messages.create({
+            model: "claude-sonnet-4-5",
+            max_tokens: 2500,
+            messages: [{ role: "user", content: [{ type: "text", text:
+`Du bist Senior-Art-Director einer Premium-Werbeagentur. Schreibe aus dem folgenden Briefing einen DETAILLIERTEN, layout-praezisen ENGLISCHEN Bild-Prompt fuer gpt-image-1, der ein hochwertiges B2B-Werbeposter erzeugt (Agentur-Niveau, NICHT generisch).
+
+PFLICHT-ELEMENTE im finalen Prompt (in dieser Reihenfolge ins Bild bauen):
+1. Top-Hero-Bereich (60% der Hoehe): GROSSES photorealistisches Hero-Foto rechte Haelfte/Hintergrund + Logo oben links auf Plaque/freigestellt + grosse mehrzeilige Bold-Headline (sans-serif, weiss, Akzent-Wort in Markensekundaerfarbe) + Subline + prominenter CTA-Button in Sekundaerfarbe mit Pfeil-Icon.
+2. Service-Strip (dunkler Streifen, ca. 12% Hoehe): 5-6 Service-Punkte in einer Reihe â€” jeder mit Line-Icon in Sekundaerfarbe + 2-zeiliger Beschreibung.
+3. Karten-Grid (ca. 22% Hoehe, heller Hintergrund): 4-5 weisse Karten mit abgerundeten Ecken, jede mit eigenem photorealistischen Bild oben + Titel in Caps + 1-Zeilen-Beschreibung + duenner Sekundaerfarb-Underline.
+4. Bottom-Contact-Bar (ca. 6% Hoehe, dunkel): Telefon / Mail / Web mit Kreis-Icons in Sekundaerfarbe, gleichmaessig verteilt + rechts Akzent-Block in Sekundaerfarbe mit Claim.
+
+REGELN:
+- Markenfarben aus Briefing exakt verwenden (Hex-Werte zitieren).
+- Typografie: schwere kondensierte Sans-Serif fuer Headlines (Caps), klare Sans fuer Body.
+- ALLE Bilder photorealistisch, professionelle DSLR-Anmutung, KEINE Illustrationen, KEINE Cartoons, KEINE leeren Flaechen.
+- Texte exakt aus Briefing uebernehmen (Firma, Telefon, Mail, Web, Adresse), KEINE Tippfehler, KEINE Platzhalter.
+- Beschreibe Komposition als Werbeagentur-Mockup: Hierarchie, Weissraum, Kontrast, hohe Druckqualitaet.
+- Format: ${size} ${format}.
+- Antworte NUR mit dem fertigen englischen Prompt, kein Drumherum, keine Markdown-Fences.
+
+BRIEFING:
+${prompt}` }] }],
+          });
+          const enh = enhMsg.content.find(c => c.type === "text")?.text?.trim();
+          if (enh && enh.length > 200) {
+            finalPrompt = enh.replace(/^```[a-z]*\n?|\n?```$/g, "").trim();
+            console.log(`[poster] ${caseType}: Claude-enhanced prompt (${finalPrompt.length} chars)`);
+          }
+        } catch (e) {
+          console.warn("[poster] prompt-enhancer failed, using raw prompt:", e.message);
+        }
+      }
+
+      console.log(`[poster] ${caseType}: generating ${size} with OpenAI gpt-image-1â€¦`);
+      const result = await openai.images.generate({
+        model: "gpt-image-1",
+        prompt: finalPrompt,
+        size,
+        quality: "high",
+        n: 1,
+      });
+      const b64 = result.data?.[0]?.b64_json;
+      if (!b64) throw new Error("OpenAI gab kein Bild zurÃ¼ck");
+      posterBuffer = Buffer.from(b64, "base64");
+    }
+
+    // Logo oben links komponieren falls vorhanden (nur Fall A/B)
+    const logoFile = req.files?.logo?.[0];
+    if (logoFile && caseType !== "D") {
+      try {
+        const logoBuf = await readFile(logoFile.path);
+        const fsp = await import("node:fs/promises");
+        await fsp.unlink(logoFile.path).catch(() => {});
+
+        const meta = await sharp(posterBuffer).metadata();
+        const logoMaxW = Math.round((meta.width || 1024) * 0.18);
+        const logoResized = await sharp(logoBuf)
+          .resize({ width: logoMaxW, withoutEnlargement: true })
+          .png()
+          .toBuffer();
+        const logoMeta = await sharp(logoResized).metadata();
+        const padding = 20;
+        const plaqueW = (logoMeta.width || logoMaxW) + padding * 2;
+        const plaqueH = (logoMeta.height || 100) + padding * 2;
+        const plaque = await sharp({
+          create: { width: plaqueW, height: plaqueH, channels: 4,
+            background: { r: 255, g: 255, b: 255, alpha: 0.96 } },
+        }).png().toBuffer();
+        posterBuffer = await sharp(posterBuffer)
+          .composite([
+            { input: plaque, top: 30, left: 30 },
+            { input: logoResized, top: 30 + padding, left: 30 + padding },
+          ])
+          .png().toBuffer();
+        console.log("[poster] logo composited");
+      } catch (e) {
+        console.warn("[poster] logo composite failed:", e.message);
+      }
+    }
+
+    // Speichern in tmp/poster-<id>.png
+    const id = crypto.randomBytes(6).toString("hex");
+    const tmpDir = path.join(ROOT, "out", "posters");
+    await mkdir(tmpDir, { recursive: true });
+    const outPath = path.join(tmpDir, `poster-${id}.png`);
+    await writeFile(outPath, posterBuffer);
+
+    res.json({
+      id,
+      url: `/posters-out/poster-${id}.png`,
+      size,
+    });
+  } catch (e) {
+    console.error("[poster] error:", e);
+    const msg = e.code === "billing_hard_limit_reached" ? "OpenAI Billing-Limit erreicht."
+              : e.message || "Generierung fehlgeschlagen";
+    res.status(500).json({ error: msg });
+  }
+});
+
 app.post("/api/config-from-template", async (req, res) => {
   try {
     const { template, name } = req.body;
@@ -229,7 +482,7 @@ app.post("/api/config-from-template", async (req, res) => {
   }
 });
 
-// ─── Upload assets (logo / hero / hero2) for an existing config ──
+// â”€â”€â”€ Upload assets (logo / hero / hero2) for an existing config â”€â”€
 const bgUpload = multer({
   dest: path.join(ROOT, "tmp-uploads"),
   limits: { fileSize: 15 * 1024 * 1024 },
@@ -292,7 +545,7 @@ app.delete("/api/config/:id/background/:slot", async (req, res) => {
   }
 });
 
-// ─── Aus Website: Claude analysiert URL + Logo → Config ──────────────
+// â”€â”€â”€ Aus Website: Claude analysiert URL + Logo â†’ Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const websiteUpload = multer({
   dest: path.join(ROOT, "tmp-uploads"),
   limits: { fileSize: 10 * 1024 * 1024 },
@@ -317,11 +570,11 @@ const findHeroImage = (html, baseUrl) => {
   return null;
 };
 
-// Sucht Logo-URLs in der Webseite — sortiert nach Qualität (besser zuerst)
+// Sucht Logo-URLs in der Webseite â€” sortiert nach QualitÃ¤t (besser zuerst)
 const findLogoUrls = (html, baseUrl) => {
   const cands = []; // { url, prio }
 
-  // 1. JSON-LD Organization.logo (höchste Priorität — strukturierte Daten)
+  // 1. JSON-LD Organization.logo (hÃ¶chste PrioritÃ¤t â€” strukturierte Daten)
   const ldMatches = [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
   for (const m of ldMatches) {
     try {
@@ -341,7 +594,7 @@ const findLogoUrls = (html, baseUrl) => {
     } catch {}
   }
 
-  // 2. <img> mit "logo" in class/id/alt — meist das echte Header-Logo
+  // 2. <img> mit "logo" in class/id/alt â€” meist das echte Header-Logo
   const imgRe = /<img[^>]+>/gi;
   let im;
   while ((im = imgRe.exec(html))) {
@@ -352,7 +605,7 @@ const findLogoUrls = (html, baseUrl) => {
     if (srcMatch) {
       try { cands.push({ url: new URL(srcMatch[1], baseUrl).toString(), prio: 80 }); } catch {}
     }
-    // srcset (oft mehrere Größen — nimm die größte)
+    // srcset (oft mehrere GrÃ¶ÃŸen â€” nimm die grÃ¶ÃŸte)
     const srcset = tag.match(/srcset=["']([^"']+)["']/i);
     if (srcset) {
       const last = srcset[1].split(",").pop()?.trim().split(/\s+/)[0];
@@ -362,7 +615,7 @@ const findLogoUrls = (html, baseUrl) => {
     }
   }
 
-  // 3. Apple-Touch-Icon (meist 180×180+)
+  // 3. Apple-Touch-Icon (meist 180Ã—180+)
   const apple = [...html.matchAll(/<link[^>]+rel=["']apple-touch-icon[^"']*["'][^>]+href=["']([^"']+)["']/gi)];
   for (const m of apple) {
     try { cands.push({ url: new URL(m[1], baseUrl).toString(), prio: 60 }); } catch {}
@@ -372,7 +625,7 @@ const findLogoUrls = (html, baseUrl) => {
     try { cands.push({ url: new URL(m[1], baseUrl).toString(), prio: 60 }); } catch {}
   }
 
-  // 4. <link rel="icon"> mit großen sizes
+  // 4. <link rel="icon"> mit groÃŸen sizes
   const iconRe = /<link[^>]+rel=["'](?:icon|shortcut icon)["'][^>]*>/gi;
   let lm;
   while ((lm = iconRe.exec(html))) {
@@ -400,7 +653,7 @@ const findLogoUrls = (html, baseUrl) => {
     .map(c => c.url);
 };
 
-// Lädt eine URL mit Fallback-Versuchen herunter und gibt Buffer + Extension zurück
+// LÃ¤dt eine URL mit Fallback-Versuchen herunter und gibt Buffer + Extension zurÃ¼ck
 const downloadImage = async (urls, minSize = 100) => {
   for (const url of urls) {
     try {
@@ -480,7 +733,7 @@ app.post("/api/from-website", websiteUpload.single("logo"), async (req, res) => 
     } else {
       // 2. Auto-Extraktion von der Webseite
       const logoUrls = findLogoUrls(html, url);
-      console.log(`[website] trying to auto-extract logo from ${logoUrls.length} candidates…`);
+      console.log(`[website] trying to auto-extract logo from ${logoUrls.length} candidatesâ€¦`);
       const result = await downloadImage(logoUrls, 200);
       if (result) {
         const dst = path.join(targetDir, `logo.${result.ext}`);
@@ -509,8 +762,8 @@ app.post("/api/from-website", websiteUpload.single("logo"), async (req, res) => 
       }
     }
 
-    // Bilder als Base64 für Claude Vision laden (Logo + Hero)
-    // ALLE Bilder werden via Sharp zu PNG normalisiert — SVG/ICO/WebP problemlos
+    // Bilder als Base64 fÃ¼r Claude Vision laden (Logo + Hero)
+    // ALLE Bilder werden via Sharp zu PNG normalisiert â€” SVG/ICO/WebP problemlos
     const fsp2 = await import("node:fs/promises");
     const imageBlocks = [];
     const tryAttachImage = async (relPath, label) => {
@@ -520,7 +773,7 @@ app.post("/api/from-website", websiteUpload.single("logo"), async (req, res) => 
       try {
         const rawBuf = await fsp2.readFile(fullPath);
         if (rawBuf.length === 0) return;
-        // Konvertiere via Sharp zu PNG, max 1500×1500 (Claude-API Limit), Alpha auf weiß flatten falls nötig
+        // Konvertiere via Sharp zu PNG, max 1500Ã—1500 (Claude-API Limit), Alpha auf weiÃŸ flatten falls nÃ¶tig
         let pngBuf;
         try {
           pngBuf = await sharp(rawBuf)
@@ -529,7 +782,7 @@ app.post("/api/from-website", websiteUpload.single("logo"), async (req, res) => 
             .png({ compressionLevel: 6 })
             .toBuffer();
         } catch (e) {
-          // Fallback für SVG: nur in PNG umwandeln ohne resize
+          // Fallback fÃ¼r SVG: nur in PNG umwandeln ohne resize
           pngBuf = await sharp(rawBuf, { density: 200 }).png().toBuffer();
         }
         if (pngBuf.length > 5 * 1024 * 1024) {
@@ -549,13 +802,13 @@ app.post("/api/from-website", websiteUpload.single("logo"), async (req, res) => 
     await tryAttachImage(logoRelPath, "LOGO");
     await tryAttachImage(heroRelPath, "HERO-BILD VON DER WEBSEITE");
 
-    const PROMPT = `Du bist ein Werbe-Profi und Brand-Designer. Analysiere die Webseite UND die mitgeschickten Bilder (Logo + Hero-Bild). Extrahiere alle für eine Werbeanzeige relevanten Inhalte. Gib EXAKT folgendes JSON zurück (NUR JSON, keine Erklärung, kein Markdown):
+    const PROMPT = `Du bist ein Werbe-Profi und Brand-Designer. Analysiere die Webseite UND die mitgeschickten Bilder (Logo + Hero-Bild). Extrahiere alle fÃ¼r eine Werbeanzeige relevanten Inhalte. Gib EXAKT folgendes JSON zurÃ¼ck (NUR JSON, keine ErklÃ¤rung, kein Markdown):
 
 {
   "id": "${finalId}",
   "unternehmen": { "name": "<Firmenname genau wie auf der Webseite>", "slogan": "<Slogan/Claim, leer wenn keiner>" },
   "headline": "<Hauptbotschaft. Wenn 2-zeilig, mit \\\\n trennen>",
-  "subheadline": "<Untertitel oder beschreibender Satz, 1-2 Sätze max>",
+  "subheadline": "<Untertitel oder beschreibender Satz, 1-2 SÃ¤tze max>",
   "vorteile": [
     { "titel": "<Vorteil 1, knapp>", "beschreibung": "<1-Zeiler>" },
     { "titel": "<Vorteil 2>", "beschreibung": "<...>" },
@@ -563,7 +816,7 @@ app.post("/api/from-website", websiteUpload.single("logo"), async (req, res) => 
   ],
   "cta": { "text": "<Call-to-Action z.B. 'Jetzt Termin'>", "kicker": "<kurzer Hinweis>" },
   "kontakt": {
-    "adresse_zeile1": "<Straße + Nr.>",
+    "adresse_zeile1": "<StraÃŸe + Nr.>",
     "adresse_zeile2": "<PLZ + Ort>",
     "telefon_buero": "<Haupttelefon>",
     "telefon_lager": "",
@@ -572,21 +825,21 @@ app.post("/api/from-website", websiteUpload.single("logo"), async (req, res) => 
   },
   "oeffnungszeiten": { "mo_do": "", "fr": "", "hinweis": "" },
   "design": {
-    "primary":   "<Hex der DOMINANTEN MARKENFARBE — schau dir Logo + Hero-Bild GENAU an>",
+    "primary":   "<Hex der DOMINANTEN MARKENFARBE â€” schau dir Logo + Hero-Bild GENAU an>",
     "primaryLt": "<aufgehellte Variante davon>",
-    "accent":    "<Hex der Akzent-/Action-Farbe — oft kontrastierend (Rot/Orange/Gold)>",
+    "accent":    "<Hex der Akzent-/Action-Farbe â€” oft kontrastierend (Rot/Orange/Gold)>",
     "ink": "#0a0a0a", "white": "#ffffff",
     "fontHead": "Oswald", "fontBody": "Inter", "fontScript": "Caveat"
   }
 }
 
 WICHTIGE FARB-REGELN:
-1. Schaue dir das LOGO an — nimm dessen dominante Farbe als "primary"
+1. Schaue dir das LOGO an â€” nimm dessen dominante Farbe als "primary"
 2. Wenn kein Logo da ist, schau ins HERO-BILD und identifiziere die Markenfarbe
 3. Falls beide Bilder fehlen, identifiziere Farben aus dem Webseiten-Text (z.B. "wir setzen auf Blau" oder Hintergrund-CSS)
-4. Gib EXAKTE Hex-Codes zurück — keine Schätzungen wie "irgendein Blau", sondern z.B. "#1e3a8a"
-5. "accent" muss zur Markenfarbe passen aber kontrastieren — bei Blau → Rot/Orange, bei Grün → Gold, bei Schwarz → Akzentfarbe aus dem Bild
-6. Bei mehrfarbigen Logos: nimm die Farbe die am meisten Fläche einnimmt für "primary"
+4. Gib EXAKTE Hex-Codes zurÃ¼ck â€” keine SchÃ¤tzungen wie "irgendein Blau", sondern z.B. "#1e3a8a"
+5. "accent" muss zur Markenfarbe passen aber kontrastieren â€” bei Blau â†’ Rot/Orange, bei GrÃ¼n â†’ Gold, bei Schwarz â†’ Akzentfarbe aus dem Bild
+6. Bei mehrfarbigen Logos: nimm die Farbe die am meisten FlÃ¤che einnimmt fÃ¼r "primary"
 
 WICHTIG: Wenn etwas nicht erkennbar ist, leer lassen statt erfinden.
 
@@ -598,7 +851,7 @@ ${text}`;
 
     const Anthropic = (await import("@anthropic-ai/sdk")).default;
     const client = new Anthropic();
-    console.log(`[website] calling claude with ${imageBlocks.length / 2} image(s)…`);
+    console.log(`[website] calling claude with ${imageBlocks.length / 2} image(s)â€¦`);
     const message = await client.messages.create({
       model: "claude-sonnet-4-5",
       max_tokens: 2500,
@@ -612,7 +865,7 @@ ${text}`;
     });
     const respText = message.content.find((c) => c.type === "text")?.text ?? "";
     const jsonMatch = respText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("Claude lieferte kein gültiges JSON zurück");
+    if (!jsonMatch) throw new Error("Claude lieferte kein gÃ¼ltiges JSON zurÃ¼ck");
     const cfg = JSON.parse(jsonMatch[0]);
 
     cfg.id = finalId;
@@ -635,11 +888,30 @@ ${text}`;
   }
 });
 
-// Trigger render — returns jobId
+// Trigger render â€” returns jobId
 app.post("/api/render/:id", async (req, res) => {
   const id = req.params.id;
-  if (!existsSync(path.join(ROOT, "configs", `${id}.json`)))
+  const cfgPath = path.join(ROOT, "configs", `${id}.json`);
+  if (!existsSync(cfgPath))
     return res.status(404).json({ error: "Config not found" });
+
+  // Read format from config
+  let format = "landscape";
+  try {
+    const cfg = JSON.parse(await readFile(cfgPath, "utf-8"));
+    format = cfg.format || "landscape";
+  } catch {}
+
+  // Map format â†’ composition ID + output suffix
+  const FORMAT_MAP = {
+    landscape: { comp: "h",  suffix: "h"  },
+    vertical:  { comp: "v",  suffix: "v"  },
+    square:    { comp: "sq", suffix: "sq" },
+    portrait:  { comp: "pt", suffix: "pt" },
+  };
+  const fm = FORMAT_MAP[format] || FORMAT_MAP.landscape;
+  const compId = `${id}-cinematic-${fm.comp}`;
+  const outFile = `${id}-cinematic-${fm.suffix}.mp4`;
 
   // Regenerate configs index so new uploads are picked up by Remotion
   await new Promise((resolve, reject) => {
@@ -651,12 +923,12 @@ app.post("/api/render/:id", async (req, res) => {
 
   const jobId = crypto.randomBytes(6).toString("hex");
   jobs.set(jobId, {
-    id, status: "rendering", progress: 0, total: 450,
+    id, format, status: "rendering", progress: 0, total: 450,
     startedAt: Date.now(), error: null, log: [],
   });
 
   const proc = spawn("npx", [
-    "remotion", "render", `${id}-cinematic-h`, `out/${id}-cinematic-h.mp4`,
+    "remotion", "render", compId, `out/${outFile}`,
   ], { cwd: ROOT, shell: true });
 
   const job = jobs.get(jobId);
@@ -695,5 +967,7 @@ app.get("/api/jobs/:jobId", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`✓ Server läuft auf http://localhost:${PORT}`);
+  console.log(`âœ“ Server lÃ¤uft auf http://localhost:${PORT}`);
 });
+
+
