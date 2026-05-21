@@ -1,0 +1,58 @@
+{
+  "id": "hs-worms",
+  "unternehmen": {
+    "name": "Hochschule Worms",
+    "slogan": "Wissen, worauf es ankommt"
+  },
+  "headline": "Wissen, worauf es ankommt\nStudieren in Worms",
+  "subheadline": "Praxisnah studieren in den Fachbereichen Informatik, Touristik/Verkehrswesen und Wirtschaftswissenschaften. International, persönlich, zukunftsorientiert.",
+  "vorteile": [
+    {
+      "titel": "Praxisorientierung",
+      "beschreibung": "Enge Kooperation mit Unternehmen und duales Studium"
+    },
+    {
+      "titel": "International",
+      "beschreibung": "Austauschprogramme und internationale Studiengänge"
+    },
+    {
+      "titel": "Persönliche Betreuung",
+      "beschreibung": "Familiäre Atmosphäre mit individueller Unterstützung"
+    }
+  ],
+  "cta": {
+    "text": "Jetzt informieren",
+    "kicker": "Hochschulinfotag oder direkt bewerben"
+  },
+  "kontakt": {
+    "adresse_zeile1": "Erenburgerstraße 19",
+    "adresse_zeile2": "67549 Worms",
+    "telefon_buero": "+49 (0) 6241 509-0",
+    "telefon_lager": "",
+    "email": "kontakt@hs-worms.de",
+    "website": "www.hs-worms.de"
+  },
+  "oeffnungszeiten": {
+    "mo_do": "",
+    "fr": "",
+    "hinweis": ""
+  },
+  "design": {
+    "primary": "#c6d500",
+    "primaryLt": "#e0ea66",
+    "accent": "#0a0a0a",
+    "ink": "#0a0a0a",
+    "white": "#ffffff",
+    "fontHead": "Oswald",
+    "fontBody": "Inter",
+    "fontScript": "Caveat"
+  },
+  "assets": {
+    "logo": "hs-worms/logo.svg",
+    "hero": null
+  },
+  "variant": "a",
+  "vorteile_label": "Ihre Vorteile",
+  "duration": 15,
+  "fontPreset": "modern"
+}
