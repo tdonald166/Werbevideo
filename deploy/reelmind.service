@@ -1,0 +1,24 @@
+[Unit]
+Description=Reelmind — Werbevideo- und Poster-Generator
+After=network.target
+
+[Service]
+Type=simple
+User=reelmindadm
+Group=reelmindadm
+WorkingDirectory=/opt/reelmind
+EnvironmentFile=/etc/reelmind/env
+ExecStart=/usr/bin/node web/server.mjs
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=reelmind
+
+# Sicherheit
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
